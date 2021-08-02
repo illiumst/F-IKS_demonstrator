@@ -66,11 +66,11 @@ public class CameraController : MonoBehaviour
         {
             TaskOnClickZoomOut();
         }
-        if (Input.GetKey("left"))
+        if (Input.GetKey("q"))
         {
             TaskOnClickTurnLeft();
         }
-        if (Input.GetKey("right"))
+        if (Input.GetKey("e"))
         {
             TaskOnClickTurnRight();
         }

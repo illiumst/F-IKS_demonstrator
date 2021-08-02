@@ -11,7 +11,6 @@ public class AgentCollision : MonoBehaviour
     public float flashDelay = 1f;
 
     Animator animator;
-
     bool collision = false;
 
     private void Start()
@@ -47,14 +46,31 @@ public class AgentCollision : MonoBehaviour
             animator.SetBool("collision", collision);
 
         }
+        if (collider.tag == "Door")
+        {
+            var doorAn = collider.GetComponentInChildren<Animator>();
+            doorAn.SetTrigger("OpenClose");
+            warningText.text = "Hit Door!!!!";
+            collision = false;
+        }
     }
 
-    void OnTriggerExit()
+    void OnTriggerExit(Collider collider)
     {
-        warningText.gameObject.SetActive(false);
-        collision = false;
-        animator.SetBool("collision", collision);
-        animator.SetBool("foundDirt", collision);
+        Debug.Log("---------------------------------We exited: " + collider.name);
+
+        if (collider.tag == "Door")
+        {
+            var doorAn = collider.GetComponentInChildren<Animator>();
+            doorAn.SetTrigger("OpenClose");
+        }
+        else
+        {
+            warningText.gameObject.SetActive(false);
+            collision = false;
+            animator.SetBool("collision", collision);
+            animator.SetBool("foundDirt", collision);
+        }
 
     }
 

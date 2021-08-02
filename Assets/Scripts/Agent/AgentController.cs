@@ -35,6 +35,10 @@ public class AgentController : MonoBehaviour
 
     public bool playingSequence;
 
+    bool manualRobotControl;
+
+    Toggle robotControlToggle;
+
     float sequenceTimer;
 
     int playButtonCounter;
@@ -56,6 +60,7 @@ public class AgentController : MonoBehaviour
         initializePositions();
 
         system = GameObject.FindWithTag("System");
+        robotControlToggle = GameObject.FindWithTag("RobotControlToggle").GetComponent<Toggle>();
 
         playButton = system.GetComponent<UIGlobals>().playButton;
         pauseButton = system.GetComponent<UIGlobals>().pauseButton;
@@ -73,15 +78,18 @@ public class AgentController : MonoBehaviour
         slider.onValueChanged.AddListener(delegate { UpdateGoalPositionAccordingToSlider(); });
 
         animator = GetComponent<Animator>();
+
+        manualRobotControl = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        manualRobotControl = robotControlToggle.isOn;
         collision = this.GetComponent<AgentCollision>().GetCollision();
         currentpos = this.transform.position;
 
-        if (!stopMoving)
+        if (!stopMoving && !manualRobotControl)
         {
             if (playingSequence)
             {
@@ -122,6 +130,26 @@ public class AgentController : MonoBehaviour
             }
         }
 
+        if (manualRobotControl)
+        {
+            if (Input.GetKey("left"))
+            {
+                MoveRobotLeft();
+            }
+            if (Input.GetKey("right"))
+            {
+                MoveRobotRight();
+            }
+            if (Input.GetKey("up"))
+            {
+                MoveRobotUp();
+            }
+            if (Input.GetKey("down"))
+            {
+                MoveRobotDown();
+            }
+        }
+
         if (isCleaning)
         {
             stopMoving = true;
@@ -129,6 +157,31 @@ public class AgentController : MonoBehaviour
         }
 
 
+    }
+
+    void MoveRobotLeft()
+    {
+        Vector3 position = this.transform.position;
+        position.x--;
+        this.transform.position = position;
+    }
+    void MoveRobotRight()
+    {
+        Vector3 position = this.transform.position;
+        position.x++;
+        this.transform.position = position;
+    }
+    void MoveRobotUp()
+    {
+        Vector3 position = this.transform.position;
+        position.z++;
+        this.transform.position = position;
+    }
+    void MoveRobotDown()
+    {
+        Vector3 position = this.transform.position;
+        position.z--;
+        this.transform.position = position;
     }
 
     public void UpdateGoalPositionAccordingToSlider()
@@ -237,6 +290,7 @@ public class AgentController : MonoBehaviour
     void initializePositions()
     {
         positions.Add(new Vector3(0, 0, 0));
+        positions.Add(new Vector3(1, 0, 3));
         positions.Add(new Vector3(-5, 0, 0));
         positions.Add(new Vector3(-4, 0, 10));
         positions.Add(new Vector3(15, 0, 0));
