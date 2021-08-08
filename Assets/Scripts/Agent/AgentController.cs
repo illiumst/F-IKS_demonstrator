@@ -162,26 +162,30 @@ public class AgentController : MonoBehaviour
     void MoveRobotLeft()
     {
         Vector3 position = this.transform.position;
-        position.x--;
+        position.x -= Time.deltaTime * speed;
         this.transform.position = position;
+        fieldOfViewPlane.transform.position = position;
     }
     void MoveRobotRight()
     {
         Vector3 position = this.transform.position;
-        position.x++;
+        position.x += Time.deltaTime * speed;
         this.transform.position = position;
+        fieldOfViewPlane.transform.position = position;
     }
     void MoveRobotUp()
     {
         Vector3 position = this.transform.position;
-        position.z++;
+        position.z += Time.deltaTime * speed;
         this.transform.position = position;
+        fieldOfViewPlane.transform.position = position;
     }
     void MoveRobotDown()
     {
         Vector3 position = this.transform.position;
-        position.z--;
+        position.z -= Time.deltaTime * speed;
         this.transform.position = position;
+        fieldOfViewPlane.transform.position = position;
     }
 
     public void UpdateGoalPositionAccordingToSlider()
@@ -238,17 +242,6 @@ public class AgentController : MonoBehaviour
         Debug.Log("-----------Playback slider value: " + slider.value);
         Debug.Log("-----------Position Count: " + (positions.Count - 1));
 
-        /*else
-        {
-            Debug.Log("------------Sequence timer: " + sequenceTimer);
-            if ((int)sequenceTimer == (slider.value + 1) || (int)sequenceTimer == 0)
-            {
-                slider.value += sequenceTimer;
-                Debug.Log("------------Slider value set in Sequence: " + slider.value);
-
-            }
-        }
-        sequenceTimer += playBackSpeed;*/
     }
 
     public void MoveRobotTo(Vector3 position)
@@ -261,15 +254,6 @@ public class AgentController : MonoBehaviour
         this.transform.forward = difference;
         fieldOfViewPlane.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
 
-
-        /*
-        Debug.Log("-------------------Difference....." + difference.x + " " + difference.y + " " + difference.z);
-        Debug.Log("-------------------speed: " + speed);
-
-        this.transform.position = currentpos + difference * speed;
-        this.transform.forward = difference;
-        //canvas.GetComponent<RectTransform>().forward = Vector3.zero;
-        fieldOfViewPlane.transform.position = currentpos + difference * speed; */
     }
 
     void BounceOff()

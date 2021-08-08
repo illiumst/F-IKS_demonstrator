@@ -15,6 +15,7 @@ TagManager:
   - AgentItemContent
   - AgentItemHeader
   - Door
+  - RobotControlToggle
   layers:
   - Default
   - TransparentFX
