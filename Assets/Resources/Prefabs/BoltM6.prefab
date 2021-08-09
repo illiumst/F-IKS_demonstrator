@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 5400000}
   - component: {fileID: 6400000}
   - component: {fileID: -2946764279330497839}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BoltM6
-  m_TagString: Untagged
+  m_TagString: Trash
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -16,6 +16,7 @@ TagManager:
   - AgentItemHeader
   - Door
   - RobotControlToggle
+  - TrashBoundary
   layers:
   - Default
   - TransparentFX
@@ -24,9 +25,9 @@ TagManager:
   - Water
   - UI
   - Post-Processing
-  - 
-  - 
-  - 
+  - Trash
+  - Agent
+  - TrashBoundary
   - 
   - 
   - 
