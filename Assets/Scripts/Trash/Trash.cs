@@ -13,24 +13,11 @@ public class Trash : MonoBehaviour
     ObjectPooler objectPooler;
     private int frames = 0;
 
-    public Trash(Vector3 position, int size)
-    {
-        this.size = size;
-        this.position = position;
-    }
-
     // Start is called before the first frame update
     void Start()
     {
-        var trashBoundary = Resources.Load("Prefabs/TrashBoundary");
-        TrashBoundarySpawnObject = trashBoundary as GameObject;
         objectPooler = ObjectPooler.Instance;
-
-        var boundarySize = 2f * (float)size / Mathf.PI;
-        var boundaryPosition = new Vector3((position.x + 0.5f * boundarySize), position.y, (position.z + 0.5f * boundarySize));
-        var newTrashBoundary = Instantiate(TrashBoundarySpawnObject, boundaryPosition, transform.rotation) as GameObject;
-        newTrashBoundary.transform.localScale = new Vector3(boundarySize, boundarySize, boundarySize);
-
+        this.position = transform.position;
     }
 
     // Update is called once per frame
@@ -40,7 +27,7 @@ public class Trash : MonoBehaviour
         //only spawn every 15 frames
         if (frames % 15 == 0)
         {
-            spawnTrashCubePiece(new Vector3(2, 0, 3), 2);
+            spawnTrashCubePiece(position, size);
         }
     }
 
@@ -64,5 +51,10 @@ public class Trash : MonoBehaviour
     public int getSize()
     {
         return this.size;
+    }
+
+    public void setSize(int size)
+    {
+        this.size = size;
     }
 }

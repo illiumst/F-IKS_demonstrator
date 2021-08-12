@@ -23,11 +23,12 @@ public class AgentCollision : MonoBehaviour
     {
         collision = true;
         Debug.Log("---------------------------------We hit: " + collider.name);
-        if (collider.tag == "Trash")
+        if (collider.tag == "TrashBoundary")
         {
             warningText.text = "Found Trash!!!!";
             warningText.gameObject.SetActive(true);
-            animator.SetBool("foundDirt", collision);
+            FlashWhenHit(flashDelay);
+            animator.SetTrigger("foundTrash");
 
         }
         if (collider.tag == "Wall")
@@ -69,7 +70,6 @@ public class AgentCollision : MonoBehaviour
             warningText.gameObject.SetActive(false);
             collision = false;
             animator.SetBool("collision", collision);
-            animator.SetBool("foundDirt", collision);
         }
 
     }
