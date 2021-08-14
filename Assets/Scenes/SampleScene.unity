@@ -7680,7 +7680,8 @@ MonoBehaviour:
   pools:
   - tag: TrashCube
     prefab: {fileID: 100000, guid: e415ce8b079c6474e9322f800256364c, type: 3}
-    size: 100
+    size: 0
+    steps: 100
 --- !u!4 &1282486053
 Transform:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ public class ObjectPooler : MonoBehaviour
         public string tag;
         public GameObject prefab;
         public int size;
+        public int steps;
     }
 
     #region Singleton

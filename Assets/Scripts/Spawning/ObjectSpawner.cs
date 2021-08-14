@@ -11,11 +11,13 @@ public class ObjectSpawner : MonoBehaviour
     GameObject WallSpawnObject;
     GameObject AgentListItem;
     public GameObject AgentListContent;
+    ObjectPooler objectPooler;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        objectPooler = ObjectPooler.Instance;
         var robot = Resources.Load("Prefabs/Robot");
         var trashBoundary = Resources.Load("Prefabs/TrashBoundary");
         var listItem = Resources.Load("Prefabs/AgentListItem");
@@ -64,6 +66,7 @@ public class ObjectSpawner : MonoBehaviour
         newTrashBoundary.GetComponent<Trash>().setSize(size);
         newTrashBoundary.transform.localScale = new Vector3(boundarySize, boundarySize, boundarySize);
 
+        objectPooler.pools[0].size += objectPooler.pools[0].steps;
 
     }
 }
