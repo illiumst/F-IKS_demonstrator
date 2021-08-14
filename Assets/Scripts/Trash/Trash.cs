@@ -18,6 +18,8 @@ public class Trash : MonoBehaviour
     {
         objectPooler = ObjectPooler.Instance;
         this.position = transform.position;
+        Bounds bounds = getBounds(gameObject);
+        transform.position = new Vector3(position.x + 0.5f * bounds.extents.x, position.y, position.z + 0.5f * bounds.extents.z);
     }
 
     // Update is called once per frame
@@ -41,6 +43,40 @@ public class Trash : MonoBehaviour
         var boundaryPosition = new Vector3((trashPosition.x + 0.5f * boundarySize), trashPosition.y, (trashPosition.z + 0.5f * boundarySize));
 
         objectPooler.SpawnFromPool("TrashCube", position, Quaternion.identity);
+    }
+
+    Bounds getBounds(GameObject objeto)
+    {
+        Bounds bounds;
+        Renderer childRender;
+        bounds = getRenderBounds(objeto);
+        if (bounds.extents.x == 0)
+        {
+            bounds = new Bounds(objeto.transform.position, Vector3.zero);
+            foreach (Transform child in objeto.transform)
+            {
+                childRender = child.GetComponent<Renderer>();
+                if (childRender)
+                {
+                    bounds.Encapsulate(childRender.bounds);
+                }
+                else
+                {
+                    bounds.Encapsulate(getBounds(child.gameObject));
+                }
+            }
+        }
+        return bounds;
+    }
+    Bounds getRenderBounds(GameObject objeto)
+    {
+        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+        Renderer render = objeto.GetComponent<Renderer>();
+        if (render != null)
+        {
+            return render.bounds;
+        }
+        return bounds;
     }
 
     public Vector3 getPosition()
