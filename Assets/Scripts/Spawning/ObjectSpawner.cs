@@ -13,6 +13,8 @@ public class ObjectSpawner : MonoBehaviour
     public GameObject AgentListContent;
     ObjectPooler objectPooler;
 
+    List<GameObject> trashList = new List<GameObject>();
+
 
     // Start is called before the first frame update
     void Start()
@@ -30,8 +32,8 @@ public class ObjectSpawner : MonoBehaviour
         spawnObject(RobotSpawnObject, new Vector3(RobotSpawnObject.transform.position.x, 0.5f, RobotSpawnObject.transform.position.z));
         spawnTrashObject(new Vector3(2, 0, 3), 2);
         spawnTrashObject(new Vector3(-10, 0, 3), 1);
-        //spawnTrashObject(new Vector3(-2, 0, -2), 1);
-        //spawnTrashObject(new Vector3(-6, 0, -12), 1);
+        spawnTrashObject(new Vector3(-2, 0, -2), 2);
+        spawnTrashObject(new Vector3(-6, 0, -12), 3);
 
 
 
@@ -60,9 +62,8 @@ public class ObjectSpawner : MonoBehaviour
     public void spawnTrashObject(Vector3 trashPosition, int size)
     {
         var boundarySize = 2f * (float)size / Mathf.PI;
-        //var boundaryPosition = new Vector3((trashPosition.x + 0.5f * boundarySize), trashPosition.y, (trashPosition.z + 0.5f * boundarySize));
-        //var newTrashBoundary = Instantiate(TrashBoundarySpawnObject, boundaryPosition, transform.rotation) as GameObject;
         var newTrashBoundary = Instantiate(TrashBoundarySpawnObject, trashPosition, transform.rotation) as GameObject;
+        trashList.Add(newTrashBoundary);
         newTrashBoundary.GetComponent<Trash>().setSize(size);
         newTrashBoundary.transform.localScale = new Vector3(boundarySize, boundarySize, boundarySize);
 

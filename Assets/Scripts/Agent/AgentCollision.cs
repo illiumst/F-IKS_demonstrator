@@ -27,7 +27,6 @@ public class AgentCollision : MonoBehaviour
         {
             warningText.text = "Found Trash!!!!";
             warningText.gameObject.SetActive(true);
-            FlashWhenHit(flashDelay);
             animator.SetTrigger("foundTrash");
 
         }
