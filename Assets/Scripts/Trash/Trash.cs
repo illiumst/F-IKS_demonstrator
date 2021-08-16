@@ -13,10 +13,25 @@ public class Trash : MonoBehaviour
     ObjectPooler objectPooler;
     private int frames = 0;
 
+    private int index;
+
     // Start is called before the first frame update
     void Start()
     {
         objectPooler = ObjectPooler.Instance;
+        var prefab = Resources.Load("Prefabs/BoltM6") as GameObject;
+        //index = GetComponent<ObjectSpawner>().GetTrashList().Count;
+        objectPooler.pools.Add(new ObjectPooler.Pool(CreateTrashTag(), prefab, size * 50));
+
+        Queue<GameObject> objectPool = new Queue<GameObject>();
+        for (int i = 0; i < objectPooler.pools[objectPooler.pools.Count - 1].size; i++)
+        {
+            GameObject obj = Instantiate(objectPooler.pools[objectPooler.pools.Count - 1].prefab);
+            obj.SetActive(false);
+            objectPool.Enqueue(obj);
+        }
+        objectPooler.poolDictionary.Add(objectPooler.pools[objectPooler.pools.Count - 1].tag, objectPool);
+
         this.position = transform.position;
         Bounds bounds = getBounds(gameObject);
         transform.position = new Vector3(position.x + 0.5f * bounds.extents.x, position.y, position.z + 0.5f * bounds.extents.z);
@@ -42,7 +57,7 @@ public class Trash : MonoBehaviour
         var boundarySize = 2f * (float)size / Mathf.PI;
         var boundaryPosition = new Vector3((trashPosition.x + 0.5f * boundarySize), trashPosition.y, (trashPosition.z + 0.5f * boundarySize));
 
-        objectPooler.SpawnFromPool("TrashCube", position, Quaternion.identity);
+        objectPooler.SpawnFromPool("Trash" + index, position, Quaternion.identity);
     }
 
     Bounds getBounds(GameObject objeto)
@@ -79,6 +94,13 @@ public class Trash : MonoBehaviour
         return bounds;
     }
 
+    public string CreateTrashTag()
+    {
+        string tag = "Trash";
+        tag += index;
+        return tag;
+    }
+
     public Vector3 getPosition()
     {
         return this.position;
@@ -92,5 +114,10 @@ public class Trash : MonoBehaviour
     public void setSize(int size)
     {
         this.size = size;
+    }
+
+    public void setIndex(int index)
+    {
+        this.index = index;
     }
 }

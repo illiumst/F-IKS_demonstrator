@@ -11,6 +11,9 @@ public class AgentCollision : MonoBehaviour
     public float flashDelay = 1f;
 
     Animator animator;
+
+    ObjectPooler objectPooler;
+
     bool collision = false;
 
     private void Start()
@@ -18,6 +21,8 @@ public class AgentCollision : MonoBehaviour
         var system = GameObject.FindWithTag("System");
         redScreenFlashImage = system.GetComponent<UIGlobals>().redScreenFlashImage;
         animator = GetComponent<Animator>();
+        objectPooler = ObjectPooler.Instance;
+
     }
     void OnTriggerEnter(Collider collider)
     {
@@ -25,6 +30,12 @@ public class AgentCollision : MonoBehaviour
         Debug.Log("---------------------------------We hit: " + collider.name);
         if (collider.tag == "TrashBoundary")
         {
+            string trashName = collider.transform.parent.name;
+            string trashIndexString = trashName.Substring(trashName.Length - 1);
+            int trashIndex;
+            int.TryParse(trashIndexString, out trashIndex);
+            Debug.Log("---------------------------------We hit trash: " + trashName + " with index: " + trashIndex);
+
             warningText.text = "Found Trash!!!!";
             warningText.gameObject.SetActive(true);
             animator.SetTrigger("foundTrash");

@@ -7,6 +7,12 @@ public class ObjectPooler : MonoBehaviour
     [System.Serializable]
     public class Pool
     {
+        public Pool(string tag, GameObject prefab, int size)
+        {
+            this.tag = tag;
+            this.prefab = prefab;
+            this.size = size;
+        }
         public string tag;
         public GameObject prefab;
         public int size;

@@ -23,7 +23,6 @@ public class ObjectSpawner : MonoBehaviour
         var robot = Resources.Load("Prefabs/Robot");
         var trashBoundary = Resources.Load("Prefabs/TrashBoundary");
         var listItem = Resources.Load("Prefabs/AgentListItem");
-        //var trash = Resources.Load("Prefabs/TrashCube");
 
         RobotSpawnObject = robot as GameObject;
         TrashBoundarySpawnObject = trashBoundary as GameObject;
@@ -54,8 +53,6 @@ public class ObjectSpawner : MonoBehaviour
             var itemContent = newListItem.transform.GetChild(1).gameObject;
             agentBody.GetComponent<AgentCollision>().setWarningText(SpawnHelperClass.FindComponentInChildWithTag<Text>(itemContent, "WarningText"));
             agentBody.GetComponent<AgentController>().setPositionText(SpawnHelperClass.FindComponentInChildWithTag<Text>(itemContent, "UpcomingPositionText"));
-
-            Debug.Log("Trying to Instantiate List item....");
         }
     }
 
@@ -64,10 +61,10 @@ public class ObjectSpawner : MonoBehaviour
         var boundarySize = 2f * (float)size / Mathf.PI;
         var newTrashBoundary = Instantiate(TrashBoundarySpawnObject, trashPosition, transform.rotation) as GameObject;
         trashList.Add(newTrashBoundary);
+        newTrashBoundary.name = "Trash" + trashList.Count;
         newTrashBoundary.GetComponent<Trash>().setSize(size);
+        newTrashBoundary.GetComponent<Trash>().setIndex(trashList.Count);
         newTrashBoundary.transform.localScale = new Vector3(boundarySize, boundarySize, boundarySize);
-
-        objectPooler.pools[0].size += objectPooler.pools[0].steps;
 
     }
 }
