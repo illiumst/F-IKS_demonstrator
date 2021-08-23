@@ -6,12 +6,16 @@ public class Trash : MonoBehaviour
 {
 
     private int size;
+
+    private int fillAmount = 3;
     private Vector3 position;
 
     GameObject TrashBoundarySpawnObject;
 
     ObjectPooler objectPooler;
     private int frames = 0;
+
+    private int fillCue = 0;
 
     private int index;
 
@@ -42,13 +46,39 @@ public class Trash : MonoBehaviour
     {
         frames++;
         //only spawn every 15 frames
-        if (frames % 15 == 0)
+        if (frames % 15 == 0 && fillAmount == 3)
         {
-            spawnTrashCubePiece(position, size);
+            fillCue++;
+            spawnTrashCubePiece(position, size, true);
+        }
+        else if (frames % 15 == 0 && fillAmount == 2)
+        {
+            fillCue++;
+            spawnTrashCubePiece(position, size, true);
+        }
+        else if (frames % 4 == 0 && fillAmount == 2)
+        {
+            fillCue++;
+            spawnTrashCubePiece(position, size, false);
+        }
+        else if (frames % 15 == 0 && fillAmount == 1)
+        {
+            fillCue++;
+            spawnTrashCubePiece(position, size, true);
+        }
+        else if (frames % 2 == 0 && fillAmount == 1)
+        {
+            fillCue++;
+            spawnTrashCubePiece(position, size, false);
+        }
+        else if (frames % 3 == 0 && fillAmount == 0)
+        {
+            fillCue++;
+            spawnTrashCubePiece(position, size, false);
         }
     }
 
-    public void spawnTrashCubePiece(Vector3 trashPosition, int size)
+    public void spawnTrashCubePiece(Vector3 trashPosition, int size, bool active)
     {
         float xTrans = Random.Range(0, 2f * (float)size / Mathf.PI);
         float zTrans = Random.Range(0, 2f * (float)size / Mathf.PI);
@@ -57,7 +87,7 @@ public class Trash : MonoBehaviour
         var boundarySize = 2f * (float)size / Mathf.PI;
         var boundaryPosition = new Vector3((trashPosition.x + 0.5f * boundarySize), trashPosition.y, (trashPosition.z + 0.5f * boundarySize));
 
-        objectPooler.SpawnFromPool("Trash" + index, position, Quaternion.identity);
+        objectPooler.SpawnFromPool("Trash" + index, position, Quaternion.identity, active);
     }
 
     Bounds getBounds(GameObject objeto)
@@ -119,5 +149,18 @@ public class Trash : MonoBehaviour
     public void setIndex(int index)
     {
         this.index = index;
+    }
+
+    public void DecreaseFillAmount()
+    {
+        if (fillAmount > 0)
+        {
+            fillAmount -= 1;
+        }
+    }
+
+    public int GetFillAmount()
+    {
+        return this.fillAmount;
     }
 }

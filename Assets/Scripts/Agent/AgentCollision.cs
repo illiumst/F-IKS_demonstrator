@@ -36,6 +36,8 @@ public class AgentCollision : MonoBehaviour
             int.TryParse(trashIndexString, out trashIndex);
             Debug.Log("---------------------------------We hit trash: " + trashName + " with index: " + trashIndex);
 
+            collider.transform.parent.GetComponent<Trash>().DecreaseFillAmount();
+
             warningText.text = "Found Trash!!!!";
             warningText.gameObject.SetActive(true);
             animator.SetTrigger("foundTrash");

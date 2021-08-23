@@ -50,6 +50,33 @@ public class ObjectPooler : MonoBehaviour
         }
     }
 
+    Pool GetPoolByTag(string tag)
+    {
+        foreach (Pool pool in pools)
+        {
+            if (pool.tag.Equals(tag))
+            {
+                return pool;
+            }
+        }
+        return null;
+    }
+    void UpdapdatePoolDictionary(string key)
+    {
+        Pool pool = GetPoolByTag(key);
+        Debug.Log("----------------------Update Pool Dictionary : " + pool.tag);
+
+
+        if (pool != null)
+        {
+            Queue<GameObject> objectPool = new Queue<GameObject>();
+            GameObject obj = Instantiate(pool.prefab);
+            obj.SetActive(false);
+            objectPool.Enqueue(obj);
+            poolDictionary[key] = objectPool;
+        }
+    }
+
     /*public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(tag))
@@ -80,8 +107,11 @@ public class ObjectPooler : MonoBehaviour
 
     }*/
 
-    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
+    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation, bool active)
     {
+        //UpdapdatePoolDictionary(tag);
+        Debug.Log("----------------------SpawnFromPool dictionary count : " + poolDictionary.Count);
+
         if (!poolDictionary.ContainsKey(tag))
         {
             Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
@@ -91,9 +121,16 @@ public class ObjectPooler : MonoBehaviour
         {
             return null;
         }
+        /*switch (fillAmount)
+        {
+            case 2: poolDictionary[tag].Dequeue(); break;
+            case 1: poolDictionary[tag].Dequeue(); poolDictionary[tag].Dequeue(); break;
+            case 0: poolDictionary[tag].Clear(); break;
+            default: break;
+        }*/
         GameObject objectToSpawn = poolDictionary[tag].Dequeue();
 
-        objectToSpawn.SetActive(true);
+        objectToSpawn.SetActive(active);
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
 
@@ -104,10 +141,23 @@ public class ObjectPooler : MonoBehaviour
             pooledObj.OnObjectSpawn();
         }
 
-        //poolDictionary[tag].Enqueue(objectToSpawn);
+        poolDictionary[tag].Enqueue(objectToSpawn);
 
         return objectToSpawn;
 
+    }
+
+    public Pool getPoolByTag(string tag)
+    {
+        Pool returnPool = null;
+        foreach (Pool pool in pools)
+        {
+            if (pool.tag.Equals(tag))
+            {
+                returnPool = pool;
+            }
+        }
+        return returnPool;
     }
 
 }
