@@ -13,6 +13,9 @@ public class ObjectSpawner : MonoBehaviour
     public GameObject AgentListContent;
     ObjectPooler objectPooler;
 
+    GameObject system;
+
+
     List<GameObject> trashList = new List<GameObject>();
 
 
@@ -20,15 +23,19 @@ public class ObjectSpawner : MonoBehaviour
     void Start()
     {
         objectPooler = ObjectPooler.Instance;
+        system = GameObject.FindWithTag("System");
         var robot = Resources.Load("Prefabs/Robot");
         var trashBoundary = Resources.Load("Prefabs/TrashBoundary");
         var listItem = Resources.Load("Prefabs/AgentListItem");
+        var wallPiece = Resources.Load("Prefabs/Wall");
 
         RobotSpawnObject = robot as GameObject;
         TrashBoundarySpawnObject = trashBoundary as GameObject;
         AgentListItem = listItem as GameObject;
+        WallSpawnObject = wallPiece as GameObject;
 
         spawnObject(RobotSpawnObject, new Vector3(RobotSpawnObject.transform.position.x, 0.5f, RobotSpawnObject.transform.position.z));
+        spawnWalls();
         //spawnTrashObject(new Vector3(2, 0, 3), 2);
         //spawnTrashObject(new Vector3(-10, 0, 3), 1);
         //spawnTrashObject(new Vector3(-2, 0, -2), 2);
@@ -66,5 +73,15 @@ public class ObjectSpawner : MonoBehaviour
         newTrashBoundary.GetComponent<Trash>().setIndex(trashList.Count);
         newTrashBoundary.transform.localScale = new Vector3(boundarySize, boundarySize, boundarySize);
 
+    }
+
+    public void spawnWalls()
+    {
+        List<Wall> walls = system.GetComponent<EnvironmentState>().environmentConstants.walls;
+        foreach (Wall wall in walls)
+        {
+            var newWallPiece = Instantiate(WallSpawnObject, new Vector3(wall.x, 2.5f, wall.y), transform.rotation) as GameObject;
+
+        }
     }
 }

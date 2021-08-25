@@ -6576,7 +6576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 593c4319517b6473dbd6aedfa45ea597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jsonFile: {fileID: 4900000, guid: 6329322abf3dc44148595356e8963aed, type: 3}
+  jsonFile: {fileID: 4900000, guid: e2806b4b279c24dc694c961b76a8b65b, type: 3}
 --- !u!114 &906522900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6591,6 +6591,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   JSONReader: {fileID: 0}
   EnvironmentInfoList: []
+  environmentConstants:
+    centerX: 5
+    centerY: 5
 --- !u!114 &906522901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8157,7 +8160,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1102267959
 Transform:
   m_ObjectHideFlags: 0
@@ -10913,7 +10916,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2009376946}
   m_Direction: 0
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

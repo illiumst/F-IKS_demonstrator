@@ -20,7 +20,7 @@ public class Wall
 
     }
 
-    void ConvertCoordinates(int centerX, int centerY)
+    public void ConvertCoordinates(int centerX, int centerY)
     {
         this.x -= centerX;
         this.y -= centerY;
