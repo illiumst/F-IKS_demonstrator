@@ -29,10 +29,10 @@ public class ObjectSpawner : MonoBehaviour
         AgentListItem = listItem as GameObject;
 
         spawnObject(RobotSpawnObject, new Vector3(RobotSpawnObject.transform.position.x, 0.5f, RobotSpawnObject.transform.position.z));
-        spawnTrashObject(new Vector3(2, 0, 3), 2);
-        spawnTrashObject(new Vector3(-10, 0, 3), 1);
-        spawnTrashObject(new Vector3(-2, 0, -2), 2);
-        spawnTrashObject(new Vector3(-6, 0, -12), 3);
+        //spawnTrashObject(new Vector3(2, 0, 3), 2);
+        //spawnTrashObject(new Vector3(-10, 0, 3), 1);
+        //spawnTrashObject(new Vector3(-2, 0, -2), 2);
+        //spawnTrashObject(new Vector3(-6, 0, -12), 3);
 
 
 

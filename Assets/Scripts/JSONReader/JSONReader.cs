@@ -8,10 +8,15 @@ public class JSONReader : MonoBehaviour
 {
     public TextAsset jsonFile;
 
-    public List<EnvironmentInfo> createEnvironmentInfoListFromFile()
+    public List<EnvironmentInfo> CreateEnvironmentInfoListFromFile()
     {
         List<List<double>> agent_coords = new List<List<double>>();
         List<EnvironmentInfo> environmentInfoList = JsonConvert.DeserializeObject<List<EnvironmentInfo>>(jsonFile.text);
         return environmentInfoList;
+    }
+    public EnvironmentConstants ReadEnvironmentConstants()
+    {
+        EnvironmentConstants contants = JsonConvert.DeserializeObject<EnvironmentConstants>(jsonFile.text);
+        return contants;
     }
 }

@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class EnvironmentInfo
+public class EnvironmentConstants
 {
-    public int[][] agents_pos { get; set; }
-    //public int[][] walls_pos { get; set; }
-    public int[][] dirt_pos { get; set; }
+    public List<Wall> walls { get; set; }
 
     // Start is called before the first frame update
     void Start()
