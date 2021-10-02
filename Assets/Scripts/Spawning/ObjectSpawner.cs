@@ -19,6 +19,11 @@ public class ObjectSpawner : MonoBehaviour
 
 
     List<GameObject> trashList = new List<GameObject>();
+    List<GameObject> wallList = new List<GameObject>();
+
+    int tempMaxWallX = 0;
+    int tempMaxWallY = 0;
+
 
 
     // Start is called before the first frame update
@@ -37,8 +42,8 @@ public class ObjectSpawner : MonoBehaviour
         AgentListItem = listItem as GameObject;
         WallSpawnObject = wallPiece as GameObject;
 
-        spawnObject(RobotSpawnObject, new Vector3(RobotSpawnObject.transform.position.x, 0.5f, RobotSpawnObject.transform.position.z));
-        spawnWalls();
+        //spawnObject(RobotSpawnObject, new Vector3(RobotSpawnObject.transform.position.x, 0.5f, RobotSpawnObject.transform.position.z));
+        //spawnWalls();
         //spawnTrashObject(new Vector3(2, 0, 3), 2);
         //spawnTrashObject(new Vector3(-10, 0, 3), 1);
         //spawnTrashObject(new Vector3(-2, 0, -2), 2);
@@ -78,94 +83,161 @@ public class ObjectSpawner : MonoBehaviour
 
     }
 
-    public void spawnWalls()
+    /* public void spawnWalls()
+     {
+         List<Wall> walls = system.GetComponent<EnvironmentState>().environmentConstants.walls;
+         foreach (Wall wall in walls)
+         {
+             Debug.Log("------Wallpiece: x: " + wall.x + " y: " + wall.y);
+             wallRotation = Quaternion.Euler(0, 0, 0);
+
+
+             if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
+             && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
+             {
+                 Debug.Log("------Wall1");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
+                 WallSpawnObject = wallPiece as GameObject;
+             }
+             else if (!CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
+             && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
+             {
+                 Debug.Log("------Wall1 top hit");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
+                 WallSpawnObject = wallPiece as GameObject;
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
+             && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
+             {
+                 Debug.Log("------Wall1 bottom hit");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
+                 WallSpawnObject = wallPiece as GameObject;
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
+             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
+             {
+                 Debug.Log("------Wall2");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
+                 WallSpawnObject = wallPiece as GameObject;
+                 wallRotation = Quaternion.Euler(0, 90, 0);
+             }
+             else if (!CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
+             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
+             {
+                 Debug.Log("------Wall2 right hit");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
+                 WallSpawnObject = wallPiece as GameObject;
+                 wallRotation = Quaternion.Euler(0, 90, 0);
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
+             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
+             {
+                 Debug.Log("------Wall2 left hit");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
+                 WallSpawnObject = wallPiece as GameObject;
+                 wallRotation = Quaternion.Euler(0, 90, 0);
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
+             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
+             {
+                 //Debug.Log("------Wall3");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
+                 WallSpawnObject = wallPiece as GameObject;
+                 wallRotation = Quaternion.Euler(0, 90, 0);
+
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
+             && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
+             {
+                 //Debug.Log("------Wall4");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
+                 WallSpawnObject = wallPiece as GameObject;
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1)
+             && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y))
+             {
+                 //Debug.Log("------Wall5");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
+                 WallSpawnObject = wallPiece as GameObject;
+                 wallRotation = Quaternion.Euler(0, -90, 0);
+
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
+             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y))
+             {
+                 //Debug.Log("------Wall6");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
+                 WallSpawnObject = wallPiece as GameObject;
+                 wallRotation = Quaternion.Euler(0, 180, 0);
+
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
+             && CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
+             {
+                 //Debug.Log("------Wall7");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
+                 WallSpawnObject = wallPiece as GameObject;
+                 wallRotation = Quaternion.Euler(0, 180, 0);
+
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
+             && CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y))
+             {
+                 //Debug.Log("------Wall8");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
+                 WallSpawnObject = wallPiece as GameObject;
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
+             && CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
+             {
+                 //Debug.Log("------Wall9");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
+                 WallSpawnObject = wallPiece as GameObject;
+                 wallRotation = Quaternion.Euler(0, 90, 0);
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
+             && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
+             {
+                 //Debug.Log("------Wall10");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
+                 WallSpawnObject = wallPiece as GameObject;
+                 wallRotation = Quaternion.Euler(0, -90, 0);
+             }
+             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
+             && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
+             {
+                 //Debug.Log("------Wall11");
+                 var wallPiece = Resources.Load("Prefabs/Walls/Wall3");
+                 WallSpawnObject = wallPiece as GameObject;
+             }
+             var newWallPiece = Instantiate(WallSpawnObject, new Vector3(wall.x, 2f, wall.y), wallRotation) as GameObject;
+             wallList.Add(newWallPiece);
+         }
+         foreach (GameObject wall in wallList)
+         {
+             Debug.Log("------Converting Wall coordinates...");
+             wall.transform.position = new Vector3(wall.transform.position.x - GetWallCenter().x,
+                 wall.transform.position.y, wall.transform.position.z - GetWallCenter().z);
+         }
+     }
+
+    public Vector3 GetWallCenter()
     {
         List<Wall> walls = system.GetComponent<EnvironmentState>().environmentConstants.walls;
+
         foreach (Wall wall in walls)
         {
-            Debug.Log("------Wallpiece: x: " + wall.x + " y: " + wall.y);
-            if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
+            if (wall.x > tempMaxWallX)
             {
-                Debug.Log("------Wall1");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
-                WallSpawnObject = wallPiece as GameObject;
+                tempMaxWallX = wall.x;
             }
-            if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y))
+            if (wall.y > tempMaxWallY)
             {
-                Debug.Log("------Wall2");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
-                WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 90, 0);
+                tempMaxWallY = wall.y;
             }
-            if (CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
-            {
-                Debug.Log("------Wall3");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
-                WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 90, 0);
-
-            }
-            if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y))
-            {
-                Debug.Log("------Wall4");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
-                WallSpawnObject = wallPiece as GameObject;
-            }
-            if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
-            {
-                Debug.Log("------Wall5");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
-                WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, -90, 0);
-
-            }
-            if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
-            {
-                Debug.Log("------Wall6");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
-                WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 180, 0);
-
-            }
-            if (CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
-            {
-                Debug.Log("------Wall7");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
-                WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 180, 0);
-
-            }
-            if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
-            {
-                Debug.Log("------Wall8");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
-                WallSpawnObject = wallPiece as GameObject;
-            }
-            if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
-            {
-                Debug.Log("------Wall9");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
-                WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 90, 0);
-            }
-            if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
-            {
-                Debug.Log("------Wall10");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
-                WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, -90, 0);
-            }
-            if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
-            {
-                Debug.Log("------Wall11");
-                var wallPiece = Resources.Load("Prefabs/Walls/Wall3");
-                WallSpawnObject = wallPiece as GameObject;
-            }
-            var newWallPiece = Instantiate(WallSpawnObject, new Vector3(wall.x, 2f, wall.y), wallRotation) as GameObject;
-
         }
+        return new Vector3(tempMaxWallX / 2, 0f, tempMaxWallY / 2);
     }
-
     public bool CheckIfWallExistsAtPosition(int x, int y)
     {
         List<Wall> walls = system.GetComponent<EnvironmentState>().environmentConstants.walls;
@@ -177,5 +249,5 @@ public class ObjectSpawner : MonoBehaviour
             }
         }
         return false;
-    }
+    }*/
 }

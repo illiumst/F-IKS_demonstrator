@@ -22,9 +22,10 @@ public class EnvironmentState : MonoBehaviour
         //CurrentEnvironmentState = EnvironmentInfoList[0];
         //Debug.Log("--------------Found some JSON: " + EnvironmentInfoList.Count);
         environmentConstants = JSONReader.ReadEnvironmentConstants();
-        Debug.Log("--------------Found some JSON with walls: " + environmentConstants.walls.Count);
+        Debug.Log("--------------Found some JSON : #Episodes: " + environmentConstants.episodes.Count);
+        Debug.Log("--------------Found some JSON : #Timesteps episode 1: " + environmentConstants.episodes[0].timesteps.Count);
+        Debug.Log("--------------Found some JSON : #Timesteps episode 1 Door 1: " + environmentConstants.episodes[0].timesteps[0].Doors[0].name);
 
-        Debug.Log("--------------Found some JSON with walls: " + environmentConstants.walls[0].name);
 
     }
 

@@ -6683,7 +6683,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 593c4319517b6473dbd6aedfa45ea597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jsonFile: {fileID: 4900000, guid: 1611bda09989b4200a2494769bc3ab7e, type: 3}
+  environmentData: {fileID: 4900000, guid: 6329322abf3dc44148595356e8963aed, type: 3}
+  episodeData: {fileID: 4900000, guid: 31a3336025bfb487499e954b59ac5cee, type: 3}
 --- !u!114 &906522900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6698,9 +6699,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   JSONReader: {fileID: 0}
   EnvironmentInfoList: []
-  environmentConstants:
-    centerX: 5
-    centerY: 5
 --- !u!114 &906522901
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -6,17 +6,36 @@ using Newtonsoft.Json.Linq;
 
 public class JSONReader : MonoBehaviour
 {
-    public TextAsset jsonFile;
+    public TextAsset environmentData;
+    public TextAsset episodeData;
+
+    public List<List<EnvironmentTimeStep>> environmentTimeSteps;
+
+    private void Start()
+    {
+        //ReadEnvironmentData();
+        //CleanBackSlashes(episodeData);
+    }
 
     public List<EnvironmentInfo> CreateEnvironmentInfoListFromFile()
     {
         List<List<double>> agent_coords = new List<List<double>>();
-        List<EnvironmentInfo> environmentInfoList = JsonConvert.DeserializeObject<List<EnvironmentInfo>>(jsonFile.text);
+        List<EnvironmentInfo> environmentInfoList = JsonConvert.DeserializeObject<List<EnvironmentInfo>>(environmentData.text);
         return environmentInfoList;
     }
     public EnvironmentConstants ReadEnvironmentConstants()
     {
-        EnvironmentConstants contants = JsonConvert.DeserializeObject<EnvironmentConstants>(jsonFile.text);
+        EnvironmentConstants contants = JsonConvert.DeserializeObject<EnvironmentConstants>(episodeData.text);
         return contants;
+    }
+
+    public void ReadEnvironmentData()
+    {
+        environmentTimeSteps = JsonConvert.DeserializeObject<List<List<EnvironmentTimeStep>>>(environmentData.text);
+    }
+
+    public void CleanBackSlashes(TextAsset textAsset)
+    {
+        //textAsset.text = textAsset.text.Replace("\\", ""); // --> not working since .text is ReadOnly.... 
     }
 }
