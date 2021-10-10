@@ -6684,7 +6684,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   environmentData: {fileID: 4900000, guid: 6329322abf3dc44148595356e8963aed, type: 3}
-  episodeData: {fileID: 4900000, guid: 31a3336025bfb487499e954b59ac5cee, type: 3}
+  episodeData: {fileID: 4900000, guid: bed38e54c94b94735b8d3748b444eaa5, type: 3}
 --- !u!114 &906522900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6694,11 +6694,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 906522896}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad99df3967bfc48758dd72fb9d652d85, type: 3}
+  m_Script: {fileID: 11500000, guid: 6cbcb4003dc9b4226b634e7f0a68ca03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   JSONReader: {fileID: 0}
-  EnvironmentInfoList: []
 --- !u!114 &906522901
 MonoBehaviour:
   m_ObjectHideFlags: 0

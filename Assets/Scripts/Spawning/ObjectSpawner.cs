@@ -43,7 +43,7 @@ public class ObjectSpawner : MonoBehaviour
         WallSpawnObject = wallPiece as GameObject;
 
         //spawnObject(RobotSpawnObject, new Vector3(RobotSpawnObject.transform.position.x, 0.5f, RobotSpawnObject.transform.position.z));
-        //spawnWalls();
+        spawnWalls();
         //spawnTrashObject(new Vector3(2, 0, 3), 2);
         //spawnTrashObject(new Vector3(-10, 0, 3), 1);
         //spawnTrashObject(new Vector3(-2, 0, -2), 2);
@@ -83,9 +83,9 @@ public class ObjectSpawner : MonoBehaviour
 
     }
 
-    /* public void spawnWalls()
+     public void spawnWalls()
      {
-         List<Wall> walls = system.GetComponent<EnvironmentState>().environmentConstants.walls;
+         List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[0].steps[0].WallTiles;
          foreach (Wall wall in walls)
          {
              Debug.Log("------Wallpiece: x: " + wall.x + " y: " + wall.y);
@@ -223,7 +223,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public Vector3 GetWallCenter()
     {
-        List<Wall> walls = system.GetComponent<EnvironmentState>().environmentConstants.walls;
+        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[0].steps[0].WallTiles;
 
         foreach (Wall wall in walls)
         {
@@ -240,7 +240,7 @@ public class ObjectSpawner : MonoBehaviour
     }
     public bool CheckIfWallExistsAtPosition(int x, int y)
     {
-        List<Wall> walls = system.GetComponent<EnvironmentState>().environmentConstants.walls;
+        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[0].steps[0].WallTiles;
         foreach (Wall wall in walls)
         {
             if (wall.x == x && wall.y == y)
@@ -249,5 +249,5 @@ public class ObjectSpawner : MonoBehaviour
             }
         }
         return false;
-    }*/
+    }
 }

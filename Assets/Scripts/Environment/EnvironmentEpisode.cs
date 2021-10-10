@@ -5,6 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class EnvironmentEpisode
 {
-    public List<EnvironmentTimeStep> timesteps { get; set; }
+    public List<EnvironmentTimeStep> steps { get; set; }
 
 }
