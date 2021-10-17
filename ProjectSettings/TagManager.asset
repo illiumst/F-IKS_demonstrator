@@ -17,6 +17,8 @@ TagManager:
   - Door
   - RobotControlToggle
   - TrashBoundary
+  - PickupItem
+  - DropOffZone
   layers:
   - Default
   - TransparentFX
