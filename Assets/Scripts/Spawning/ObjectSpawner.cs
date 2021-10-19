@@ -245,7 +245,7 @@ public class ObjectSpawner : MonoBehaviour
                 //Debug.Log("------Wall7");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 180, 0);
+                wallRotation = Quaternion.Euler(0, 270, 0);
 
             }
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
@@ -254,6 +254,8 @@ public class ObjectSpawner : MonoBehaviour
                 //Debug.Log("------Wall8");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
+                wallRotation = Quaternion.Euler(0, 90, 0);
+
             }
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
@@ -261,7 +263,7 @@ public class ObjectSpawner : MonoBehaviour
                 //Debug.Log("------Wall9");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 90, 0);
+                wallRotation = Quaternion.Euler(0, 180, 0);
             }
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
@@ -269,7 +271,7 @@ public class ObjectSpawner : MonoBehaviour
                 //Debug.Log("------Wall10");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, -90, 0);
+                wallRotation = Quaternion.Euler(0, 0, 0);
             }
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
