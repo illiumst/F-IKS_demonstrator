@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8878501036068555237}
-  m_Layer: 0
-  m_Name: Wall3 1
+  m_Layer: 10
+  m_Name: WallBlockCylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 7530380403973749065}
   - component: {fileID: 5738981007255910783}
   - component: {fileID: 3753894617654072383}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}

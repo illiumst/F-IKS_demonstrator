@@ -1289,7 +1289,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1333348178}
   m_HandleRect: {fileID: 1333348177}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5407,7 +5407,7 @@ Light:
       e33: 1
     m_UseCullingMatrixOverride: 0
   m_Cookie: {fileID: 0}
-  m_DrawHalo: 1
+  m_DrawHalo: 0
   m_Flare: {fileID: 0}
   m_RenderMode: 0
   m_CullingMask:
@@ -7739,7 +7739,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 985952121}
   m_LocalRotation: {x: -0.44767946, y: -0.0023410171, z: 0.0011720434, w: 0.89419025}
-  m_LocalPosition: {x: 3.609793, y: -21.132118, z: 83.59247}
+  m_LocalPosition: {x: 3.7, y: -22.8, z: 82.3}
   m_LocalScale: {x: 132.7403, y: 20.921633, z: 62.058807}
   m_Children: []
   m_Father: {fileID: 963194228}
@@ -9530,7 +9530,7 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 0.8690344, b: 0.7216981, a: 1}
-  m_Intensity: 3.19
+  m_Intensity: 1.61
   m_Range: 54.13
   m_SpotAngle: 32
   m_InnerSpotAngle: 21.80208
@@ -15753,6 +15753,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4406488891832653679, guid: 0b293610312e943b399731c83a48de2e, type: 3}
+      propertyPath: viewAngle
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4406488891832653679, guid: 0b293610312e943b399731c83a48de2e, type: 3}
+      propertyPath: viewRadius
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5905215707602257156, guid: 0b293610312e943b399731c83a48de2e, type: 3}
       propertyPath: m_Name
       value: Robot
