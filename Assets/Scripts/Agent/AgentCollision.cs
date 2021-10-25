@@ -45,10 +45,9 @@ public class AgentCollision : MonoBehaviour
         }
         if (collider.tag == "Wall")
         {
-            warningText.text = "Hit Wall!!!!";
-            warningText.gameObject.SetActive(true);
-            FlashWhenHit(flashDelay);
-            animator.SetBool("collision", collision);
+            //FlashWhenHit(flashDelay);
+            //TODO check what's wrong with animnator: null reference exception
+            //animator.SetBool("collision", collision);
 
         }
 
@@ -79,7 +78,6 @@ public class AgentCollision : MonoBehaviour
         }
         else
         {
-            warningText.gameObject.SetActive(false);
             collision = false;
             animator.SetBool("collision", collision);
         }

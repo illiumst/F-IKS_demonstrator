@@ -5,13 +5,18 @@ using UnityEngine.UI;
 
 public class WallRenderer : MonoBehaviour
 {
+    private void Update()
+    {
+        GameObject robot = this.transform.parent.gameObject.transform.GetChild(0).gameObject;
+        this.transform.position = robot.transform.position;
+    }
     void OnTriggerEnter(Collider collider)
     {
         //Check for a match with the specified name on any GameObject that collides with your GameObject
         if (collider.tag == "Wall")
         {
             //If the GameObject's name matches the one you suggest, output this message in the console
-            Debug.Log("Do something here");
+            Debug.Log("________Robot Field of View hit wall");
             MakeWallTransparent(collider.gameObject);
         }
 
@@ -22,7 +27,7 @@ public class WallRenderer : MonoBehaviour
         if (collider.tag == "Wall")
         {
             //If the GameObject's name matches the one you suggest, output this message in the console
-            Debug.Log("Do something here");
+            Debug.Log("________Robot Field of View exited wall");
             MakeWallSolid(collider.gameObject);
         }
 
