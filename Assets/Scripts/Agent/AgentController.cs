@@ -16,12 +16,15 @@ public class AgentController : MonoBehaviour
 
     [SerializeField] float speed;
 
-    [SerializeField] List<Vector3> positions = new List<Vector3>();
+    [HideInInspector]
+    public List<Vector3> positions = new List<Vector3>();
 
     GameObject system;
     Text positionText;
 
     public int currentArrayPosOnSlider = 0;
+
+    public int timeStep;
 
     bool isCleaning = false;
     bool collision;
@@ -39,16 +42,13 @@ public class AgentController : MonoBehaviour
 
     Toggle robotControlToggle;
 
-    float sequenceTimer;
-
-    int playButtonCounter;
-
     float distance;
 
     public Canvas canvas;
-    public GameObject fieldOfViewPlane;
 
     Animator animator;
+
+    Agent parentAgent;
 
     // Start is called before the first frame update
     void Start()
@@ -57,7 +57,8 @@ public class AgentController : MonoBehaviour
         endGoalPosition = currentpos;
         lastReachedGoalPosition = currentpos;
         lastReachedGoalPositionIndex = 0;
-        initializePositions();
+
+        //initializePositions();
 
         system = GameObject.FindWithTag("System");
         robotControlToggle = GameObject.FindWithTag("RobotControlToggle").GetComponent<Toggle>();
@@ -70,8 +71,6 @@ public class AgentController : MonoBehaviour
         playButton.onClick.AddListener(PlaySequence);
         pauseButton.onClick.AddListener(PauseSequence);
         playingSequence = false;
-        sequenceTimer = 0f;
-        playButtonCounter = 0;
         distance = 0f;
 
         slider.maxValue = positions.Count - 1;
@@ -164,28 +163,24 @@ public class AgentController : MonoBehaviour
         Vector3 position = this.transform.position;
         position.x -= Time.deltaTime * speed;
         this.transform.position = position;
-        fieldOfViewPlane.transform.position = position;
     }
     void MoveRobotRight()
     {
         Vector3 position = this.transform.position;
         position.x += Time.deltaTime * speed;
         this.transform.position = position;
-        fieldOfViewPlane.transform.position = position;
     }
     void MoveRobotUp()
     {
         Vector3 position = this.transform.position;
         position.z += Time.deltaTime * speed;
         this.transform.position = position;
-        fieldOfViewPlane.transform.position = position;
     }
     void MoveRobotDown()
     {
         Vector3 position = this.transform.position;
         position.z -= Time.deltaTime * speed;
         this.transform.position = position;
-        fieldOfViewPlane.transform.position = position;
     }
 
     public void UpdateGoalPositionAccordingToSlider()
@@ -252,8 +247,6 @@ public class AgentController : MonoBehaviour
         this.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
         Vector3 difference = goalPosition - currentpos;
         this.transform.forward = difference;
-        fieldOfViewPlane.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
-
     }
 
     void BounceOff()
@@ -271,14 +264,29 @@ public class AgentController : MonoBehaviour
         }
     }
 
-    void initializePositions()
+    /*void initializePositions(Agent agentInput, int episode)
     {
-        positions.Add(new Vector3(0, 0, 0));
+        var episode = system.GetComponent<EnvironmentStateMachine>().constants.episodes[episode];
+        (foreach EnvironmentTimeStep step in episode.steps){
+            foreach(Agent agent in step.Agents){
+                if(agent.name.Equals(agentInput.name)){
+                    var pos = GetRecalculatedPosition(agent.x, 0, agent.y);
+                    positions.Add(pos);
+                }
+            }
+        }
+        /*positions.Add(new Vector3(0, 0, 0));
         positions.Add(new Vector3(1, 0, 3));
         positions.Add(new Vector3(-5, 0, 0));
         positions.Add(new Vector3(-4, 0, 10));
         positions.Add(new Vector3(15, 0, 0));
         positions.Add(new Vector3(8, 0, -2));
+    }*/
+
+    public Vector3 GetRecalculatedPosition(float x, float y, float z)
+    {
+        Vector3 center = system.GetComponent<EnvironmentStateMachine>().environmentCenter;
+        return new Vector3(x - center.x, y, z - center.z);
     }
 
     void PlaySequence()

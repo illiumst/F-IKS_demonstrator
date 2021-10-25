@@ -19,6 +19,7 @@ TagManager:
   - TrashBoundary
   - PickupItem
   - DropOffZone
+  - NameTag
   layers:
   - Default
   - TransparentFX

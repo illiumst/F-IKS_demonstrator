@@ -6,9 +6,9 @@ public class CameraController : MonoBehaviour
 {
     public float panSpeed = 40f;
 
-    public float turnSpeed = 10f;
+    public float turnSpeed = 5f;
 
-    public float zoomAmount = 100f;
+    public float zoomAmount = 10f;
 
     public Button ZoomInButton;
     public Button ZoomOutButton;
@@ -22,10 +22,18 @@ public class CameraController : MonoBehaviour
     Vector3 cameraPos;
     Vector3 cameraTurn;
 
+    public GameObject target;
+    private Vector3 targetPoint;
+
+    private Vector3 mousePosition;
+
     float zoom;
 
     void Start()
     {
+        mousePosition = Input.mousePosition;
+        targetPoint = target.transform.position;
+        transform.LookAt(targetPoint);
         ZoomInButton.onClick.AddListener(TaskOnClickZoomIn);
         ZoomOutButton.onClick.AddListener(TaskOnClickZoomOut);
         PanUpButton.onClick.AddListener(TaskOnClickPanUp);
@@ -74,6 +82,18 @@ public class CameraController : MonoBehaviour
         {
             TaskOnClickTurnRight();
         }
+        if(!Input.GetMouseButtonDown(1)){
+            Camera.main.orthographicSize -= Input.GetAxis("Mouse ScrollWheel")*zoomAmount;
+        }
+        //bringt zum Absturz --> Coroutine
+         /*while(Input.GetMouseButtonDown(1)){
+             if(mousePosition.x < Input.mousePosition.x){
+                transform.RotateAround (targetPoint,new Vector3(0.0f,1.0f,0.0f),10 * Time.deltaTime * turnSpeed);
+             };
+             if(mousePosition.x > Input.mousePosition.x){
+                transform.RotateAround (targetPoint,new Vector3(0.0f,1.0f,0.0f),-10 * Time.deltaTime * turnSpeed);
+             };
+        }*/
     }
 
     void TaskOnClickZoomIn()
@@ -113,14 +133,17 @@ public class CameraController : MonoBehaviour
     void TaskOnClickTurnLeft()
     {
         //TODO 360 degrees abfragen
-        cameraTurn.y += turnSpeed * Time.deltaTime;
-        transform.eulerAngles = cameraTurn;
+        //cameraTurn.y += turnSpeed * Time.deltaTime;
+        //transform.eulerAngles = cameraTurn;
+        transform.RotateAround (targetPoint,new Vector3(0.0f,1.0f,0.0f),10 * Time.deltaTime * turnSpeed);
     }
 
     void TaskOnClickTurnRight()
     {
         //TODO 360 degrees abfragen
-        cameraTurn.y -= turnSpeed * Time.deltaTime;
-        transform.eulerAngles = cameraTurn;
+        //cameraTurn.y -= turnSpeed * Time.deltaTime;
+        //transform.eulerAngles = cameraTurn;
+        transform.RotateAround (targetPoint,new Vector3(0.0f,1.0f,0.0f),-10 * Time.deltaTime * turnSpeed);
+
     }
 }

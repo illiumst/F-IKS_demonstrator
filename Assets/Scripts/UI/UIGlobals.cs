@@ -8,12 +8,9 @@ public class UIGlobals : MonoBehaviour
 
     public Text warningText;
     public Text positionText;
-
     public Slider slider;
-
     public Button playButton;
     public Button pauseButton;
-
     public Image redScreenFlashImage;
 
     // Start is called before the first frame update
