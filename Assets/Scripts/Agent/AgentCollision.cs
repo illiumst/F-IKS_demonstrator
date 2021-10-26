@@ -27,7 +27,6 @@ public class AgentCollision : MonoBehaviour
     void OnTriggerEnter(Collider collider)
     {
         collision = true;
-        Debug.Log("---------------------------------We hit: " + collider.name);
         if (collider.tag == "TrashBoundary")
         {
             string trashName = collider.transform.parent.name;
@@ -38,8 +37,6 @@ public class AgentCollision : MonoBehaviour
 
             collider.transform.parent.GetComponent<Trash>().DecreaseFillAmount();
 
-            warningText.text = "Found Trash!!!!";
-            warningText.gameObject.SetActive(true);
             animator.SetTrigger("foundTrash");
 
         }
@@ -69,7 +66,6 @@ public class AgentCollision : MonoBehaviour
 
     void OnTriggerExit(Collider collider)
     {
-        Debug.Log("---------------------------------We exited: " + collider.name);
 
         if (collider.tag == "Door")
         {

@@ -37,10 +37,10 @@ public class AgentFieldOfView : MonoBehaviour
     }
     void FindVisibleTargets()
     {
-        Debug.Log("________________ Trying to find targets....");
+        //Debug.Log("________________ Trying to find targets....");
         visibleTargets.Clear();
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
-        Debug.Log("________________ Targets in view radius: " + targetsInViewRadius.Length);
+        //Debug.Log("________________ Targets in view radius: " + targetsInViewRadius.Length);
 
 
         for (int i = 0; i < targetsInViewRadius.Length; i++)
@@ -54,7 +54,7 @@ public class AgentFieldOfView : MonoBehaviour
                 if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
                 {
                     visibleTargets.Add(target);
-                    Debug.Log("________________ Found target without obstacle....");
+                    //Debug.Log("________________ Found target without obstacle....");
                 }
             }
         }

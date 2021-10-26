@@ -64,7 +64,7 @@ public class ObjectPooler : MonoBehaviour
     void UpdapdatePoolDictionary(string key)
     {
         Pool pool = GetPoolByTag(key);
-        Debug.Log("----------------------Update Pool Dictionary : " + pool.tag);
+        //Debug.Log("----------------------Update Pool Dictionary : " + pool.tag);
 
 
         if (pool != null)
@@ -77,57 +77,19 @@ public class ObjectPooler : MonoBehaviour
         }
     }
 
-    /*public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
-    {
-        if (!poolDictionary.ContainsKey(tag))
-        {
-            Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
-            return null;
-        }
-        if (poolDictionary[tag].Count == 0)
-        {
-            return null;
-        }
-        GameObject objectToSpawn = poolDictionary[tag].Dequeue();
-
-        objectToSpawn.SetActive(true);
-        objectToSpawn.transform.position = position;
-        objectToSpawn.transform.rotation = rotation;
-
-        IPooledObject pooledObj = objectToSpawn.GetComponent<IPooledObject>();
-
-        if (pooledObj != null)
-        {
-            pooledObj.OnObjectSpawn();
-        }
-
-        //poolDictionary[tag].Enqueue(objectToSpawn);
-
-        return objectToSpawn;
-
-    }*/
-
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation, bool active)
     {
-        //UpdapdatePoolDictionary(tag);
-        Debug.Log("----------------------SpawnFromPool dictionary count : " + poolDictionary.Count);
+        //Debug.Log("----------------------SpawnFromPool dictionary count : " + poolDictionary.Count);
 
         if (!poolDictionary.ContainsKey(tag))
         {
-            Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
+            //Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
             return null;
         }
         if (poolDictionary[tag].Count == 0)
         {
             return null;
         }
-        /*switch (fillAmount)
-        {
-            case 2: poolDictionary[tag].Dequeue(); break;
-            case 1: poolDictionary[tag].Dequeue(); poolDictionary[tag].Dequeue(); break;
-            case 0: poolDictionary[tag].Clear(); break;
-            default: break;
-        }*/
         GameObject objectToSpawn = poolDictionary[tag].Dequeue();
 
         objectToSpawn.SetActive(active);

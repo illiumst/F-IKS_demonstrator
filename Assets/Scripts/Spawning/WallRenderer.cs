@@ -16,7 +16,7 @@ public class WallRenderer : MonoBehaviour
         if (collider.tag == "Wall")
         {
             //If the GameObject's name matches the one you suggest, output this message in the console
-            Debug.Log("________Robot Field of View hit wall");
+            //Debug.Log("________Robot Field of View hit wall");
             MakeWallTransparent(collider.gameObject);
         }
 
@@ -27,7 +27,7 @@ public class WallRenderer : MonoBehaviour
         if (collider.tag == "Wall")
         {
             //If the GameObject's name matches the one you suggest, output this message in the console
-            Debug.Log("________Robot Field of View exited wall");
+            //Debug.Log("________Robot Field of View exited wall");
             MakeWallSolid(collider.gameObject);
         }
 

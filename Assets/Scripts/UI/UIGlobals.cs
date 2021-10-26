@@ -12,6 +12,7 @@ public class UIGlobals : MonoBehaviour
     public Button playButton;
     public Button pauseButton;
     public Image redScreenFlashImage;
+    public Text sliderStepCount;
 
     // Start is called before the first frame update
     void Start()
