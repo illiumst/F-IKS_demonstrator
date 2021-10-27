@@ -1074,7 +1074,7 @@ GameObject:
   - component: {fileID: 7233098272774325691}
   m_Layer: 5
   m_Name: AgentListItem
-  m_TagString: Untagged
+  m_TagString: AgentListItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

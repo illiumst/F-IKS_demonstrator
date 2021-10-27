@@ -27,6 +27,7 @@ public class ObjectSpawner : MonoBehaviour
 
     int tempMaxWallX = 0;
     int tempMaxWallY = 0;
+    Vector3 wallCenter;
 
 
 
@@ -50,13 +51,37 @@ public class ObjectSpawner : MonoBehaviour
         PickupItemSpawnObject = pickUpItem as GameObject;
         DropOffZoneSpawnObject = dropOffZone as GameObject;
 
-        spawnWalls();
-        system.GetComponent<EnvironmentStateMachine>().environmentCenter = GetWallCenter();
-        spawnAgents(0, 0);
-        spawnPickUpItems(0, 0);
-        spawnDropOffZones(0, 0);
-        spawnDirtRegister(0, 0);
+        SpawnNewEpisode(0);
 
+    }
+
+    public void SpawnNewEpisode(int episode){
+        spawnWalls(episode);
+        //TODO beim respawnen etwas off mit center
+        spawnAgents(episode, 0);
+        spawnPickUpItems(episode, 0);
+        spawnDropOffZones(episode, 0);
+        spawnDirtRegister(episode, 0);
+    }
+
+    public void RemoveLastEpisode(){
+        DestroyObjectsWithTag("Agent");
+        DestroyObjectsWithTag("Wall");
+        DestroyObjectsWithTag("PickupItem");
+        DestroyObjectsWithTag("DropOffZone");
+        DestroyObjectsWithTag("Trash");
+        DestroyObjectsWithTag("TrashBoundary");
+        DestroyObjectsWithTag("AgentListItem");
+        wallList.Clear();
+        trashList.Clear();
+    }
+
+    void DestroyObjectsWithTag(string tag){
+
+        GameObject[] objs =  GameObject.FindGameObjectsWithTag (tag) as GameObject[];
+        foreach(GameObject obj in objs){
+            Destroy(obj);
+        }
     }
 
     public void spawnObject(GameObject objectToSpawn, Vector3 SpawnPosition)
@@ -174,9 +199,12 @@ public class ObjectSpawner : MonoBehaviour
         }
     }
 
-    public void spawnWalls()
+    public void spawnWalls(int episode)
     {
-        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[0].steps[0].WallTiles;
+        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[0].WallTiles;
+        system.GetComponent<EnvironmentStateMachine>().environmentCenter = GetWallCenter(walls, episode);
+        wallCenter = GetWallCenter(walls, episode);
+
         foreach (Wall wall in walls)
         {
             //.Log("------Wallpiece: x: " + wall.x + " y: " + wall.y);
@@ -321,12 +349,13 @@ public class ObjectSpawner : MonoBehaviour
 
     public Vector3 GetRecalculatedPosition(float x, float y, float z)
     {
-        return new Vector3(x - GetWallCenter().x, y, z - GetWallCenter().z);
+        return new Vector3(x - wallCenter.x, y, z - wallCenter.z);
     }
 
-    public Vector3 GetWallCenter()
+    public Vector3 GetWallCenter(List<Wall> walls, int episode)
     {
-        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[0].steps[0].WallTiles;
+        tempMaxWallX=0;
+        tempMaxWallY=0;
 
         foreach (Wall wall in walls)
         {

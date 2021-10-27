@@ -9,10 +9,13 @@ public class EnvironmentStateMachine : MonoBehaviour
     Slider slider;
     Button playButton;
     Button pauseButton;
+    GameObject episodeSelectionDropdown;
+
 
     int currentEpisode;
     int currentStep;
     bool allAgentsInitialized = false;
+    bool episodeSpawned = false;
     bool playingSequence = false;
 
     public JSONReader JSONReader;
@@ -23,6 +26,8 @@ public class EnvironmentStateMachine : MonoBehaviour
     public List<GameObject> dirtObjects = new List<GameObject>();
     public List<GameObject> itemObjects = new List<GameObject>();
     public List<GameObject> zoneObjects = new List<GameObject>();
+    
+    public List<string> dropDownOptions = new List<string>();
 
     public Vector3 environmentCenter;
 
@@ -32,12 +37,14 @@ public class EnvironmentStateMachine : MonoBehaviour
     {
         system = GameObject.FindWithTag("System");
         slider = system.GetComponent<UIGlobals>().slider;
+        episodeSelectionDropdown = GameObject.FindWithTag("EpisodeSelectionDropdown");
+
 
         JSONReader = GetComponent<JSONReader>();
         environmentConstants = JSONReader.ReadEnvironmentConstants();
-        slider.maxValue = environmentConstants.episodes[0].steps.Count;
-        Debug.Log("________________Episode 0 has #steps: " + slider.maxValue);
         currentEpisode = 0;
+        slider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
+        Debug.Log("________________Episode 0 has #steps: " + slider.maxValue);
         currentStep = (int)slider.value;
 
         playButton = system.GetComponent<UIGlobals>().playButton;
@@ -45,6 +52,13 @@ public class EnvironmentStateMachine : MonoBehaviour
         playButton.onClick.AddListener(PlaySequence);
         pauseButton.onClick.AddListener(PauseSequence);
         UpdateSliderLabel();
+        InitializeEpisodeSelectionDropdown();
+        var drop = episodeSelectionDropdown.GetComponent<Dropdown>();
+        drop.onValueChanged.AddListener(delegate {
+                DropdownValueChanged(drop);
+            });
+
+
     }
 
     // Update is called once per frame
@@ -54,6 +68,9 @@ public class EnvironmentStateMachine : MonoBehaviour
             allAgentsInitialized = AllAgentObjectsInitialized(currentEpisode);
         }
         else{
+            /*if(!episodeSpawned){
+                system.GetComponent<ObjectSpawner>().SpawnNewEpisode(currentEpisode);
+            }*/
             slider.onValueChanged.AddListener(delegate
             {
                 currentStep = (int)slider.value;
@@ -67,6 +84,38 @@ public class EnvironmentStateMachine : MonoBehaviour
         }
 
     }
+
+    void DropdownValueChanged(Dropdown change)
+    {
+        currentEpisode = change.value;
+        slider.value = 0;
+        slider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
+        system.GetComponent<ObjectSpawner>().RemoveLastEpisode();
+        emptyObjectLists();
+        system.GetComponent<ObjectSpawner>().SpawnNewEpisode(currentEpisode);
+        //LoadNewEpisode();
+        //Respawn Agents
+        //loading sign
+    }
+
+    void emptyObjectLists(){
+        agentObjects.Clear();
+        agentListObjects.Clear();
+        dirtObjects.Clear();
+        itemObjects.Clear();
+        zoneObjects.Clear();
+    }
+
+    void InitializeEpisodeSelectionDropdown(){
+        Debug.Log("---------------DROPDOWN Initialization: #episodes "+environmentConstants.episodes.Count);
+        var drop = episodeSelectionDropdown.GetComponent<Dropdown>();
+        drop.ClearOptions();
+        for(int i = 0; i<environmentConstants.episodes.Count; i++){
+            dropDownOptions.Add("Episode "+(i+1));
+        }
+        drop.AddOptions(dropDownOptions);
+    }
+
     void UpdateSliderLabel(){
 
         var sliderHandleArea = slider.transform.GetChild(2).gameObject;
@@ -173,11 +222,18 @@ public class EnvironmentStateMachine : MonoBehaviour
             else if ((controller.currentpos == controller.goalPosition) && (slider.value == (slider.maxValue - 1f)))
             {
                 Debug.Log("-----------Playback slider value finished list: " + slider.value);
+                //TODO respawn robot here -> so it doesnt move through walls
+                var pos = RequestAgentPosition(agentObj, currentEpisode, 0);
+                RepositionAgent(agentObj, pos);
                 slider.value = 0f;
             }
         }
         UpdateAgentPositions(currentEpisode, (int) slider.value);
         UpdateAgentUI(currentEpisode, (int) slider.value);
+    }
+
+    void RepositionAgent(GameObject agent, Vector3 pos){
+        agent.transform.position = pos;
     }
 
     void PlaySequence()
