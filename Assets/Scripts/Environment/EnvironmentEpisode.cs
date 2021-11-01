@@ -7,4 +7,6 @@ public class EnvironmentEpisode
 {
     public List<EnvironmentTimeStep> steps { get; set; }
 
+    public int episode { get; set; }
+
 }

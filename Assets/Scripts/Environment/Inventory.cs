@@ -5,12 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class Inventory
 {
-    /*public List<string> 
-    public string name { get; set; }
-    public int x { get; set; }
-    public int y { get; set; }
-    public string tile { get; set; }
-    public bool can_collide { get; set; }*/
-
+    public string agent { get; set; }
+    public string pomdp_r { get; set; }
+    public string capacity { get; set; }
 
 }

@@ -20,7 +20,12 @@ public class JSONReader : MonoBehaviour
     public List<EnvironmentInfo> CreateEnvironmentInfoListFromFile()
     {
         List<List<double>> agent_coords = new List<List<double>>();
-        List<EnvironmentInfo> environmentInfoList = JsonConvert.DeserializeObject<List<EnvironmentInfo>>(environmentData.text);
+        var settings = new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        MissingMemberHandling = MissingMemberHandling.Ignore
+                    };
+        List<EnvironmentInfo> environmentInfoList = JsonConvert.DeserializeObject<List<EnvironmentInfo>>(environmentData.text, settings);
         return environmentInfoList;
     }
     public EnvironmentConstants ReadEnvironmentConstants()

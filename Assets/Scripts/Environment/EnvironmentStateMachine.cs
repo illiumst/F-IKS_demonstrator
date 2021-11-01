@@ -93,9 +93,7 @@ public class EnvironmentStateMachine : MonoBehaviour
         system.GetComponent<ObjectSpawner>().RemoveLastEpisode();
         emptyObjectLists();
         system.GetComponent<ObjectSpawner>().SpawnNewEpisode(currentEpisode);
-        //LoadNewEpisode();
-        //Respawn Agents
-        //loading sign
+        UpdateSliderLabel();
     }
 
     void emptyObjectLists(){
