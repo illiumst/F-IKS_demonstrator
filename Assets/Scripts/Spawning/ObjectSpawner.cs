@@ -109,15 +109,16 @@ public class ObjectSpawner : MonoBehaviour
         newListItem.transform.SetParent(AgentListContent.transform, false);
         var agentBody = newRobot.transform.GetChild(0).gameObject;
         var itemHeader = newListItem.transform.GetChild(0).gameObject;
-        var itemHeaderText = itemHeader.transform.GetChild(2).gameObject;
+        var itemHeaderText = itemHeader.transform.GetChild(1).gameObject;
         itemHeaderText.GetComponent<Text>().text = name;
 
         var itemContent = newListItem.transform.GetChild(1).gameObject;
-        var contentPositionText = itemContent.transform.GetChild(0).gameObject;
+        var data = itemContent.transform.GetChild(1).gameObject;
+        var contentPositionText = data.transform.GetChild(0).gameObject;
         contentPositionText.GetComponent<Text>().text = "x: " + x + " y: " + y;
-        var contentActionText = itemContent.transform.GetChild(1).gameObject;
+        var contentActionText =data.transform.GetChild(1).gameObject;
         contentActionText.GetComponent<Text>().text = action;
-        var contentValidityText = itemContent.transform.GetChild(2).gameObject;
+        var contentValidityText = data.transform.GetChild(2).gameObject;
         string validityString = "invalid";
         var color = Color.red;
         if (valid)

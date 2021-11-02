@@ -22,6 +22,7 @@ TagManager:
   - NameTag
   - EpisodeSelectionDropdown
   - AgentListItem
+  - PlaybackSpeedDropdown
   layers:
   - Default
   - TransparentFX

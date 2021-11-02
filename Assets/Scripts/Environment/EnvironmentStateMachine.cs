@@ -120,7 +120,7 @@ public class EnvironmentStateMachine : MonoBehaviour
         var handle = sliderHandleArea.transform.GetChild(0).gameObject;
         var steptext = handle.transform.GetChild(0).gameObject;
         steptext.GetComponent<Text>().text= "Step "+slider.value;
-        system.GetComponent<UIGlobals>().sliderStepCount.gameObject.GetComponent<Text>().text = slider.value+"/"+slider.maxValue;
+        system.GetComponent<UIGlobals>().sliderStepCount.gameObject.GetComponent<Text>().text = "Step "+slider.value+" / "+slider.maxValue;
     }
 
     bool AllAgentObjectsInitialized(int episode)

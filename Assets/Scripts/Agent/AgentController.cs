@@ -246,16 +246,17 @@ public class AgentController : MonoBehaviour
     public void UpdateAgentListItems(GameObject agentObject, GameObject listItem, int x, int y, string name, string action, bool valid)
     {
         var agentBody = agentObject.transform.GetChild(0).gameObject;
-        var itemHeader = listItem.transform.GetChild(0).gameObject;
+        var itemHeader = listItem.transform.GetChild(1).gameObject;
         var itemHeaderText = itemHeader.transform.GetChild(2).gameObject;
         itemHeaderText.GetComponent<Text>().text = name;
 
         var itemContent = listItem.transform.GetChild(1).gameObject;
-        var contentPositionText = itemContent.transform.GetChild(0).gameObject;
+        var data = itemContent.transform.GetChild(0).gameObject;
+        var contentPositionText = data.transform.GetChild(0).gameObject;
         contentPositionText.GetComponent<Text>().text = "x: " + x + " y: " + y;
-        var contentActionText = itemContent.transform.GetChild(1).gameObject;
+        var contentActionText =data.transform.GetChild(1).gameObject;
         contentActionText.GetComponent<Text>().text = action;
-        var contentValidityText = itemContent.transform.GetChild(2).gameObject;
+        var contentValidityText = data.transform.GetChild(2).gameObject;
         string validityString = "invalid";
         var color = Color.red;
         if (valid)
