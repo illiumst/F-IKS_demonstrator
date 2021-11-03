@@ -13,17 +13,21 @@ public class ObjectSpawner : MonoBehaviour
     GameObject WallSpawnObject;
     GameObject PickupItemSpawnObject;
     GameObject DropOffZoneSpawnObject;
+    GameObject DoorObject;
     GameObject AgentListItem;
     public GameObject AgentListContent;
     ObjectPooler objectPooler;
 
     Quaternion wallRotation;
+    Quaternion doorRotation;
+
 
     GameObject system;
 
 
     List<GameObject> trashList = new List<GameObject>();
     List<GameObject> wallList = new List<GameObject>();
+    List<GameObject> doorList = new List<GameObject>();
 
     int tempMaxWallX = 0;
     int tempMaxWallY = 0;
@@ -42,6 +46,7 @@ public class ObjectSpawner : MonoBehaviour
         var wallPiece = Resources.Load("Prefabs/Walls/Wall3");
         var pickUpItem = Resources.Load("Prefabs/PickupItem");
         var dropOffZone = Resources.Load("Prefabs/DropOffZone");
+        var door = Resources.Load("Prefabs/Door");
         wallRotation = transform.rotation;
 
         RobotSpawnObject = robot as GameObject;
@@ -50,6 +55,7 @@ public class ObjectSpawner : MonoBehaviour
         WallSpawnObject = wallPiece as GameObject;
         PickupItemSpawnObject = pickUpItem as GameObject;
         DropOffZoneSpawnObject = dropOffZone as GameObject;
+        DoorObject = door as GameObject;
 
         SpawnNewEpisode(0);
 
@@ -57,11 +63,12 @@ public class ObjectSpawner : MonoBehaviour
 
     public void SpawnNewEpisode(int episode){
         spawnWalls(episode);
+        spawnDoors(episode);
         //TODO beim respawnen etwas off mit center
         spawnAgents(episode, 0);
         spawnPickUpItems(episode, 0);
         spawnDropOffZones(episode, 0);
-        spawnDirtRegister(episode, 0);
+        //spawnDirtRegister(episode, 0);
     }
 
     public void RemoveLastEpisode(){
@@ -72,8 +79,10 @@ public class ObjectSpawner : MonoBehaviour
         DestroyObjectsWithTag("Trash");
         DestroyObjectsWithTag("TrashBoundary");
         DestroyObjectsWithTag("AgentListItem");
+        DestroyObjectsWithTag("Door");
         wallList.Clear();
         trashList.Clear();
+        doorList.Clear();
     }
 
     void DestroyObjectsWithTag(string tag){
@@ -345,6 +354,39 @@ public class ObjectSpawner : MonoBehaviour
         {
             //Debug.Log("------Converting Wall coordinates...");
             wall.transform.position = GetRecalculatedPosition(wall.transform.position.x, wall.transform.position.y, wall.transform.position.z);
+        }
+    }
+
+    public void spawnDoors(int episode)
+    {
+        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[0].WallTiles;
+        List<Door> doors = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[0].Doors;
+        system.GetComponent<EnvironmentStateMachine>().environmentCenter = GetWallCenter(walls, episode);
+        wallCenter = GetWallCenter(walls, episode);
+
+        foreach (Door door in doors)
+        {
+            //.Log("------Wallpiece: x: " + wall.x + " y: " + wall.y);
+            doorRotation = Quaternion.Euler(0, 0, 0);
+
+            if (CheckIfWallExistsAtPosition(door.x - 1, door.y) && CheckIfWallExistsAtPosition(door.x + 1, door.y)
+            && !CheckIfWallExistsAtPosition(door.x, door.y + 1) && !CheckIfWallExistsAtPosition(door.x, door.y - 1))
+            {
+                doorRotation = Quaternion.Euler(0, 0, 0);
+            }
+            else if (!CheckIfWallExistsAtPosition(door.x - 1, door.y) && !CheckIfWallExistsAtPosition(door.x + 1, door.y)
+            && CheckIfWallExistsAtPosition(door.x, door.y + 1) && CheckIfWallExistsAtPosition(door.x, door.y - 1))
+            {
+                doorRotation = Quaternion.Euler(0, 90, 0);
+            }
+            
+            var newDoorPiece = Instantiate(DoorObject, new Vector3(door.x, 1f, door.y), doorRotation) as GameObject;
+            doorList.Add(newDoorPiece);
+        }
+        foreach (GameObject door in doorList)
+        {
+            //Debug.Log("------Converting Wall coordinates...");
+            door.transform.position = GetRecalculatedPosition(door.transform.position.x, door.transform.position.y, door.transform.position.z);
         }
     }
 

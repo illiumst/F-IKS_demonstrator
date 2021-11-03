@@ -85,6 +85,26 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     }
 
+    void SkipSteps(int i){
+        if(i>0){
+            if(slider.value+i>slider.maxValue){
+                slider.value = (slider.value+i)-slider.maxValue;
+            }
+            else{
+                slider.value = slider.value+i;
+            }
+        }
+        else{
+             if(slider.value+i<0){
+                 slider.value = (slider.value+i)+slider.maxValue;
+             }
+             else{
+                 slider.value = slider.value+i;
+             }
+        }
+        
+    }
+
     void DropdownValueChanged(Dropdown change)
     {
         currentEpisode = change.value;

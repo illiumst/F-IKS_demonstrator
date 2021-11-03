@@ -74,6 +74,7 @@ public class AgentController : MonoBehaviour
     void Update()
     {
         manualRobotControl = robotControlToggle.isOn;
+        //manualRobotControl = false;
         collision = this.GetComponent<AgentCollision>().GetCollision();
         currentpos = this.transform.position;
 
@@ -246,12 +247,12 @@ public class AgentController : MonoBehaviour
     public void UpdateAgentListItems(GameObject agentObject, GameObject listItem, int x, int y, string name, string action, bool valid)
     {
         var agentBody = agentObject.transform.GetChild(0).gameObject;
-        var itemHeader = listItem.transform.GetChild(1).gameObject;
-        var itemHeaderText = itemHeader.transform.GetChild(2).gameObject;
+        var itemHeader = listItem.transform.GetChild(0).gameObject;
+        var itemHeaderText = itemHeader.transform.GetChild(1).gameObject;
         itemHeaderText.GetComponent<Text>().text = name;
 
         var itemContent = listItem.transform.GetChild(1).gameObject;
-        var data = itemContent.transform.GetChild(0).gameObject;
+        var data = itemContent.transform.GetChild(1).gameObject;
         var contentPositionText = data.transform.GetChild(0).gameObject;
         contentPositionText.GetComponent<Text>().text = "x: " + x + " y: " + y;
         var contentActionText =data.transform.GetChild(1).gameObject;
