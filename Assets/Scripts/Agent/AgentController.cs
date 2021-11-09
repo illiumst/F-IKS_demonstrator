@@ -40,7 +40,7 @@ public class AgentController : MonoBehaviour
 
     bool manualRobotControl;
 
-    Toggle robotControlToggle;
+    //Toggle robotControlToggle;
 
     float distance;
 
@@ -60,7 +60,7 @@ public class AgentController : MonoBehaviour
         sliderValue = 0;
 
         system = GameObject.FindWithTag("System");
-        robotControlToggle = GameObject.FindWithTag("RobotControlToggle").GetComponent<Toggle>();
+        // = GameObject.FindWithTag("RobotControlToggle").GetComponent<Toggle>();
 
         playingSequence = false;
         distance = 0f;
@@ -73,17 +73,18 @@ public class AgentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        manualRobotControl = robotControlToggle.isOn;
-        //manualRobotControl = false;
+        //manualRobotControl = robotControlToggle.isOn;
         collision = this.GetComponent<AgentCollision>().GetCollision();
         currentpos = this.transform.position;
+
+        playBackSpeed = system.GetComponent<EnvironmentStateMachine>().playBackSpeed;
 
         if(playingSequence){
             Debug.Log("Trying to move robot in sequence");
             MoveRobotTo(endGoalPosition);
         }
 
-        if (!stopMoving && !manualRobotControl && !playingSequence)
+       /* if (!stopMoving && !manualRobotControl && !playingSequence)
         {
 
             if (currentpos != goalPosition && goalPosition != null && !isCleaning && !collision)
@@ -116,7 +117,7 @@ public class AgentController : MonoBehaviour
             {
                 BounceOff();
             }
-        }
+        }*/
 
         if (manualRobotControl)
         {
@@ -215,7 +216,9 @@ public class AgentController : MonoBehaviour
 
         this.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
         Vector3 difference = goalPosition - currentpos;
+        var name = this.transform.GetChild(4);
         this.transform.forward = difference;
+        name.transform.forward = new Vector3(0,0,0);
     }
 
     void BounceOff()
@@ -260,20 +263,22 @@ public class AgentController : MonoBehaviour
         var contentValidityText = data.transform.GetChild(2).gameObject;
         string validityString = "invalid";
         var color = Color.red;
+        var textColor = Color.red;
         if (valid)
         {
+            textColor= new Color32(0, 160, 20, 255);
             color = Color.green;
             validityString = "valid";
         }
         contentValidityText.GetComponent<Text>().text = validityString;
-        contentValidityText.GetComponent<Text>().color = color;
+        contentValidityText.GetComponent<Text>().color = textColor;
 
         var validityLight = agentBody.transform.GetChild(5).gameObject;
         validityLight.GetComponent<Light>().color = color;
 
         var canvas = agentBody.transform.GetChild(4).gameObject;
         var nameTag = canvas.transform.GetChild(0).gameObject;
-        nameTag.GetComponent<TextMeshProUGUI>().color = color;
+        nameTag.GetComponent<TextMeshProUGUI>().color = textColor;
     }
 
 

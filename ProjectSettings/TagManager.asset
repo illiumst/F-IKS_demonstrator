@@ -23,6 +23,12 @@ TagManager:
   - EpisodeSelectionDropdown
   - AgentListItem
   - PlaybackSpeedDropdown
+  - TooltipCanvas
+  - WallObjects
+  - AgentObjects
+  - ItemRegister
+  - ZoneObjects
+  - DirtRegister
   layers:
   - Default
   - TransparentFX

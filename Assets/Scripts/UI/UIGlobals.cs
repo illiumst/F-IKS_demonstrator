@@ -11,6 +11,10 @@ public class UIGlobals : MonoBehaviour
     public Slider slider;
     public Button playButton;
     public Button pauseButton;
+    public Button nextButton;
+    public Button nextNextButton;
+    public Button previousButton;
+    public Button previousPreviousButton;
     public Image redScreenFlashImage;
     public Text sliderStepCount;
 

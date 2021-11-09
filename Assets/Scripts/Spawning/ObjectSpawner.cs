@@ -18,6 +18,14 @@ public class ObjectSpawner : MonoBehaviour
     public GameObject AgentListContent;
     ObjectPooler objectPooler;
 
+    [SerializeField] GameObject WallObjects;
+    [SerializeField] GameObject DoorObjects;
+    [SerializeField] GameObject AgentObjects;
+    [SerializeField] GameObject ItemRegister;
+    [SerializeField] GameObject ZoneObjects;
+    [SerializeField] GameObject DirtRegister;
+
+
     Quaternion wallRotation;
     Quaternion doorRotation;
 
@@ -68,7 +76,7 @@ public class ObjectSpawner : MonoBehaviour
         spawnAgents(episode, 0);
         spawnPickUpItems(episode, 0);
         spawnDropOffZones(episode, 0);
-        //spawnDirtRegister(episode, 0);
+        spawnDirtRegister(episode, 0);
     }
 
     public void RemoveLastEpisode(){
@@ -93,18 +101,22 @@ public class ObjectSpawner : MonoBehaviour
         }
     }
 
-    public void spawnObject(GameObject objectToSpawn, Vector3 SpawnPosition)
+    public void spawnObject(GameObject objectToSpawn, Vector3 SpawnPosition, string name)
     {
 
         if (objectToSpawn.tag == "PickupItem")
         {
             var newPickupItem = Instantiate(objectToSpawn, SpawnPosition, transform.rotation) as GameObject;
+            newPickupItem.name = name;
+            newPickupItem.transform.parent = ItemRegister.transform;
             system.GetComponent<EnvironmentStateMachine>().itemObjects.Add(newPickupItem);
 
         }
         if (objectToSpawn.tag == "DropOffZone")
         {
             var newDropOffZone = Instantiate(objectToSpawn, SpawnPosition, transform.rotation) as GameObject;
+            newDropOffZone.name = name;
+            newDropOffZone.transform.parent = ZoneObjects.transform;
             system.GetComponent<EnvironmentStateMachine>().zoneObjects.Add(newDropOffZone);
 
         }
@@ -113,7 +125,9 @@ public class ObjectSpawner : MonoBehaviour
     public void spawnAgent(Vector3 SpawnPosition, int x, int y, string name, string action, bool valid)
     {
         var newRobot = Instantiate(RobotSpawnObject, SpawnPosition, transform.rotation) as GameObject;
-        //Debug.Log("--------Spawned Robot: " + newRobot.name);
+        newRobot.name = name;
+        newRobot.transform.parent = AgentObjects.transform;
+
         var newListItem = Instantiate(AgentListItem) as GameObject;
         newListItem.transform.SetParent(AgentListContent.transform, false);
         var agentBody = newRobot.transform.GetChild(0).gameObject;
@@ -130,13 +144,15 @@ public class ObjectSpawner : MonoBehaviour
         var contentValidityText = data.transform.GetChild(2).gameObject;
         string validityString = "invalid";
         var color = Color.red;
+        var textColor = Color.red;
         if (valid)
         {
+            textColor= new Color32(0, 160, 20, 255);
             color = Color.green;
             validityString = "valid";
         }
         contentValidityText.GetComponent<Text>().text = validityString;
-        contentValidityText.GetComponent<Text>().color = color;
+        contentValidityText.GetComponent<Text>().color = textColor;
 
         var validityLight = agentBody.transform.GetChild(5).gameObject;
         validityLight.GetComponent<Light>().color = color;
@@ -144,7 +160,7 @@ public class ObjectSpawner : MonoBehaviour
         var canvas = agentBody.transform.GetChild(4).gameObject;
         var nameTag = canvas.transform.GetChild(0).gameObject;
         nameTag.GetComponent<TextMeshProUGUI>().SetText(name);
-        nameTag.GetComponent<TextMeshProUGUI>().color = color;
+        nameTag.GetComponent<TextMeshProUGUI>().color = textColor;
         system.GetComponent<EnvironmentStateMachine>().agentObjects.Add(newRobot);
         system.GetComponent<EnvironmentStateMachine>().agentListObjects.Add(newListItem);
     }
@@ -165,7 +181,7 @@ public class ObjectSpawner : MonoBehaviour
         List<Item> items = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[step].ItemRegister;
         foreach (Item item in items)
         {
-            spawnObject(PickupItemSpawnObject, GetRecalculatedPosition(item.x, 0.3f, item.y));
+            spawnObject(PickupItemSpawnObject, GetRecalculatedPosition(item.x, 0.3f, item.y), item.name);
         }
     }
     public void spawnDropOffZones(int episode, int step)
@@ -175,7 +191,7 @@ public class ObjectSpawner : MonoBehaviour
         {
             if (zone != null)
             {
-                spawnObject(DropOffZoneSpawnObject, GetRecalculatedPosition(zone.x, 0.05f, zone.y));
+                spawnObject(DropOffZoneSpawnObject, GetRecalculatedPosition(zone.x, 0.05f, zone.y), zone.name);
             }
         }
     }
@@ -193,7 +209,27 @@ public class ObjectSpawner : MonoBehaviour
 
     }
 
-    public void spawnDirtRegister(int episode, int step)
+    public void spawnDirt(Vector3 trashPosition, double amount, string name){
+        var rand = Random.Range(0, 3);
+        var randRot = Random.Range(0, 360);
+        var dirtObj = Resources.Load("Prefabs/Puddles/Puddle1") as GameObject;
+        switch(rand){
+            case 0: dirtObj = Resources.Load("Prefabs/Puddles/Puddle1") as GameObject; break;
+            case 1: dirtObj = Resources.Load("Prefabs/Puddles/Puddle2") as GameObject; break;
+            case 2: dirtObj = Resources.Load("Prefabs/Puddles/Puddle2") as GameObject; break;
+            default: dirtObj = Resources.Load("Prefabs/Puddles/Puddle1") as GameObject; break;
+        }
+        var dirtSpawn = Instantiate(dirtObj, trashPosition, transform.rotation) as GameObject;
+        dirtSpawn.name = name;
+        dirtSpawn.transform.parent = DirtRegister.transform;
+        var scaleFactor = Mathf.Sqrt((float)amount);
+        dirtSpawn.transform.localScale = new Vector3(scaleFactor, 0.001f, scaleFactor);
+        dirtSpawn.transform.eulerAngles = new Vector3(0, randRot, 0);
+        trashList.Add(dirtSpawn);
+        system.GetComponent<EnvironmentStateMachine>().dirtObjects.Add(dirtSpawn);
+    }
+
+    /*public void spawnDirtRegisterOld(int episode, int step)
     {
         List<Dirt> dirtPiles = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[step].DirtRegister;
         foreach (Dirt dirt in dirtPiles)
@@ -204,6 +240,20 @@ public class ObjectSpawner : MonoBehaviour
                 var size = (int)(dirt.amount * 10);
                 //TODO check sizing
                 spawnTrashObject(pos, size);
+
+            }
+        }
+    }*/
+
+    public void spawnDirtRegister(int episode, int step)
+    {
+        List<Dirt> dirtPiles = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[step].DirtRegister;
+        foreach (Dirt dirt in dirtPiles)
+        {
+            if (dirt != null)
+            {
+                var pos = GetRecalculatedPosition(dirt.x, 0, dirt.y);
+                spawnDirt(pos, dirt.amount, dirt.name);
 
             }
         }
@@ -348,6 +398,8 @@ public class ObjectSpawner : MonoBehaviour
                 WallSpawnObject = wallPiece as GameObject;
             }
             var newWallPiece = Instantiate(WallSpawnObject, new Vector3(wall.x, 1f, wall.y), wallRotation) as GameObject;
+            newWallPiece.name = wall.name;
+            newWallPiece.transform.parent = WallObjects.transform;
             wallList.Add(newWallPiece);
         }
         foreach (GameObject wall in wallList)
@@ -381,6 +433,8 @@ public class ObjectSpawner : MonoBehaviour
             }
             
             var newDoorPiece = Instantiate(DoorObject, new Vector3(door.x, 1f, door.y), doorRotation) as GameObject;
+            newDoorPiece.name = door.name;
+            newDoorPiece.transform.parent = DoorObjects.transform;
             doorList.Add(newDoorPiece);
         }
         foreach (GameObject door in doorList)

@@ -9,17 +9,24 @@ public class EnvironmentStateMachine : MonoBehaviour
     Slider slider;
     Button playButton;
     Button pauseButton;
+    Button nextButton;
+    Button nextNextButton;
+    Button previousButton;
+    Button previousPreviousButton;
     GameObject episodeSelectionDropdown;
+    GameObject playBackSpeedDropdown;
+
 
 
     int currentEpisode;
     int currentStep;
     bool allAgentsInitialized = false;
-    bool episodeSpawned = false;
+    //bool episodeSpawned = false;
     bool playingSequence = false;
 
     public JSONReader JSONReader;
     public EnvironmentConstants environmentConstants;
+    public float playBackSpeed = 1f;
 
     public List<GameObject> agentObjects = new List<GameObject>();
     public List<GameObject> agentListObjects = new List<GameObject>();
@@ -38,26 +45,42 @@ public class EnvironmentStateMachine : MonoBehaviour
         system = GameObject.FindWithTag("System");
         slider = system.GetComponent<UIGlobals>().slider;
         episodeSelectionDropdown = GameObject.FindWithTag("EpisodeSelectionDropdown");
+        playBackSpeedDropdown = GameObject.FindWithTag("PlaybackSpeedDropdown");
 
 
         JSONReader = GetComponent<JSONReader>();
         environmentConstants = JSONReader.ReadEnvironmentConstants();
         currentEpisode = 0;
         slider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
-        Debug.Log("________________Episode 0 has #steps: " + slider.maxValue);
+       // Debug.Log("________________Episode 0 has #steps: " + slider.maxValue);
         currentStep = (int)slider.value;
 
         playButton = system.GetComponent<UIGlobals>().playButton;
         pauseButton = system.GetComponent<UIGlobals>().pauseButton;
+        nextButton = system.GetComponent<UIGlobals>().nextButton;
+        nextNextButton = system.GetComponent<UIGlobals>().nextNextButton;
+        previousButton = system.GetComponent<UIGlobals>().previousButton;
+        previousPreviousButton = system.GetComponent<UIGlobals>().previousPreviousButton;
         playButton.onClick.AddListener(PlaySequence);
         pauseButton.onClick.AddListener(PauseSequence);
+
+        nextButton.onClick.AddListener(delegate {SkipSteps(1);});
+        nextNextButton.onClick.AddListener(delegate {SkipSteps(10);});
+        previousButton.onClick.AddListener(delegate {SkipSteps(-1);});
+        previousPreviousButton.onClick.AddListener(delegate {SkipSteps(-10);});
+
         UpdateSliderLabel();
         InitializeEpisodeSelectionDropdown();
+        InitializePlaybackSpeedDropdown();
         var drop = episodeSelectionDropdown.GetComponent<Dropdown>();
         drop.onValueChanged.AddListener(delegate {
                 DropdownValueChanged(drop);
             });
-
+        var speedDrop = playBackSpeedDropdown.GetComponent<Dropdown>();
+        speedDrop.onValueChanged.AddListener(delegate {
+                SpeedDropdownValueChanged(speedDrop);
+            });
+        speedDrop.value = 3;
 
     }
 
@@ -73,9 +96,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             }*/
             slider.onValueChanged.AddListener(delegate
             {
-                currentStep = (int)slider.value;
-                UpdateAgents(currentEpisode, currentStep);
-                UpdateSliderLabel();
+                LoadNewTimeStep(currentEpisode, currentStep);
             });
 
             if(playingSequence){
@@ -86,6 +107,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     }
 
     void SkipSteps(int i){
+        PauseSequence();
         if(i>0){
             if(slider.value+i>slider.maxValue){
                 slider.value = (slider.value+i)-slider.maxValue;
@@ -102,7 +124,7 @@ public class EnvironmentStateMachine : MonoBehaviour
                  slider.value = slider.value+i;
              }
         }
-        
+        LoadNewTimeStep(currentEpisode, currentStep);
     }
 
     void DropdownValueChanged(Dropdown change)
@@ -114,6 +136,11 @@ public class EnvironmentStateMachine : MonoBehaviour
         emptyObjectLists();
         system.GetComponent<ObjectSpawner>().SpawnNewEpisode(currentEpisode);
         UpdateSliderLabel();
+    }
+    void SpeedDropdownValueChanged(Dropdown change)
+    {
+        playBackSpeed = (change.value+1f)/4f;
+        Debug.Log("PlaybackSpeed set to: "+playBackSpeed);
     }
 
     void emptyObjectLists(){
@@ -132,6 +159,19 @@ public class EnvironmentStateMachine : MonoBehaviour
             dropDownOptions.Add("Episode "+(i+1));
         }
         drop.AddOptions(dropDownOptions);
+    }
+
+    void InitializePlaybackSpeedDropdown(){
+        var options = new List<string>();
+        options.Add("0.25x");
+        options.Add("0.5x");
+        options.Add("0.75x");
+        options.Add("Normal");
+        options.Add("1.25x");
+        options.Add("1.5x");
+        options.Add("1.75x");
+        var drop = playBackSpeedDropdown.GetComponent<Dropdown>();
+        drop.AddOptions(options);
     }
 
     void UpdateSliderLabel(){
@@ -157,7 +197,11 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     public void LoadNewTimeStep(int episode, int step)
     {
-        //UpdateAgents(episode, step);
+        currentStep = (int)slider.value;
+        UpdateAgents(episode, step);
+        UpdateDirtPiles(episode, step);
+        UpdateSliderLabel();    
+                
     }
 
     public void UpdateAgents(int episode, int step)
@@ -214,8 +258,31 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     public void UpdateDirtPiles(int episode, int step)
     {
-        //amount
-        //spawn new piles
+        List<Dirt> dirtPiles = environmentConstants.episodes[episode].steps[step].DirtRegister;
+
+        foreach(Dirt dirt in dirtPiles){
+            if(GetDirtObjectByName(dirt.name)!=null){
+                var dirtInPrevStep = GetDirtByNamePrevStep(dirt.name);
+                if(dirtInPrevStep!=null && dirtInPrevStep.amount!=dirt.amount){
+                    var dirtObj = GetDirtObjectByName(dirt.name);
+                    var scaleFactor = Mathf.Sqrt((float)dirt.amount);
+                    dirtObj.transform.localScale = new Vector3(scaleFactor, 0.001f, scaleFactor);
+                }
+            }
+            else{
+                var pos = GetRecalculatedPosition(dirt.x, 0, dirt.y);
+                system.GetComponent<ObjectSpawner>().spawnDirt(pos, dirt.amount, dirt.name);
+            }
+        }
+        foreach(GameObject dirtObj in dirtObjects){
+            if(GetDirtByName(dirtObj.name)==null){
+
+                Debug.Log("Dirt disappeared: "+dirtObj.name+" in step: "+currentStep);
+                dirtObj.SetActive(false);
+                //dirtObjects.Remove(dirtObj);
+                //Destroy(dirtObj);
+            }
+        }
     }
 
     public void HandleSequencePlayUpdate()
@@ -260,6 +327,8 @@ public class EnvironmentStateMachine : MonoBehaviour
         var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
         controller.playingSequence = true;
         playingSequence = true;
+        playButton.gameObject.SetActive(false);
+        pauseButton.gameObject.SetActive(true);
         }
     }
 
@@ -269,7 +338,55 @@ public class EnvironmentStateMachine : MonoBehaviour
         var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
         controller.playingSequence = false;
         playingSequence = false;
+        playButton.gameObject.SetActive(true);
+        pauseButton.gameObject.SetActive(false);
         }
+    }
+
+    public Agent GetAgentByName(string name){
+        foreach(Agent agent in environmentConstants.episodes[currentEpisode].steps[currentStep].Agents){
+            if(agent.name.Equals(name)){
+                return agent;
+            }
+        }
+        return null;
+    }
+    public Dirt GetDirtByName(string name){
+        foreach(Dirt dirt in environmentConstants.episodes[currentEpisode].steps[currentStep].DirtRegister){
+            if(dirt.name.Equals(name)){
+                return dirt;
+            }
+        }
+        return null;
+    }
+
+    public Dirt GetDirtByNamePrevStep(string name){
+        if(currentStep>0){
+            foreach(Dirt dirt in environmentConstants.episodes[currentEpisode].steps[currentStep-1].DirtRegister){
+                if(dirt.name.Equals(name)){
+                    return dirt;
+                }
+            }
+        }
+        return null;
+    }
+
+    public GameObject GetDirtObjectByName(string name){
+        foreach(GameObject dirt in dirtObjects){
+            if(dirt.name.Equals(name)){
+                return dirt;
+            }
+        }
+        return null;
+    }
+
+     public Item GetItemByName(string name){
+        foreach(Item item in environmentConstants.episodes[currentEpisode].steps[currentStep].ItemRegister){
+            if(item.name.Equals(name)){
+                return item;
+            }
+        }
+        return null;
     }
 
 
