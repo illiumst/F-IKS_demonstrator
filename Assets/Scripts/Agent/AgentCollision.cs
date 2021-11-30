@@ -55,28 +55,27 @@ public class AgentCollision : MonoBehaviour
             animator.SetBool("collision", collision);
 
         }
-        if (collider.tag == "Door")
+       /* if (collider.tag == "Door")
         {
             var doorAn = collider.GetComponentInChildren<Animator>();
             doorAn.SetTrigger("OpenClose");
-            warningText.text = "Hit Door!!!!";
             collision = false;
-        }
+        }*/
     }
 
     void OnTriggerExit(Collider collider)
     {
 
-        if (collider.tag == "Door")
+       /* if (collider.tag == "Door")
         {
             var doorAn = collider.GetComponentInChildren<Animator>();
             doorAn.SetTrigger("OpenClose");
-        }
-        else
-        {
+        }*/
+        //else
+        //{
             collision = false;
             animator.SetBool("collision", collision);
-        }
+        //}
 
     }
 

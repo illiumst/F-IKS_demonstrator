@@ -29,6 +29,7 @@ TagManager:
   - ItemRegister
   - ZoneObjects
   - DirtRegister
+  - BufferFillArea
   layers:
   - Default
   - TransparentFX

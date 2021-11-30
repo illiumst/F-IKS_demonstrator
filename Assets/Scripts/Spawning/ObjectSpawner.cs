@@ -14,6 +14,7 @@ public class ObjectSpawner : MonoBehaviour
     GameObject PickupItemSpawnObject;
     GameObject DropOffZoneSpawnObject;
     GameObject DoorObject;
+    GameObject positionMarkerObject;
     GameObject AgentListItem;
     public GameObject AgentListContent;
     ObjectPooler objectPooler;
@@ -24,6 +25,8 @@ public class ObjectSpawner : MonoBehaviour
     [SerializeField] GameObject ItemRegister;
     [SerializeField] GameObject ZoneObjects;
     [SerializeField] GameObject DirtRegister;
+    [SerializeField] GameObject FloorMarkerRegister;
+    [SerializeField] Toggle floorMarkerToggle;
 
 
     Quaternion wallRotation;
@@ -64,9 +67,13 @@ public class ObjectSpawner : MonoBehaviour
         PickupItemSpawnObject = pickUpItem as GameObject;
         DropOffZoneSpawnObject = dropOffZone as GameObject;
         DoorObject = door as GameObject;
+        positionMarkerObject = Resources.Load("Prefabs/PositionMarker") as GameObject;
 
         SpawnNewEpisode(0);
+    }
 
+    private void Update() {
+        FloorMarkerRegister.SetActive(floorMarkerToggle.isOn);
     }
 
     public void SpawnNewEpisode(int episode){
@@ -77,6 +84,7 @@ public class ObjectSpawner : MonoBehaviour
         spawnPickUpItems(episode, 0);
         spawnDropOffZones(episode, 0);
         spawnDirtRegister(episode, 0);
+        spawnFloorPositionMarkers(episode);
     }
 
     public void RemoveLastEpisode(){
@@ -119,6 +127,46 @@ public class ObjectSpawner : MonoBehaviour
             newDropOffZone.transform.parent = ZoneObjects.transform;
             system.GetComponent<EnvironmentStateMachine>().zoneObjects.Add(newDropOffZone);
 
+        }
+    }
+
+    private void spawnFloorPositionMarkers(int episode){
+        var tmpMaxWallX=0;
+        var tmpMaxWallY=0;
+        var tmpMinWallX=0;
+        var tmpMinWallY=0;
+
+        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[0].WallTiles;
+        
+        foreach (Wall wall in walls)
+        {
+            if (wall.x > tmpMaxWallX)
+            {
+                tmpMaxWallX = wall.x;
+            }
+             if (wall.x < tmpMinWallX)
+            {
+                tmpMinWallX = wall.x;
+            }
+            if (wall.y > tmpMaxWallY)
+            {
+                tmpMaxWallY = wall.y;
+            }
+            if (wall.y < tmpMinWallY)
+            {
+                tmpMinWallY = wall.y;
+            }
+        }
+
+        for(int i = tmpMinWallX; i<=tmpMaxWallX; i++){
+            for(int j = tmpMinWallY; j<=tmpMaxWallY; j++){
+                var posMarker = Instantiate(positionMarkerObject) as GameObject;
+                posMarker.transform.parent = FloorMarkerRegister.transform;
+                posMarker.transform.position = GetRecalculatedPosition((float)i, 0f, (float)j);
+                var canvas = posMarker.transform.GetChild(0).gameObject;
+                var text = canvas.transform.GetChild(0).gameObject;
+                text.GetComponent<Text>().text = "x:"+i+" y:"+j;
+            }
         }
     }
 
@@ -433,14 +481,16 @@ public class ObjectSpawner : MonoBehaviour
             }
             
             var newDoorPiece = Instantiate(DoorObject, new Vector3(door.x, 1f, door.y), doorRotation) as GameObject;
+            var doorChild = newDoorPiece.gameObject.transform.GetChild(0);
+            doorChild.transform.rotation = doorRotation;
             newDoorPiece.name = door.name;
             newDoorPiece.transform.parent = DoorObjects.transform;
             doorList.Add(newDoorPiece);
         }
         foreach (GameObject door in doorList)
         {
-            //Debug.Log("------Converting Wall coordinates...");
             door.transform.position = GetRecalculatedPosition(door.transform.position.x, door.transform.position.y, door.transform.position.z);
+            system.GetComponent<EnvironmentStateMachine>().doorObjects.Add(door);
         }
     }
 

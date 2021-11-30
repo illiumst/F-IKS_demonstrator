@@ -16,7 +16,7 @@ public class AgentController : MonoBehaviour
 
     [SerializeField] float playBackSpeed;
 
-    [SerializeField] float speed;
+    public float speed;
 
     GameObject system;
     Text positionText;
@@ -40,13 +40,12 @@ public class AgentController : MonoBehaviour
 
     bool manualRobotControl;
 
-    //Toggle robotControlToggle;
 
     float distance;
 
     public Canvas canvas;
 
-    Animator animator;
+    public Animator animator;
 
     Agent parentAgent;
 
@@ -54,6 +53,7 @@ public class AgentController : MonoBehaviour
     void Start()
     {
         currentpos = this.transform.position;
+        goalPosition = currentpos;
         endGoalPosition = currentpos;
         lastReachedGoalPosition = currentpos;
         lastReachedGoalPositionIndex = 0;
@@ -73,51 +73,21 @@ public class AgentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //manualRobotControl = robotControlToggle.isOn;
         collision = this.GetComponent<AgentCollision>().GetCollision();
         currentpos = this.transform.position;
 
         playBackSpeed = system.GetComponent<EnvironmentStateMachine>().playBackSpeed;
 
-        if(playingSequence){
-            Debug.Log("Trying to move robot in sequence");
+        if (playingSequence)
+        {
+            speed = playBackSpeed * 3;
             MoveRobotTo(endGoalPosition);
         }
 
-       /* if (!stopMoving && !manualRobotControl && !playingSequence)
+        if (!playingSequence && currentpos != goalPosition && goalPosition != null)
         {
-
-            if (currentpos != goalPosition && goalPosition != null && !isCleaning && !collision)
-            {
-                MoveRobotTo(goalPosition);
-            }
-
-            if (currentpos == goalPosition && goalPosition != endGoalPosition)
-            {
-                Debug.Log("---------------------Reached Endgoal!");
-                float diff = sliderValue - lastReachedGoalPositionIndex;
-                if (diff > 0)
-                {
-                    //var index = positions.IndexOf(goalPosition) + 1;
-                    //goalPosition = positions[index];
-                }
-                else
-                {
-                    //var index = positions.IndexOf(goalPosition) - 1;
-                    //goalPosition = positions[index];
-                }
-            }
-            if (currentpos == endGoalPosition)
-            {
-                lastReachedGoalPosition = endGoalPosition;
-                //lastReachedGoalPositionIndex = positions.IndexOf(endGoalPosition);
-            }
-
-            if (collision)
-            {
-                BounceOff();
-            }
-        }*/
+            MoveRobotTo(goalPosition);
+        }
 
         if (manualRobotControl)
         {
@@ -142,10 +112,11 @@ public class AgentController : MonoBehaviour
         if (isCleaning)
         {
             stopMoving = true;
-            //clean --> call in different script
         }
-        if(stopMoving){
-            Debug.Log("!!!!!!!!!!!!!!!!!!!!! Agent stopped moving !!!!!!!!!!!!!!!!!!!!!");
+        if (stopMoving)
+        {
+            speed = 0;
+            animator.SetFloat("speed", speed);
         }
     }
 
@@ -181,7 +152,7 @@ public class AgentController : MonoBehaviour
         float diff = sliderValue - lastReachedGoalPositionIndex;
         if (playingSequence)
         {
-            speed = playBackSpeed;
+            speed = playBackSpeed / 10f;
         }
         else
         {
@@ -217,8 +188,11 @@ public class AgentController : MonoBehaviour
         this.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
         Vector3 difference = goalPosition - currentpos;
         var name = this.transform.GetChild(4);
-        this.transform.forward = difference;
-        name.transform.forward = new Vector3(0,0,0);
+        if (difference != Vector3.zero)
+        {
+            this.transform.forward = difference;
+            name.transform.eulerAngles = Vector3.zero;
+        }
     }
 
     void BounceOff()
@@ -231,8 +205,6 @@ public class AgentController : MonoBehaviour
         }
         else
         {
-            //var index = positions.IndexOf(goalPosition) + 1;
-            //goalPosition = positions[index];
         }
     }
 
@@ -258,7 +230,7 @@ public class AgentController : MonoBehaviour
         var data = itemContent.transform.GetChild(1).gameObject;
         var contentPositionText = data.transform.GetChild(0).gameObject;
         contentPositionText.GetComponent<Text>().text = "x: " + x + " y: " + y;
-        var contentActionText =data.transform.GetChild(1).gameObject;
+        var contentActionText = data.transform.GetChild(1).gameObject;
         contentActionText.GetComponent<Text>().text = action;
         var contentValidityText = data.transform.GetChild(2).gameObject;
         string validityString = "invalid";
@@ -266,7 +238,7 @@ public class AgentController : MonoBehaviour
         var textColor = Color.red;
         if (valid)
         {
-            textColor= new Color32(0, 160, 20, 255);
+            textColor = new Color32(0, 160, 20, 255);
             color = Color.green;
             validityString = "valid";
         }

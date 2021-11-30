@@ -9,6 +9,7 @@ public class UIGlobals : MonoBehaviour
     public Text warningText;
     public Text positionText;
     public Slider slider;
+    public Slider bufferSlider;
     public Button playButton;
     public Button pauseButton;
     public Button nextButton;
