@@ -8418,6 +8418,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cbcb4003dc9b4226b634e7f0a68ca03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sliderFill: {fileID: 386271037}
+  bufferFill: {fileID: 328854145}
   stepOverviewText: {fileID: 570968731}
   agentNrText: {fileID: 61665564}
   dirtNrText: {fileID: 326546662}

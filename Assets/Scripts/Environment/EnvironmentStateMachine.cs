@@ -8,6 +8,8 @@ public class EnvironmentStateMachine : MonoBehaviour
     GameObject system;
     Slider slider;
     Slider bufferSlider;
+    public Image sliderFill;
+    public Image bufferFill;
     Button playButton;
     Button pauseButton;
     Button nextButton;
@@ -111,11 +113,21 @@ public class EnvironmentStateMachine : MonoBehaviour
             slider.onValueChanged.AddListener(delegate
             {
                 LoadNewTimeStep(currentEpisode, currentStep);
-                if ((int)slider.value > currentStep + 1 || (int)slider.value < currentStep - 1)
+                if ((int)slider.value > currentStep + 1)
                 {
                     stepsSkipped = ((int)slider.value - currentStep);
                     buffering = true;
                     PauseSequence();
+                }
+                else if ((int)slider.value < currentStep - 1)
+                {
+                    stepsSkipped = ((int)slider.value - currentStep);
+                    buffering = true;
+                    PauseSequence();
+                    sliderFill.color = Color.white;
+                    sliderFill.transform.SetSiblingIndex(1);
+                    bufferFill.color = Color.blue;
+                    Debug.Log("Buffering backwards: steps skipped: " + stepsSkipped);
                 }
             });
 
@@ -492,22 +504,44 @@ public class EnvironmentStateMachine : MonoBehaviour
 
             var setPBSpeed = SpeedDropdownValueChanged(playBackSpeedDropdown.GetComponent<Dropdown>());
             playBackSpeed = setPBSpeed * 10;
-            if (bufferSlider.value == 0f)
+            if (stepsSkipped > 0)
             {
-                bufferSlider.value = 1f;
+                if (bufferSlider.value == 0f)
+                {
+                    bufferSlider.value = 1f;
+                }
+                else if (controller.currentpos == controller.goalPosition && bufferSlider.value < slider.value)
+                {
+                    bufferSlider.value = bufferSlider.value + (playBackSpeed / 10);
+                }
+                else if ((int)bufferSlider.value == (int)slider.value)
+                {
+                    Debug.Log("Finished Buffering");
+                    controller.playingSequence = false;
+                    stepsSkipped = 0;
+                    buffering = false;
+                    playBackSpeed = setPBSpeed;
+                }
             }
-            else if (controller.currentpos == controller.goalPosition && bufferSlider.value < slider.value)
+            else
             {
-                bufferSlider.value = bufferSlider.value + (playBackSpeed / 10);
+                if (controller.currentpos == controller.goalPosition && bufferSlider.value > slider.value)
+                {
+                    bufferSlider.value = bufferSlider.value - (playBackSpeed / 10);
+                }
+                else if ((int)bufferSlider.value == (int)slider.value)
+                {
+                    Debug.Log("Finished Buffering");
+                    controller.playingSequence = false;
+                    stepsSkipped = 0;
+                    buffering = false;
+                    playBackSpeed = setPBSpeed;
+                    sliderFill.color = Color.blue;
+                    sliderFill.transform.SetSiblingIndex(0);
+                    bufferFill.color = Color.white;
+                }
             }
-            else if ((int)bufferSlider.value == (int)slider.value)
-            {
-                Debug.Log("Finished Buffering");
-                controller.playingSequence = false;
-                stepsSkipped = 0;
-                buffering = false;
-                playBackSpeed = setPBSpeed;
-            }
+
         }
     }
 
