@@ -10,27 +10,14 @@ public class AgentController : MonoBehaviour
 
     public Vector3 currentpos;
     public Vector3 goalPosition;
-    public Vector3 endGoalPosition;
-    public Vector3 lastReachedGoalPosition;
-    public int lastReachedGoalPositionIndex;
 
     [SerializeField] float playBackSpeed;
 
     public float speed;
 
     GameObject system;
-    Text positionText;
-
-    public int currentArrayPosOnSlider = 0;
-
-    public int timeStep;
 
     public float sliderValue;
-
-    bool isCleaning = false;
-    bool collision;
-
-    public bool stopMoving = false;
 
     Button playButton;
     Button pauseButton;
@@ -39,11 +26,6 @@ public class AgentController : MonoBehaviour
     public bool playingSequence;
 
     bool manualRobotControl;
-
-
-    float distance;
-
-    public Canvas canvas;
 
     public Animator animator;
 
@@ -54,16 +36,11 @@ public class AgentController : MonoBehaviour
     {
         currentpos = this.transform.position;
         goalPosition = currentpos;
-        endGoalPosition = currentpos;
-        lastReachedGoalPosition = currentpos;
-        lastReachedGoalPositionIndex = 0;
         sliderValue = 0;
 
         system = GameObject.FindWithTag("System");
-        // = GameObject.FindWithTag("RobotControlToggle").GetComponent<Toggle>();
 
         playingSequence = false;
-        distance = 0f;
 
         animator = GetComponent<Animator>();
 
@@ -73,15 +50,15 @@ public class AgentController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        collision = this.GetComponent<AgentCollision>().GetCollision();
         currentpos = this.transform.position;
 
         playBackSpeed = system.GetComponent<EnvironmentStateMachine>().playBackSpeed;
 
+        //sequence with playbutton is being played
         if (playingSequence)
         {
             speed = playBackSpeed * 3;
-            MoveRobotTo(endGoalPosition);
+            MoveRobotTo(goalPosition);
         }
 
         if (!playingSequence && currentpos != goalPosition && goalPosition != null)
@@ -109,15 +86,6 @@ public class AgentController : MonoBehaviour
             }
         }
 
-        if (isCleaning)
-        {
-            stopMoving = true;
-        }
-        if (stopMoving)
-        {
-            speed = 0;
-            animator.SetFloat("speed", speed);
-        }
     }
 
     void MoveRobotLeft()
@@ -145,41 +113,6 @@ public class AgentController : MonoBehaviour
         this.transform.position = position;
     }
 
-    public void UpdateGoalPositionAccordingToSlider()
-    {
-        //TODO does not work yet when slider moved to fast
-        stopMoving = false;
-        float diff = sliderValue - lastReachedGoalPositionIndex;
-        if (playingSequence)
-        {
-            speed = playBackSpeed / 10f;
-        }
-        else
-        {
-            speed = speed * Mathf.Abs(diff);
-        }
-
-        currentArrayPosOnSlider = (int)sliderValue;
-        //endGoalPosition = positions[currentArrayPosOnSlider];
-
-        if (diff > 1)
-        {
-            //goalPosition = positions[lastReachedGoalPositionIndex + 1];
-        }
-        if (diff == 1 || diff == -1)
-        {
-            goalPosition = endGoalPosition;
-        }
-        //TODO not yet working; check if end of positions list reached
-        if (diff < 0)
-        {
-            //goalPosition = positions[lastReachedGoalPositionIndex - 1];
-        }
-        distance = Vector3.Distance(currentpos, goalPosition);
-
-    }
-
-
     public void MoveRobotTo(Vector3 position)
     {
         animator.SetBool("moving", true);
@@ -195,28 +128,10 @@ public class AgentController : MonoBehaviour
         }
     }
 
-    void BounceOff()
-    {
-        Debug.Log("-------------- Bouncing off...");
-        this.GetComponent<AgentCollision>().SetCollision(false);
-        if (goalPosition == endGoalPosition)
-        {
-            goalPosition = transform.position;
-        }
-        else
-        {
-        }
-    }
-
     public Vector3 GetRecalculatedPosition(float x, float y, float z)
     {
         Vector3 center = system.GetComponent<EnvironmentStateMachine>().environmentCenter;
         return new Vector3(x - center.x, y, z - center.z);
-    }
-
-    public void setPositionText(Text text)
-    {
-        this.positionText = text;
     }
 
     public void UpdateAgentListItems(GameObject agentObject, GameObject listItem, int x, int y, string name, string action, bool valid)

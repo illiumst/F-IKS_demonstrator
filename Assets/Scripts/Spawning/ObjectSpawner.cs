@@ -72,14 +72,15 @@ public class ObjectSpawner : MonoBehaviour
         SpawnNewEpisode(0);
     }
 
-    private void Update() {
+    private void Update()
+    {
         FloorMarkerRegister.SetActive(floorMarkerToggle.isOn);
     }
 
-    public void SpawnNewEpisode(int episode){
+    public void SpawnNewEpisode(int episode)
+    {
         spawnWalls(episode);
         spawnDoors(episode);
-        //TODO beim respawnen etwas off mit center
         spawnAgents(episode, 0);
         spawnPickUpItems(episode, 0);
         spawnDropOffZones(episode, 0);
@@ -87,7 +88,8 @@ public class ObjectSpawner : MonoBehaviour
         spawnFloorPositionMarkers(episode);
     }
 
-    public void RemoveLastEpisode(){
+    public void RemoveLastEpisode()
+    {
         DestroyObjectsWithTag("Agent");
         DestroyObjectsWithTag("Wall");
         DestroyObjectsWithTag("PickupItem");
@@ -101,10 +103,12 @@ public class ObjectSpawner : MonoBehaviour
         doorList.Clear();
     }
 
-    void DestroyObjectsWithTag(string tag){
+    void DestroyObjectsWithTag(string tag)
+    {
 
-        GameObject[] objs =  GameObject.FindGameObjectsWithTag (tag) as GameObject[];
-        foreach(GameObject obj in objs){
+        GameObject[] objs = GameObject.FindGameObjectsWithTag(tag) as GameObject[];
+        foreach (GameObject obj in objs)
+        {
             Destroy(obj);
         }
     }
@@ -130,21 +134,22 @@ public class ObjectSpawner : MonoBehaviour
         }
     }
 
-    private void spawnFloorPositionMarkers(int episode){
-        var tmpMaxWallX=0;
-        var tmpMaxWallY=0;
-        var tmpMinWallX=0;
-        var tmpMinWallY=0;
+    private void spawnFloorPositionMarkers(int episode)
+    {
+        var tmpMaxWallX = 0;
+        var tmpMaxWallY = 0;
+        var tmpMinWallX = 0;
+        var tmpMinWallY = 0;
 
         List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[0].WallTiles;
-        
+
         foreach (Wall wall in walls)
         {
             if (wall.x > tmpMaxWallX)
             {
                 tmpMaxWallX = wall.x;
             }
-             if (wall.x < tmpMinWallX)
+            if (wall.x < tmpMinWallX)
             {
                 tmpMinWallX = wall.x;
             }
@@ -158,14 +163,16 @@ public class ObjectSpawner : MonoBehaviour
             }
         }
 
-        for(int i = tmpMinWallX; i<=tmpMaxWallX; i++){
-            for(int j = tmpMinWallY; j<=tmpMaxWallY; j++){
+        for (int i = tmpMinWallX; i <= tmpMaxWallX; i++)
+        {
+            for (int j = tmpMinWallY; j <= tmpMaxWallY; j++)
+            {
                 var posMarker = Instantiate(positionMarkerObject) as GameObject;
                 posMarker.transform.parent = FloorMarkerRegister.transform;
                 posMarker.transform.position = GetRecalculatedPosition((float)i, 0f, (float)j);
                 var canvas = posMarker.transform.GetChild(0).gameObject;
                 var text = canvas.transform.GetChild(0).gameObject;
-                text.GetComponent<Text>().text = "x:"+i+" y:"+j;
+                text.GetComponent<Text>().text = "x:" + i + " y:" + j;
             }
         }
     }
@@ -187,7 +194,7 @@ public class ObjectSpawner : MonoBehaviour
         var data = itemContent.transform.GetChild(1).gameObject;
         var contentPositionText = data.transform.GetChild(0).gameObject;
         contentPositionText.GetComponent<Text>().text = "x: " + x + " y: " + y;
-        var contentActionText =data.transform.GetChild(1).gameObject;
+        var contentActionText = data.transform.GetChild(1).gameObject;
         contentActionText.GetComponent<Text>().text = action;
         var contentValidityText = data.transform.GetChild(2).gameObject;
         string validityString = "invalid";
@@ -195,7 +202,7 @@ public class ObjectSpawner : MonoBehaviour
         var textColor = Color.red;
         if (valid)
         {
-            textColor= new Color32(0, 160, 20, 255);
+            textColor = new Color32(0, 160, 20, 255);
             color = Color.green;
             validityString = "valid";
         }
@@ -257,11 +264,13 @@ public class ObjectSpawner : MonoBehaviour
 
     }
 
-    public void spawnDirt(Vector3 trashPosition, double amount, string name){
+    public void spawnDirt(Vector3 trashPosition, double amount, string name)
+    {
         var rand = Random.Range(0, 3);
         var randRot = Random.Range(0, 360);
         var dirtObj = Resources.Load("Prefabs/Puddles/Puddle1") as GameObject;
-        switch(rand){
+        switch (rand)
+        {
             case 0: dirtObj = Resources.Load("Prefabs/Puddles/Puddle1") as GameObject; break;
             case 1: dirtObj = Resources.Load("Prefabs/Puddles/Puddle2") as GameObject; break;
             case 2: dirtObj = Resources.Load("Prefabs/Puddles/Puddle2") as GameObject; break;
@@ -479,7 +488,7 @@ public class ObjectSpawner : MonoBehaviour
             {
                 doorRotation = Quaternion.Euler(0, 90, 0);
             }
-            
+
             var newDoorPiece = Instantiate(DoorObject, new Vector3(door.x, 1f, door.y), doorRotation) as GameObject;
             var doorChild = newDoorPiece.gameObject.transform.GetChild(0);
             doorChild.transform.rotation = doorRotation;
@@ -501,8 +510,8 @@ public class ObjectSpawner : MonoBehaviour
 
     public Vector3 GetWallCenter(List<Wall> walls, int episode)
     {
-        tempMaxWallX=0;
-        tempMaxWallY=0;
+        tempMaxWallX = 0;
+        tempMaxWallY = 0;
 
         foreach (Wall wall in walls)
         {

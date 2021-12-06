@@ -26,7 +26,6 @@ public class EnvironmentStateMachine : MonoBehaviour
     int currentEpisode;
     int currentStep;
     bool allAgentsInitialized = false;
-    //bool episodeSpawned = false;
     bool playingSequence = false;
     bool buffering = false;
     int stepsSkipped = 0;
@@ -101,7 +100,6 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!allAgentsInitialized)
@@ -283,8 +281,6 @@ public class EnvironmentStateMachine : MonoBehaviour
         UpdateItemObjects(episode, step);
         UpdateSliderLabel();
         UpdateStepOverview();
-        Debug.Log("Trying to load timestep: " + currentStep);
-
     }
 
     public void UpdateAgents(int episode, int step)
@@ -338,14 +334,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             Vector3 recalcPos = GetRecalculatedPosition(agents[i].x, 0, agents[i].y);
             var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
             BroadCastSliderValueToAgentObj(agentObjController);
-            if (playingSequence || buffering)
-            {
-                agentObjController.endGoalPosition = recalcPos;
-            }
-            else
-            {
-                agentObjController.goalPosition = recalcPos;
-            }
+            agentObjController.goalPosition = recalcPos;
         }
     }
 
@@ -357,27 +346,57 @@ public class EnvironmentStateMachine : MonoBehaviour
             var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
             if (!agents[i].valid)
             {
-                //Debug.Log("-------invalid action by " + agents[i].name);
-                agentObjController.stopMoving = true;
+                if (CheckForWallCollision(agents[i], episode, step))
+                {
+                    agentObjController.animator.SetTrigger("collision");
+                }
             }
             else if (agents[i].action.Equals("Action[CLEAN_UP]") && agents[i].valid)
             {
-                //Debug.Log("-------clean up by " + agents[i].name);
                 agentObjController.animator.SetTrigger("foundTrash");
             }
             else if (agents[i].action.Equals("Action[ITEM_ACTION]") && agents[i].valid)
             {
-                //Debug.Log("-------item action " + agents[i].name);
                 agentObjController.animator.SetTrigger("foundTrash");
             }
-            else
+        }
+    }
+
+    bool CheckForWallCollision(Agent agent, int episode, int step)
+    {
+        List<Agent> agents = environmentConstants.episodes[episode].steps[step].Agents;
+        int index = agents.IndexOf(agent);
+        var agentObjController = agentObjects[index].transform.GetChild(0).GetComponent<AgentController>();
+
+        var x = agent.x;
+        var y = agent.y;
+
+        switch (agent.action)
+        {
+            case "Action[NORTH]": return CheckForWall(x, y - 1, episode);
+            case "Action[NORTHEAST]": return CheckForWall(x + 1, y - 1, episode);
+            case "Action[EAST]": return CheckForWall(x + 1, y, episode);
+            case "Action[SOUTHEAST]": return CheckForWall(x + 1, y + 1, episode);
+            case "Action[SOUTH]": return CheckForWall(x, y + 1, episode);
+            case "Action[SOUTHWEST]": return CheckForWall(x - 1, y + 1, episode);
+            case "Action[WEST]": return CheckForWall(x - 1, y, episode);
+            case "Action[NORTHWEST]": return CheckForWall(x - 1, y - 1, episode);
+            default: return false; ;
+        }
+    }
+
+    bool CheckForWall(int x, int y, int episode)
+    {
+        bool wallExists = false;
+        List<Wall> walls = environmentConstants.episodes[episode].steps[0].WallTiles;
+        foreach (Wall wall in walls)
+        {
+            if (wall.x == x && wall.y == y)
             {
-                agentObjController.stopMoving = false;
+                wallExists = true;
             }
         }
-
-
-
+        return wallExists;
     }
 
     private void BroadCastSliderValueToAgentObj(AgentController controller)
@@ -432,11 +451,7 @@ public class EnvironmentStateMachine : MonoBehaviour
         {
             if (GetDirtByName(dirtObj.name) == null)
             {
-
-                // Debug.Log("Dirt disappeared: "+dirtObj.name+" in step: "+currentStep);
                 dirtObj.SetActive(false);
-                //dirtObjects.Remove(dirtObj);
-                //Destroy(dirtObj);
             }
         }
     }
@@ -447,7 +462,6 @@ public class EnvironmentStateMachine : MonoBehaviour
         foreach (GameObject agentObj in agentObjects)
         {
             var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
-            controller.goalPosition = controller.endGoalPosition;
 
             if (slider.value == 0f)
             {
@@ -471,11 +485,9 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     public void HandleBufferSequenceUpdate(int stepsSkipped)
     {
-        //Debug.Log("Buffering value " + bufferSlider.value + " slider value: " + slider.value);
         foreach (GameObject agentObj in agentObjects)
         {
             var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
-            controller.goalPosition = controller.endGoalPosition;
             controller.playingSequence = true;
 
             var setPBSpeed = SpeedDropdownValueChanged(playBackSpeedDropdown.GetComponent<Dropdown>());
