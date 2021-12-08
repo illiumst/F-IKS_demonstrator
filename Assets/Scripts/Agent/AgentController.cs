@@ -24,6 +24,7 @@ public class AgentController : MonoBehaviour
 
 
     public bool playingSequence;
+    public bool valid;
 
     bool manualRobotControl;
 
@@ -37,6 +38,7 @@ public class AgentController : MonoBehaviour
         currentpos = this.transform.position;
         goalPosition = currentpos;
         sliderValue = 0;
+        valid = true;
 
         system = GameObject.FindWithTag("System");
 
@@ -55,13 +57,13 @@ public class AgentController : MonoBehaviour
         playBackSpeed = system.GetComponent<EnvironmentStateMachine>().playBackSpeed;
 
         //sequence with playbutton is being played
-        if (playingSequence)
+        if (playingSequence && valid)
         {
             speed = playBackSpeed * 3;
             MoveRobotTo(goalPosition);
         }
 
-        if (!playingSequence && currentpos != goalPosition && goalPosition != null)
+        if (!playingSequence && currentpos != goalPosition && goalPosition != null && valid)
         {
             MoveRobotTo(goalPosition);
         }
@@ -121,17 +123,19 @@ public class AgentController : MonoBehaviour
         this.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
         Vector3 difference = goalPosition - currentpos;
         var name = this.transform.GetChild(4);
+        var wallVisualiser = this.transform.GetChild(6);
         if (difference != Vector3.zero)
         {
             this.transform.forward = difference;
             name.transform.eulerAngles = Vector3.zero;
+            wallVisualiser.eulerAngles = Vector3.zero;
         }
     }
 
     public Vector3 GetRecalculatedPosition(float x, float y, float z)
     {
         Vector3 center = system.GetComponent<EnvironmentStateMachine>().environmentCenter;
-        return new Vector3(x - center.x, y, z - center.z);
+        return new Vector3(x - center.x, y, center.z - z);
     }
 
     public void UpdateAgentListItems(GameObject agentObject, GameObject listItem, int x, int y, string name, string action, bool valid)

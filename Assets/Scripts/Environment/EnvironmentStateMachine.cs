@@ -10,6 +10,8 @@ public class EnvironmentStateMachine : MonoBehaviour
     Slider bufferSlider;
     public Image sliderFill;
     public Image bufferFill;
+
+    public GameObject steptext;
     Button playButton;
     Button pauseButton;
     Button nextButton;
@@ -29,7 +31,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     int currentStep;
     bool allAgentsInitialized = false;
     bool playingSequence = false;
-    bool buffering = false;
+    [SerializeField] bool buffering;
     int stepsSkipped = 0;
 
     public JSONReader JSONReader;
@@ -74,6 +76,8 @@ public class EnvironmentStateMachine : MonoBehaviour
         currentStep = (int)bufferSlider.value;
         UpdateSliderLabel();
         UpdateStepOverview();
+        steptext.SetActive(false);
+        buffering = false;
 
         //Button Listner set-up
         playButton.onClick.AddListener(PlaySequence);
@@ -118,6 +122,11 @@ public class EnvironmentStateMachine : MonoBehaviour
                     stepsSkipped = ((int)slider.value - currentStep);
                     buffering = true;
                     PauseSequence();
+                    sliderFill.color = Color.blue;
+                    sliderFill.transform.SetSiblingIndex(0);
+                    bufferFill.color = Color.white;
+                    Debug.Log("Buffering forward: steps skipped: " + stepsSkipped);
+
                 }
                 else if ((int)slider.value < currentStep - 1)
                 {
@@ -136,6 +145,11 @@ public class EnvironmentStateMachine : MonoBehaviour
                 LoadNewTimeStep(currentEpisode, currentStep);
             });
 
+            if ((int)bufferSlider.value != (int)slider.value)
+            {
+                buffering = true;
+            }
+
             if (playingSequence)
             {
                 HandleSequencePlayUpdate();
@@ -143,6 +157,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             if (buffering)
             {
                 HandleBufferSequenceUpdate(stepsSkipped);
+                steptext.SetActive(true);
             }
         }
 
@@ -266,9 +281,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     {
 
         var sliderHandleArea = slider.transform.GetChild(2).gameObject;
-        var handle = sliderHandleArea.transform.GetChild(0).gameObject;
-        var steptext = handle.transform.GetChild(0).gameObject;
-        steptext.GetComponent<Text>().text = "Step " + currentStep;
+        steptext.GetComponent<Text>().text = "" + (int)slider.value;
         system.GetComponent<UIGlobals>().sliderStepCount.gameObject.GetComponent<Text>().text = "Step " + currentStep + " / " + slider.maxValue;
     }
 
@@ -281,7 +294,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     public Vector3 GetRecalculatedPosition(float x, float y, float z)
     {
         Vector3 center = environmentCenter;
-        return new Vector3(x - center.x, y, z - center.z);
+        return new Vector3(x - center.x, y, center.z - z);
     }
 
     public void LoadNewTimeStep(int episode, int step)
@@ -358,18 +371,25 @@ public class EnvironmentStateMachine : MonoBehaviour
             var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
             if (!agents[i].valid)
             {
+                agentObjController.valid = false;
+                agentObjController.speed = 0;
+                agentObjController.animator.SetBool("moving", false);
                 if (CheckForWallCollision(agents[i], episode, step))
                 {
                     agentObjController.animator.SetTrigger("collision");
                 }
             }
-            else if (agents[i].action.Equals("Action[CLEAN_UP]") && agents[i].valid)
+            if (agents[i].valid)
             {
-                agentObjController.animator.SetTrigger("foundTrash");
-            }
-            else if (agents[i].action.Equals("Action[ITEM_ACTION]") && agents[i].valid)
-            {
-                agentObjController.animator.SetTrigger("foundTrash");
+                agentObjController.valid = true;
+                if (agents[i].action.Equals("Action[CLEAN_UP]"))
+                {
+                    agentObjController.animator.SetTrigger("foundTrash");
+                }
+                if (agents[i].action.Equals("Action[ITEM_ACTION]"))
+                {
+                    agentObjController.animator.SetTrigger("foundTrash");
+                }
             }
         }
     }
@@ -482,7 +502,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             }
             else if (controller.currentpos == controller.goalPosition && slider.value < (slider.maxValue - 1f))
             {
-                slider.value = slider.value + (playBackSpeed / 10);
+                slider.value = slider.value + (playBackSpeed / 10f);
                 bufferSlider.value = slider.value;
             }
             else if ((controller.currentpos == controller.goalPosition) && (slider.value == (slider.maxValue - 1f)))
@@ -504,6 +524,19 @@ public class EnvironmentStateMachine : MonoBehaviour
 
             var setPBSpeed = SpeedDropdownValueChanged(playBackSpeedDropdown.GetComponent<Dropdown>());
             playBackSpeed = setPBSpeed * 10;
+            var factor = 0f;
+            if ((stepsSkipped <= 30 && stepsSkipped > 0) || (stepsSkipped >= -30 && stepsSkipped < 0))
+            {
+                factor = 10f;
+            }
+            else if ((stepsSkipped <= 100 && stepsSkipped > 0) || (stepsSkipped >= -100 && stepsSkipped < 0))
+            {
+                factor = 6f;
+            }
+            else if ((stepsSkipped > 100 && stepsSkipped > 0) || (stepsSkipped < -100 && stepsSkipped < 0))
+            {
+                factor = 3f;
+            }
             if (stepsSkipped > 0)
             {
                 if (bufferSlider.value == 0f)
@@ -512,11 +545,11 @@ public class EnvironmentStateMachine : MonoBehaviour
                 }
                 else if (controller.currentpos == controller.goalPosition && bufferSlider.value < slider.value)
                 {
-                    bufferSlider.value = bufferSlider.value + (playBackSpeed / 10);
+                    bufferSlider.value = bufferSlider.value + (playBackSpeed / factor);
                 }
                 else if ((int)bufferSlider.value == (int)slider.value)
                 {
-                    Debug.Log("Finished Buffering");
+                    Debug.Log("Finished Buffering forward");
                     controller.playingSequence = false;
                     stepsSkipped = 0;
                     buffering = false;
@@ -527,11 +560,11 @@ public class EnvironmentStateMachine : MonoBehaviour
             {
                 if (controller.currentpos == controller.goalPosition && bufferSlider.value > slider.value)
                 {
-                    bufferSlider.value = bufferSlider.value - (playBackSpeed / 10);
+                    bufferSlider.value = bufferSlider.value - (playBackSpeed / factor);
                 }
                 else if ((int)bufferSlider.value == (int)slider.value)
                 {
-                    Debug.Log("Finished Buffering");
+                    Debug.Log("Finished Buffering backward");
                     controller.playingSequence = false;
                     stepsSkipped = 0;
                     buffering = false;

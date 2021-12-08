@@ -4,77 +4,76 @@ using System.Collections;
 
 public class AgentCollision : MonoBehaviour
 {
+    /*
+   This script is probably not needed anymore!!
+   Text warningText;
+   Image redScreenFlashImage;
 
-    Text warningText;
-    Image redScreenFlashImage;
+   public float flashDelay = 1f;
 
-    public float flashDelay = 1f;
+   Animator animator;
 
-    Animator animator;
+   ObjectPooler objectPooler;
 
-    ObjectPooler objectPooler;
+   bool collision = false;
 
-    bool collision = false;
+   private void Start()
+   {
+       var system = GameObject.FindWithTag("System");
+       redScreenFlashImage = system.GetComponent<UIGlobals>().redScreenFlashImage;
+       animator = GetComponent<Animator>();
+       objectPooler = ObjectPooler.Instance;
 
-    private void Start()
-    {
-        var system = GameObject.FindWithTag("System");
-        redScreenFlashImage = system.GetComponent<UIGlobals>().redScreenFlashImage;
-        animator = GetComponent<Animator>();
-        objectPooler = ObjectPooler.Instance;
+   }
+   void OnTriggerEnter(Collider collider)
+   {
+       collision = true;
+       if (collider.tag == "TrashBoundary")
+       {
+           string trashName = collider.transform.parent.name;
+           string trashIndexString = trashName.Substring(trashName.Length - 1);
+           int trashIndex;
+           int.TryParse(trashIndexString, out trashIndex);
+           Debug.Log("---------------------------------We hit trash: " + trashName + " with index: " + trashIndex);
 
-    }
-    void OnTriggerEnter(Collider collider)
-    {
-        collision = true;
-        if (collider.tag == "TrashBoundary")
-        {
-            string trashName = collider.transform.parent.name;
-            string trashIndexString = trashName.Substring(trashName.Length - 1);
-            int trashIndex;
-            int.TryParse(trashIndexString, out trashIndex);
-            Debug.Log("---------------------------------We hit trash: " + trashName + " with index: " + trashIndex);
+           collider.transform.parent.GetComponent<Trash>().DecreaseFillAmount();
 
-            collider.transform.parent.GetComponent<Trash>().DecreaseFillAmount();
+           animator.SetTrigger("foundTrash");
 
-            animator.SetTrigger("foundTrash");
+       }
+       if (collider.tag == "Wall")
+       {
+           //FlashWhenHit(flashDelay);
+           //TODO check what's wrong with animnator: null reference exception
+           //animator.SetBool("collision", collision);
 
-        }
-        if (collider.tag == "Wall")
-        {
-            //FlashWhenHit(flashDelay);
-            //TODO check what's wrong with animnator: null reference exception
-            //animator.SetBool("collision", collision);
-
-        }
+       }
 
         if (collider.tag == "Agent")
         {
-            warningText.text = "Hit another Agent!!!!";
-            warningText.gameObject.SetActive(true);
             animator.SetBool("collision", collision);
 
         }
-       /* if (collider.tag == "Door")
-        {
-            var doorAn = collider.GetComponentInChildren<Animator>();
-            doorAn.SetTrigger("OpenClose");
-            collision = false;
-        }*/
-    }
+     if (collider.tag == "Door")
+     {
+         var doorAn = collider.GetComponentInChildren<Animator>();
+         doorAn.SetTrigger("OpenClose");
+         collision = false;
+     }
+}
 
     void OnTriggerExit(Collider collider)
     {
 
-       /* if (collider.tag == "Door")
-        {
-            var doorAn = collider.GetComponentInChildren<Animator>();
-            doorAn.SetTrigger("OpenClose");
-        }*/
+        if (collider.tag == "Door")
+         {
+             var doorAn = collider.GetComponentInChildren<Animator>();
+             doorAn.SetTrigger("OpenClose");
+         }
         //else
         //{
-            collision = false;
-            animator.SetBool("collision", collision);
+        collision = false;
+        animator.SetBool("collision", collision);
         //}
 
     }
@@ -106,5 +105,5 @@ public class AgentCollision : MonoBehaviour
     public void SetCollision(bool collision)
     {
         this.collision = collision;
-    }
+    }*/
 }

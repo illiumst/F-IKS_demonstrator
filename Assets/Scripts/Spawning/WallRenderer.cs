@@ -3,43 +3,45 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+
 public class WallRenderer : MonoBehaviour
 {
+    public List<Collider> TriggerList = new List<Collider>();
+
     private void Update()
     {
-        GameObject robot = this.transform.parent.gameObject.transform.GetChild(0).gameObject;
-        this.transform.position = robot.transform.position;
+
     }
     void OnTriggerEnter(Collider collider)
     {
-        //Check for a match with the specified name on any GameObject that collides with your GameObject
-        if (collider.tag == "Wall")
+        if (collider.tag == "Agent")
         {
-            //If the GameObject's name matches the one you suggest, output this message in the console
-            //Debug.Log("________Robot Field of View hit wall");
-            MakeWallTransparent(collider.gameObject);
+            if (!TriggerList.Contains(collider))
+            {
+                TriggerList.Add(collider);
+            }
+            //TODO: dont make transparent when max x or max y
+            var spawner = GameObject.FindWithTag("System").GetComponent<ObjectSpawner>();
+            if (this.gameObject.transform.position.x != spawner.GetMaxWallX() && this.gameObject.transform.position.y != spawner.GetMaxWallY())
+            {
+                MakeWallTransparent(this.gameObject);
+            }
         }
-        if (collider.tag == "Door")
-        {
-            //If the GameObject's name matches the one you suggest, output this message in the console
-            MakeDoorTransparent(collider.gameObject);
-        }
-
     }
     void OnTriggerExit(Collider collider)
     {
-        //Check for a match with the specified name on any GameObject that collides with your GameObject
-        if (collider.tag == "Wall")
+        if (collider.tag == "Agent")
         {
-            //If the GameObject's name matches the one you suggest, output this message in the console
-            //Debug.Log("________Robot Field of View exited wall");
-            MakeWallSolid(collider.gameObject);
-        }
-        if (collider.tag == "Door")
-        {
-            //If the GameObject's name matches the one you suggest, output this message in the console
-            //Debug.Log("________Robot Field of View exited wall");
-            MakeDoorSolid(collider.gameObject);
+            if (TriggerList.Contains(collider))
+            {
+                TriggerList.Remove(collider);
+            }
+            if (TriggerList.Count == 0)
+            {
+                //Check for a match with the specified name on any GameObject that collides with your GameObject  
+                MakeWallSolid(this.gameObject);
+            }
         }
 
     }
@@ -62,23 +64,5 @@ public class WallRenderer : MonoBehaviour
         }
 
     }
-    public void MakeDoorTransparent(GameObject door)
-    {
-        var material = Resources.Load("Materials/DoorMaterialTransparent", typeof(Material)) as Material;
-        foreach (MeshRenderer rend in door.GetComponentsInChildren<MeshRenderer>())
-        {
-            rend.material = material;
-        }
 
-    }
-
-    public void MakeDoorSolid(GameObject door)
-    {
-        var material = Resources.Load("Materials/DoorMaterial", typeof(Material)) as Material;
-        foreach (MeshRenderer rend in door.GetComponentsInChildren<MeshRenderer>())
-        {
-            rend.material = material;
-        }
-
-    }
 }

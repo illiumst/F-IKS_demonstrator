@@ -44,6 +44,9 @@ public class ObjectSpawner : MonoBehaviour
     int tempMaxWallY = 0;
     Vector3 wallCenter;
 
+    int maxWallX;
+    int maxWallY;
+
 
 
     // Start is called before the first frame update
@@ -382,10 +385,9 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
             {
-                //Debug.Log("------Wall3");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
                 WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 90, 0);
+                wallRotation = Quaternion.Euler(0, 0, 0);
 
             }
             else if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
@@ -394,6 +396,8 @@ public class ObjectSpawner : MonoBehaviour
                 //Debug.Log("------Wall4");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
                 WallSpawnObject = wallPiece as GameObject;
+                wallRotation = Quaternion.Euler(0, -270, 0);
+
             }
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1)
             && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y))
@@ -401,7 +405,7 @@ public class ObjectSpawner : MonoBehaviour
                 //Debug.Log("------Wall5");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
                 WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, -90, 0);
+                wallRotation = Quaternion.Euler(0, -180, 0);
 
             }
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
@@ -410,7 +414,7 @@ public class ObjectSpawner : MonoBehaviour
                 //Debug.Log("------Wall6");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
                 WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 180, 0);
+                wallRotation = Quaternion.Euler(0, 270, 0);
 
             }
             else if (CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
@@ -437,7 +441,7 @@ public class ObjectSpawner : MonoBehaviour
                 //Debug.Log("------Wall9");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 180, 0);
+                wallRotation = Quaternion.Euler(0, 0, 0);
             }
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
@@ -445,7 +449,7 @@ public class ObjectSpawner : MonoBehaviour
                 //Debug.Log("------Wall10");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
-                wallRotation = Quaternion.Euler(0, 0, 0);
+                wallRotation = Quaternion.Euler(0, 180, 0);
             }
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
@@ -505,7 +509,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public Vector3 GetRecalculatedPosition(float x, float y, float z)
     {
-        return new Vector3(x - wallCenter.x, y, z - wallCenter.z);
+        return new Vector3(x - wallCenter.x, y, wallCenter.z - z);
     }
 
     public Vector3 GetWallCenter(List<Wall> walls, int episode)
@@ -524,6 +528,8 @@ public class ObjectSpawner : MonoBehaviour
                 tempMaxWallY = wall.y;
             }
         }
+        maxWallX = tempMaxWallX;
+        maxWallY = tempMaxWallY;
         return new Vector3(tempMaxWallX / 2, 0f, tempMaxWallY / 2);
     }
     public bool CheckIfWallExistsAtPosition(int x, int y)
@@ -537,5 +543,15 @@ public class ObjectSpawner : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public int GetMaxWallX()
+    {
+        return this.maxWallX;
+    }
+
+    public int GetMaxWallY()
+    {
+        return this.maxWallY;
     }
 }

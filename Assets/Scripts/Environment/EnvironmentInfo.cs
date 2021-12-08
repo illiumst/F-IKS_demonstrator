@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class EnvironmentInfo
 {
+    /* OLD!!!!
     public int[][] agents_pos { get; set; }
     //public int[][] walls_pos { get; set; }
     public int[][] dirt_pos { get; set; }
@@ -20,4 +21,5 @@ public class EnvironmentInfo
     {
 
     }
+    */
 }
