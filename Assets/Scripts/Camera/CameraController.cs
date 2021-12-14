@@ -38,7 +38,7 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         targetPoint = target.transform.position;
-        transform.LookAt(targetPoint);
+        //transform.LookAt(targetPoint);
         ZoomInButton.onClick.AddListener(TaskOnClickZoomIn);
         ZoomOutButton.onClick.AddListener(TaskOnClickZoomOut);
         PanUpButton.onClick.AddListener(TaskOnClickPanUp);
@@ -56,6 +56,9 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //targetPoint = target.transform.position;
+        //transform.LookAt(targetPoint);
+
         if (Input.GetKey("w"))
         {
             TaskOnClickPanUp();

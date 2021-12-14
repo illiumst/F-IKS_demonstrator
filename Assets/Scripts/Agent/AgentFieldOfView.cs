@@ -21,7 +21,7 @@ public class AgentFieldOfView : MonoBehaviour
         viewMesh = new Mesh();
         viewMesh.name = "View Mesh";
         viewMeshFilter.mesh = viewMesh;
-        StartCoroutine("FindTargetsWithDelay", 0.2f);
+        StartCoroutine("FindTargetsWithDelay", .5f);
     }
     IEnumerator FindTargetsWithDelay(float delay)
     {
@@ -37,10 +37,8 @@ public class AgentFieldOfView : MonoBehaviour
     }
     void FindVisibleTargets()
     {
-        //Debug.Log("________________ Trying to find targets....");
         visibleTargets.Clear();
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
-        //Debug.Log("________________ Targets in view radius: " + targetsInViewRadius.Length);
 
 
         for (int i = 0; i < targetsInViewRadius.Length; i++)
@@ -54,7 +52,6 @@ public class AgentFieldOfView : MonoBehaviour
                 if (!Physics.Raycast(transform.position, dirToTarget, distToTarget, obstacleMask))
                 {
                     visibleTargets.Add(target);
-                    //Debug.Log("________________ Found target without obstacle....");
                 }
             }
         }
@@ -71,7 +68,7 @@ public class AgentFieldOfView : MonoBehaviour
             float angle = transform.eulerAngles.y - viewAngle / 2 + stepAngleSize * i;
             ViewCastInfo newViewCast = ViewCast(angle);
             viewPoints.Add(newViewCast.point);
-            //Debug.DrawLine(transform.position, transform.position + DirFromAngle(angle, true) * viewRadius, Color.red);
+            Debug.DrawLine(transform.position, transform.position + DirFromAngle(angle, true) * viewRadius, Color.red);
         }
 
         int vertexCount = viewPoints.Count + 1;

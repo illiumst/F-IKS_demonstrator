@@ -294,7 +294,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     public Vector3 GetRecalculatedPosition(float x, float y, float z)
     {
         Vector3 center = environmentCenter;
-        return new Vector3(x - center.x, y, center.z - z);
+        return new Vector3(x - center.x, y, z - center.z);
     }
 
     public void LoadNewTimeStep(int episode, int step)
@@ -327,7 +327,7 @@ public class EnvironmentStateMachine : MonoBehaviour
                 if (!doors[i].state.Equals(doorsPrev[i].state))
                 {
                     var doorAn = doorObjects[i].GetComponentInChildren<Animator>();
-                    doorAn.SetTrigger("OpenClose");
+                    doorAn.SetTrigger("doorOpen");
                 }
             }
         }

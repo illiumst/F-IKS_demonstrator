@@ -7,6 +7,7 @@ public class EnvironmentConstants
 {
     //public List<Wall> walls { get; set; }
 
+    //TODO hier kommt noch ein header
     public List<EnvironmentEpisode> episodes { get; set; }
 
 }

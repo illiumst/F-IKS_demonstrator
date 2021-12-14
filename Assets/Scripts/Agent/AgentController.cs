@@ -135,7 +135,7 @@ public class AgentController : MonoBehaviour
     public Vector3 GetRecalculatedPosition(float x, float y, float z)
     {
         Vector3 center = system.GetComponent<EnvironmentStateMachine>().environmentCenter;
-        return new Vector3(x - center.x, y, center.z - z);
+        return new Vector3(x - center.x, y, z - center.z);
     }
 
     public void UpdateAgentListItems(GameObject agentObject, GameObject listItem, int x, int y, string name, string action, bool valid)
