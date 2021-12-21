@@ -25,6 +25,7 @@ public class AgentController : MonoBehaviour
 
     public bool playingSequence;
     public bool valid;
+    public bool backwardBuffer;
 
     bool manualRobotControl;
 
@@ -39,6 +40,7 @@ public class AgentController : MonoBehaviour
         goalPosition = currentpos;
         sliderValue = 0;
         valid = true;
+        backwardBuffer = false;
 
         system = GameObject.FindWithTag("System");
 
@@ -121,6 +123,10 @@ public class AgentController : MonoBehaviour
         animator.SetFloat("speed", speed);
 
         this.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
+        if (backwardBuffer)
+        {
+            this.transform.Rotate(new Vector3(0, 180, 0), Space.Self);
+        }
         Vector3 difference = goalPosition - currentpos;
         var name = this.transform.GetChild(4);
         var wallVisualiser = this.transform.GetChild(6);

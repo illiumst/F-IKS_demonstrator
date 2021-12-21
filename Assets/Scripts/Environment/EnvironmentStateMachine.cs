@@ -327,7 +327,13 @@ public class EnvironmentStateMachine : MonoBehaviour
                 if (!doors[i].state.Equals(doorsPrev[i].state))
                 {
                     var doorAn = doorObjects[i].GetComponentInChildren<Animator>();
-                    doorAn.SetTrigger("doorOpen");
+
+                    if(doorsPrev[i].state.Equals("closed")){
+                        doorAn.SetTrigger("doorOpen");
+                    }
+                    else{
+                        doorAn.SetTrigger("doorClose");
+                    }
                 }
             }
         }
@@ -525,6 +531,10 @@ public class EnvironmentStateMachine : MonoBehaviour
             var setPBSpeed = SpeedDropdownValueChanged(playBackSpeedDropdown.GetComponent<Dropdown>());
             playBackSpeed = setPBSpeed * 10;
             var factor = 0f;
+            if (stepsSkipped < 0)
+            {
+                controller.backwardBuffer = true;
+            }
             if ((stepsSkipped <= 30 && stepsSkipped > 0) || (stepsSkipped >= -30 && stepsSkipped < 0))
             {
                 factor = 10f;
@@ -539,6 +549,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             }
             if (stepsSkipped > 0)
             {
+                controller.backwardBuffer = false;
                 if (bufferSlider.value == 0f)
                 {
                     bufferSlider.value = 1f;
@@ -553,6 +564,7 @@ public class EnvironmentStateMachine : MonoBehaviour
                     controller.playingSequence = false;
                     stepsSkipped = 0;
                     buffering = false;
+                    controller.backwardBuffer = false;
                     playBackSpeed = setPBSpeed;
                 }
             }
@@ -566,6 +578,7 @@ public class EnvironmentStateMachine : MonoBehaviour
                 {
                     Debug.Log("Finished Buffering backward");
                     controller.playingSequence = false;
+                    controller.backwardBuffer = false;
                     stepsSkipped = 0;
                     buffering = false;
                     playBackSpeed = setPBSpeed;
