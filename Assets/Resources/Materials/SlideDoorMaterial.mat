@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WallMaterialSeeThrough
+  m_Name: SlideDoorMaterial
   m_Shader: {fileID: -6465566751694194690, guid: e1a57e69bc24b493e8bf1bdb9c80c586, type: 3}
   m_ShaderKeywords: _ALPHATEST_ON _SPECULAR_SETUP
   m_LightmapFlags: 4
@@ -121,15 +121,15 @@ Material:
     - _UVSec: 0
     - _WorkflowMode: 0
     - _ZWrite: 1
-    - _opacity: 0.6
+    - _opacity: 0.5
     - _size: 1
-    - _size1: 0.7
+    - _size1: 0
     - _size2: 0
-    - _size3: 0.7
+    - _size3: 0
     - _size4: 0
-    - _smoothness: 0.5
+    - _smoothness: 0.7
     m_Colors:
-    - Color_8f052fad1f734c69b65fa3e4414bff65: {r: 1, g: 1, b: 1, a: 0}
+    - Color_8f052fad1f734c69b65fa3e4414bff65: {r: 0.36267355, g: 0.39560285, b: 0.4716981, a: 0}
     - Vector2_778966a213664052a83ea88f482e88f9: {r: 0.5, g: -1.5, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9196337389631467828}
   m_Layer: 10
   m_Name: Sphere
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 8325762977900776}
   m_Layer: 10
   m_Name: Sphere (1)
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -203,7 +203,6 @@ GameObject:
   - component: {fileID: 6930260493473790122}
   - component: {fileID: 813534649205245333}
   - component: {fileID: 7034673954169747072}
-  - component: {fileID: 8395504960605132117}
   m_Layer: 10
   m_Name: Door
   m_TagString: Door
@@ -254,7 +253,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5eef7ba63d8c047edaf06a16964a152f, type: 2}
+  - {fileID: 2100000, guid: b4b23edac8ee44f2ead0aa3ae0dd1c2a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -308,19 +307,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &8395504960605132117
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6930260493473790127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 084b9e64ee6ec472d853e83dcbe2026c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TriggerList: []
 --- !u!1 &6930260493635302305
 GameObject:
   m_ObjectHideFlags: 0

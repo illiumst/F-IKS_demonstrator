@@ -5,6 +5,7 @@ using UnityEngine;
 public class AgentOcclusionCircleSynch : MonoBehaviour
 {
     public Material WallMaterial;
+    public Material DoorMaterial;
 
     public static int Pos1ID = Shader.PropertyToID("_agent1Pos");
     public static int Pos2ID = Shader.PropertyToID("_agent2Pos");
@@ -50,6 +51,7 @@ public class AgentOcclusionCircleSynch : MonoBehaviour
     { 
         var view1 = Camera.main.WorldToViewportPoint(transform.position);
         WallMaterial.SetVector(posID, view1);
+        DoorMaterial.SetVector(posID, view1);
 
 
         int layerMask = 1 << 10;
@@ -68,10 +70,14 @@ public class AgentOcclusionCircleSynch : MonoBehaviour
                 if (hit.collider.tag == "Wall"){
                     WallMaterial.SetFloat(sizeID, 0.7f);
                 }
+                if (hit.collider.tag == "Door"){
+                    DoorMaterial.SetFloat(sizeID, 0.7f);
+                }
             } 
         }
         else{
                 WallMaterial.SetFloat(sizeID, 0);
+                DoorMaterial.SetFloat(sizeID, 0);
         }
 
         

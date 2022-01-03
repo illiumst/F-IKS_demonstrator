@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8878501036068555237}
   m_Layer: 10
   m_Name: WallBlock
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -273,7 +273,7 @@ GameObject:
   - component: {fileID: 8239192983426025895}
   m_Layer: 10
   m_Name: Wall1 (3)
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

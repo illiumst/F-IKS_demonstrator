@@ -459,6 +459,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WallMaterial: {fileID: 2100000, guid: d733bfeaebaf34566b186699d794ee4f, type: 2}
+  DoorMaterial: {fileID: 2100000, guid: b4b23edac8ee44f2ead0aa3ae0dd1c2a, type: 2}
 --- !u!1 &6289344002056104605
 GameObject:
   m_ObjectHideFlags: 0
