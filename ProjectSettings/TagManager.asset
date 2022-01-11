@@ -30,6 +30,11 @@ TagManager:
   - ZoneObjects
   - DirtRegister
   - BufferFillArea
+  - SpeechBubbleContent
+  - SpeechBubble
+  - AgentCanvas
+  - SpeechBubbleInvalid
+  - SpeechBubbleDirectionText
   layers:
   - Default
   - TransparentFX
@@ -66,4 +71,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 4061794351
     locked: 0

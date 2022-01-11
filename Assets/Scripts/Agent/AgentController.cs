@@ -33,6 +33,28 @@ public class AgentController : MonoBehaviour
 
     Agent parentAgent;
 
+    GameObject agentCanvas;
+    GameObject speechBubble;
+    GameObject speechBubbleContent;
+    GameObject speechBubbleInvalidityImage;
+    GameObject speechBubbleDirectionText;
+
+    Texture2D cleaningTex;
+    //Texture2D cleaningInvalidTex;
+    //Texture2D wallColTex;
+    //Texture2D agentColTex;
+    Texture2D itemPickTex;
+    //Texture2D itemOffTex;
+    Texture2D directionTex;
+
+    Sprite cleaningSprite;
+    //Sprite cleaningInvalidSprite;
+    //Sprite wallColSprite;
+    //Sprite agentColSprite;
+    Sprite itemPickSprite;
+    //Sprite itemOffSprite;
+    Sprite directionSprite;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,6 +71,31 @@ public class AgentController : MonoBehaviour
         animator = GetComponent<Animator>();
 
         manualRobotControl = false;
+
+        agentCanvas = FindGameObjectInChildWithTag(gameObject, "AgentCanvas");
+        speechBubble = FindGameObjectInChildWithTag(agentCanvas, "SpeechBubble");
+        speechBubbleContent = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleContent");
+        speechBubbleInvalidityImage = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleInvalid");
+        speechBubbleDirectionText = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleDirectionText");
+
+        cleaningTex = Resources.Load<Texture2D>("Sprites/cleaningNew");
+        //cleaningInvalidTex = Resources.Load<Texture2D>("Sprites/cleaningNewInvalid");
+        //wallColTex = Resources.Load<Texture2D>("Sprites/wallCol");
+        //agentColTex = Resources.Load<Texture2D>("Sprites/agentCol");
+        itemPickTex = Resources.Load<Texture2D>("Sprites/boxUp");
+        //itemOffTex = Resources.Load<Texture2D>("Sprites/boxDown");
+        directionTex = Resources.Load<Texture2D>("Sprites/direction");
+
+
+        cleaningSprite = Sprite.Create(cleaningTex, new Rect(0.0f, 0.0f, cleaningTex.width, cleaningTex.height), new Vector2(0.5f, 0.5f), 100.0f);
+        //cleaningInvalidSprite = Sprite.Create(cleaningInvalidTex, new Rect(0.0f, 0.0f, cleaningInvalidTex.width, cleaningInvalidTex.height), new Vector2(0.5f, 0.5f), 100.0f);
+        //wallColSprite = Sprite.Create(wallColTex, new Rect(0.0f, 0.0f, wallColTex.width, wallColTex.height), new Vector2(0.5f, 0.5f), 100.0f);
+        //agentColSprite = Sprite.Create(agentColTex, new Rect(0.0f, 0.0f, agentColTex.width, agentColTex.height), new Vector2(0.5f, 0.5f), 100.0f);
+        itemPickSprite = Sprite.Create(itemPickTex, new Rect(0.0f, 0.0f, itemPickTex.width, itemPickTex.height), new Vector2(0.5f, 0.5f), 100.0f);
+        //itemOffSprite = Sprite.Create(itemOffTex, new Rect(0.0f, 0.0f, itemOffTex.width, itemOffTex.height), new Vector2(0.5f, 0.5f), 100.0f);
+        directionSprite = Sprite.Create(directionTex, new Rect(0.0f, 0.0f, directionTex.width, directionTex.height), new Vector2(0.5f, 0.5f), 100.0f);
+
+        speechBubble.SetActive(false);
     }
 
     // Update is called once per frame
@@ -194,5 +241,189 @@ public class AgentController : MonoBehaviour
         nameTag.GetComponent<TextMeshProUGUI>().color = textColor;
     }
 
+    public void UpdateSpeechBubble(string action, bool valid)
+    {
+        var rectTrans = speechBubbleContent.GetComponent<RectTransform>();
+        var cam = Camera.main;
+        if (valid)
+        {
+            speechBubbleInvalidityImage.SetActive(false);
+            speechBubble.GetComponent<Image>().color = new Color32(190, 255, 200, 255);
+
+            switch (action)
+            {
+                case "Action[CLEAN_UP]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = cleaningSprite;
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
+                    //rectTrans.Rotate(new Vector3(0, 0, 0));
+                    speechBubbleDirectionText.SetActive(false);
+                    speechBubble.SetActive(true);
+                    break;
+                case "Action[ITEM_ACTION]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = itemPickSprite;
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
+                    //rectTrans.Rotate(new Vector3(0, 0, 0));
+                    speechBubbleDirectionText.SetActive(false);
+                    speechBubble.SetActive(true);
+                    break;
+                case "Action[NORTH]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "N";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
+                    //rectTrans.Rotate(new Vector3(0, 0, 0));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[NORTHEAST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "N/E";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 45));
+                    //rectTrans.Rotate(new Vector3(0, 0, 45));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[EAST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "E";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 90));
+                    //rectTrans.Rotate(new Vector3(0, 0, 90));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[SOUTHEAST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "S/E";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 135));
+                    //rectTrans.Rotate(new Vector3(0, 0, 135));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[SOUTH]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "S";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 180));
+                    //rectTrans.Rotate(new Vector3(0, 0, 180));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[SOUTHWEST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "S/W";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 225));
+                    //rectTrans.Rotate(new Vector3(0, 0, 225));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[WEST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "W";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 270));
+                    //rectTrans.Rotate(new Vector3(0, 0, 270));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[NORTHWEST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "N/W";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 315));
+                    //rectTrans.Rotate(new Vector3(0, 0, 315));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+
+                default: speechBubble.SetActive(false); break;
+            }
+        }
+        else
+        {
+            speechBubbleInvalidityImage.SetActive(true);
+            speechBubble.GetComponent<Image>().color = new Color32(255, 190, 190, 255);
+            switch (action)
+            {
+                case "Action[CLEAN_UP]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = cleaningSprite;
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
+                    //rectTrans.Rotate(new Vector3(0, 0, 0));
+                    speechBubbleDirectionText.SetActive(false);
+                    speechBubble.SetActive(true);
+                    break;
+                case "Action[ITEM_ACTION]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = itemPickSprite;
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
+                    //rectTrans.Rotate(new Vector3(0, 0, 0));
+                    speechBubbleDirectionText.SetActive(false);
+                    speechBubble.SetActive(true);
+                    break;
+                case "Action[NORTH]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "N";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
+                    //rectTrans.Rotate(new Vector3(0, 0, 0));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[NORTHEAST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "N/E";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 45));
+                    //rectTrans.Rotate(new Vector3(0, 0, 45));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[EAST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "E";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 90));
+                    //rectTrans.Rotate(new Vector3(0, 0, 90));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[SOUTHEAST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "S/E";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 135));
+                    //rectTrans.Rotate(new Vector3(0, 0, 135));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[SOUTH]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "S";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 180));
+                    //rectTrans.Rotate(new Vector3(0, 0, 180));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[SOUTHWEST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "S/W";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 225));
+                    //rectTrans.Rotate(new Vector3(0, 0, 225));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[WEST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "W";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 270));
+                    //rectTrans.Rotate(new Vector3(0, 0, 270));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+                case "Action[NORTHWEST]":
+                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
+                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = "N/W";
+                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(0, 90, 315));
+                    //rectTrans.Rotate(new Vector3(0, 0, 315));
+                    speechBubbleDirectionText.SetActive(true);
+                    speechBubble.SetActive(true); break;
+
+                default: speechBubble.SetActive(false); break;
+            }
+        }
+        //speechBubble.transform.LookAt(cam.transform.position);
+
+    }
+
+    public static GameObject FindGameObjectInChildWithTag(GameObject parent, string tag)
+    {
+        Transform t = parent.transform;
+
+        for (int i = 0; i < t.childCount; i++)
+        {
+            if (t.GetChild(i).gameObject.tag == tag)
+            {
+                return t.GetChild(i).gameObject;
+            }
+
+        }
+
+        return null;
+    }
 
 }

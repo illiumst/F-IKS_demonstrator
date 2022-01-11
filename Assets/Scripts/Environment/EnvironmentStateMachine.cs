@@ -102,7 +102,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             Debug.Log("PlaybackSpeed set to: " + playBackSpeed);
 
         });
-        speedDrop.value = 3;
+        speedDrop.value = 1;
 
     }
 
@@ -116,7 +116,9 @@ public class EnvironmentStateMachine : MonoBehaviour
         {
             slider.onValueChanged.AddListener(delegate
             {
-                LoadNewTimeStep(currentEpisode, currentStep);
+                slider.value = Mathf.Round(slider.value * 100f) / 100f;
+                Debug.Log("Timestep slider: " + slider.value);
+
                 if ((int)slider.value > currentStep + 1)
                 {
                     stepsSkipped = ((int)slider.value - currentStep);
@@ -142,10 +144,20 @@ public class EnvironmentStateMachine : MonoBehaviour
 
             bufferSlider.onValueChanged.AddListener(delegate
             {
-                LoadNewTimeStep(currentEpisode, currentStep);
+                bufferSlider.value = Mathf.Round(bufferSlider.value * 100f) / 100f;
+                Debug.Log("Timestep buffer: " + bufferSlider.value + " currentstep: " + currentStep);
+                if (bufferSlider.value % 1 == 0)
+                {
+                    if (bufferSlider.value == currentStep + 1f)
+                    {
+                        LoadNewTimeStep(currentEpisode, currentStep);
+                    }
+                }
+
             });
 
-            if ((int)bufferSlider.value != (int)slider.value)
+            //Debug.Log("bufferSlider: " + bufferSlider.value + " slider: " + slider.value);
+            if (bufferSlider.value != slider.value)
             {
                 buffering = true;
             }
@@ -159,6 +171,7 @@ public class EnvironmentStateMachine : MonoBehaviour
                 HandleBufferSequenceUpdate(stepsSkipped);
                 steptext.SetActive(true);
             }
+
         }
 
     }
@@ -208,15 +221,15 @@ public class EnvironmentStateMachine : MonoBehaviour
     float SpeedDropdownValueChanged(Dropdown change)
     {
         var pbSpeed = 1f;
+        //adjust slider values to make sure values reach whole numbers
+        slider.value = (int)slider.value;
+        bufferSlider.value = (int)bufferSlider.value;
         switch (change.value)
         {
-            case 0: pbSpeed = 0.25f; break;
-            case 1: pbSpeed = 0.5f; break;
-            case 2: pbSpeed = 0.75f; break;
-            case 3: pbSpeed = 1f; break;
-            case 4: pbSpeed = 1.25f; break;
-            case 5: pbSpeed = 1.5f; break;
-            case 6: pbSpeed = 1.75f; break;
+            case 0: pbSpeed = 0.5f; break;
+            case 1: pbSpeed = 1f; break;
+            case 2: pbSpeed = 2f; break;
+            case 3: pbSpeed = 5f; break;
             default: pbSpeed = 1f; break;
         }
         return pbSpeed;
@@ -246,13 +259,10 @@ public class EnvironmentStateMachine : MonoBehaviour
     void InitializePlaybackSpeedDropdown()
     {
         var options = new List<string>();
-        options.Add("0.25x");
         options.Add("0.5x");
-        options.Add("0.75x");
         options.Add("Normal");
-        options.Add("1.25x");
-        options.Add("1.5x");
-        options.Add("1.75x");
+        options.Add("2x");
+        options.Add("5x");
         var drop = playBackSpeedDropdown.GetComponent<Dropdown>();
         drop.AddOptions(options);
     }
@@ -306,6 +316,7 @@ public class EnvironmentStateMachine : MonoBehaviour
         UpdateItemObjects(episode, step);
         UpdateSliderLabel();
         UpdateStepOverview();
+        Debug.Log("Loading new time step.....step: " + currentStep);
     }
 
     public void UpdateAgents(int episode, int step)
@@ -328,10 +339,12 @@ public class EnvironmentStateMachine : MonoBehaviour
                 {
                     var doorAn = doorObjects[i].GetComponentInChildren<Animator>();
 
-                    if(doorsPrev[i].state.Equals("closed")){
+                    if (doorsPrev[i].state.Equals("closed"))
+                    {
                         doorAn.SetTrigger("doorOpen");
                     }
-                    else{
+                    else
+                    {
                         doorAn.SetTrigger("doorClose");
                     }
                 }
@@ -375,6 +388,8 @@ public class EnvironmentStateMachine : MonoBehaviour
         for (int i = 0; i < agents.Count; i++)
         {
             var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
+            agentObjController.UpdateSpeechBubble(agents[i].action, agents[i].valid);
+
             if (!agents[i].valid)
             {
                 agentObjController.valid = false;
@@ -391,6 +406,7 @@ public class EnvironmentStateMachine : MonoBehaviour
                 if (agents[i].action.Equals("Action[CLEAN_UP]"))
                 {
                     agentObjController.animator.SetTrigger("foundTrash");
+                    SpawnCleaningBubbles(agentObjController.goalPosition);
                 }
                 if (agents[i].action.Equals("Action[ITEM_ACTION]"))
                 {
@@ -411,19 +427,19 @@ public class EnvironmentStateMachine : MonoBehaviour
 
         switch (agent.action)
         {
-            case "Action[NORTH]": return CheckForWall(x, y - 1, episode);
-            case "Action[NORTHEAST]": return CheckForWall(x + 1, y - 1, episode);
-            case "Action[EAST]": return CheckForWall(x + 1, y, episode);
-            case "Action[SOUTHEAST]": return CheckForWall(x + 1, y + 1, episode);
-            case "Action[SOUTH]": return CheckForWall(x, y + 1, episode);
-            case "Action[SOUTHWEST]": return CheckForWall(x - 1, y + 1, episode);
-            case "Action[WEST]": return CheckForWall(x - 1, y, episode);
-            case "Action[NORTHWEST]": return CheckForWall(x - 1, y - 1, episode);
+            case "Action[NORTH]": return CheckForWall(x, y - 1, episode, agentObjController);
+            case "Action[NORTHEAST]": return CheckForWall(x + 1, y - 1, episode, agentObjController);
+            case "Action[EAST]": return CheckForWall(x + 1, y, episode, agentObjController);
+            case "Action[SOUTHEAST]": return CheckForWall(x + 1, y + 1, episode, agentObjController);
+            case "Action[SOUTH]": return CheckForWall(x, y + 1, episode, agentObjController);
+            case "Action[SOUTHWEST]": return CheckForWall(x - 1, y + 1, episode, agentObjController);
+            case "Action[WEST]": return CheckForWall(x - 1, y, episode, agentObjController);
+            case "Action[NORTHWEST]": return CheckForWall(x - 1, y - 1, episode, agentObjController);
             default: return false; ;
         }
     }
 
-    bool CheckForWall(int x, int y, int episode)
+    bool CheckForWall(int x, int y, int episode, AgentController ctr)
     {
         bool wallExists = false;
         List<Wall> walls = environmentConstants.episodes[episode].steps[0].WallTiles;
@@ -432,6 +448,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             if (wall.x == x && wall.y == y)
             {
                 wallExists = true;
+                //ctr.UpdateSpeechBubbleWallCol();
             }
         }
         return wallExists;
@@ -489,12 +506,18 @@ public class EnvironmentStateMachine : MonoBehaviour
         {
             if (GetDirtByName(dirtObj.name) == null)
             {
-                dirtObj.SetActive(false);
+                StartCoroutine(DeleteDirtObject(dirtObj));
             }
         }
     }
 
-    public void HandleSequencePlayUpdate()
+    IEnumerator DeleteDirtObject(GameObject dirt)
+    {
+        yield return new WaitForSeconds(1);
+        dirt.SetActive(false);
+    }
+
+    void HandleSequencePlayUpdate()
     {
 
         foreach (GameObject agentObj in agentObjects)
@@ -509,6 +532,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             else if (controller.currentpos == controller.goalPosition && slider.value < (slider.maxValue - 1f))
             {
                 slider.value = slider.value + (playBackSpeed / 10f);
+                //Debug.Log(" Sequence steps skipped normal: " + slider.value);
                 bufferSlider.value = slider.value;
             }
             else if ((controller.currentpos == controller.goalPosition) && (slider.value == (slider.maxValue - 1f)))
@@ -521,32 +545,28 @@ public class EnvironmentStateMachine : MonoBehaviour
         }
     }
 
-    public void HandleBufferSequenceUpdate(int stepsSkipped)
+    void HandleBufferSequenceUpdate(int stepsSkipped)
     {
         foreach (GameObject agentObj in agentObjects)
         {
             var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
             controller.playingSequence = true;
-
-            var setPBSpeed = SpeedDropdownValueChanged(playBackSpeedDropdown.GetComponent<Dropdown>());
-            playBackSpeed = setPBSpeed * 10;
+            float setPBSpeed = SpeedDropdownValueChanged(playBackSpeedDropdown.GetComponent<Dropdown>());
+            Debug.Log("Buffering....");
             var factor = 0f;
-            if (stepsSkipped < 0)
-            {
-                controller.backwardBuffer = true;
-            }
             if ((stepsSkipped <= 30 && stepsSkipped > 0) || (stepsSkipped >= -30 && stepsSkipped < 0))
             {
                 factor = 10f;
             }
             else if ((stepsSkipped <= 100 && stepsSkipped > 0) || (stepsSkipped >= -100 && stepsSkipped < 0))
             {
-                factor = 6f;
+                factor = 5f;
             }
             else if ((stepsSkipped > 100 && stepsSkipped > 0) || (stepsSkipped < -100 && stepsSkipped < 0))
             {
-                factor = 3f;
+                factor = 2f;
             }
+            //buffering forward
             if (stepsSkipped > 0)
             {
                 controller.backwardBuffer = false;
@@ -556,9 +576,10 @@ public class EnvironmentStateMachine : MonoBehaviour
                 }
                 else if (controller.currentpos == controller.goalPosition && bufferSlider.value < slider.value)
                 {
-                    bufferSlider.value = bufferSlider.value + (playBackSpeed / factor);
+                    bufferSlider.value += (playBackSpeed / factor);
+                    Debug.Log("Adjusting buffer slider forward: " + bufferSlider.value);
                 }
-                else if ((int)bufferSlider.value == (int)slider.value)
+                else if (bufferSlider.value == slider.value)
                 {
                     Debug.Log("Finished Buffering forward");
                     controller.playingSequence = false;
@@ -568,13 +589,18 @@ public class EnvironmentStateMachine : MonoBehaviour
                     playBackSpeed = setPBSpeed;
                 }
             }
-            else
+            //buffering backwards
+            else if (stepsSkipped < 0)
             {
+                controller.backwardBuffer = true;
+
                 if (controller.currentpos == controller.goalPosition && bufferSlider.value > slider.value)
                 {
                     bufferSlider.value = bufferSlider.value - (playBackSpeed / factor);
+                    Debug.Log("Adjusting buffer slider backwards: " + bufferSlider.value);
+
                 }
-                else if ((int)bufferSlider.value == (int)slider.value)
+                else if (bufferSlider.value == slider.value)
                 {
                     Debug.Log("Finished Buffering backward");
                     controller.playingSequence = false;
@@ -587,7 +613,6 @@ public class EnvironmentStateMachine : MonoBehaviour
                     bufferFill.color = Color.white;
                 }
             }
-
         }
     }
 
@@ -598,26 +623,50 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     void PlaySequence()
     {
+        playingSequence = true;
+        playButton.gameObject.SetActive(false);
+        pauseButton.gameObject.SetActive(true);
+        bufferSlider.value = (int)bufferSlider.value;
+        slider.value = bufferSlider.value;
+        LoadNewTimeStep(currentEpisode, currentStep);
+        buffering = false;
+
         foreach (GameObject agentObj in agentObjects)
         {
             var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
             controller.playingSequence = true;
-            playingSequence = true;
-            playButton.gameObject.SetActive(false);
-            pauseButton.gameObject.SetActive(true);
         }
     }
 
     void PauseSequence()
     {
+        playingSequence = false;
+        playButton.gameObject.SetActive(true);
+        pauseButton.gameObject.SetActive(false);
+
         foreach (GameObject agentObj in agentObjects)
         {
             var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
             controller.playingSequence = false;
-            playingSequence = false;
-            playButton.gameObject.SetActive(true);
-            pauseButton.gameObject.SetActive(false);
         }
+    }
+
+    void SpawnCleaningBubbles(Vector3 pos)
+    {
+        StartCoroutine(BubbleSpawn(pos));
+    }
+
+    IEnumerator BubbleSpawn(Vector3 pos)
+    {
+        //spawn bubbles
+        Debug.Log("Spawning Bubbles....");
+        var particleRes = Resources.Load("Prefabs/CleaningParticlesNew") as GameObject;
+        var particlePos = new Vector3(pos.x, 0.3f, pos.z);
+        GameObject particles = Instantiate(particleRes, particlePos, Quaternion.identity, null) as GameObject;
+        ParticleSystem ps = particles.GetComponent<ParticleSystem>();
+        yield return new WaitForSeconds(2);
+        //destroy bubbles
+        Destroy(particles);
     }
 
     public Agent GetAgentByName(string name)
