@@ -6,6 +6,7 @@
 
 **Opening the project**
 - in the Unity Hub under "Projects" load the cloned project from the folder on your computer
+- to see the most up to date version of the project: check out the git branch "develop"
 - double click the project to open it in Unity
 
 ![plot](./Screenshots/UnityHub.png)
