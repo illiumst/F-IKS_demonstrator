@@ -18,6 +18,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     Button nextNextButton;
     Button previousButton;
     Button previousPreviousButton;
+
     GameObject episodeSelectionDropdown;
     GameObject playBackSpeedDropdown;
     public GameObject stepOverviewText;
@@ -69,6 +70,7 @@ public class EnvironmentStateMachine : MonoBehaviour
         nextNextButton = system.GetComponent<UIGlobals>().nextNextButton;
         previousButton = system.GetComponent<UIGlobals>().previousButton;
         previousPreviousButton = system.GetComponent<UIGlobals>().previousPreviousButton;
+
 
         //slider
         slider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;

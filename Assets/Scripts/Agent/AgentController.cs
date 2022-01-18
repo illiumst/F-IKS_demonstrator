@@ -39,6 +39,9 @@ public class AgentController : MonoBehaviour
     GameObject speechBubbleInvalidityImage;
     GameObject speechBubbleDirectionText;
 
+    Toggle showValidActionsToggle;
+    Toggle showInvalidActionsToggle;
+
     Texture2D cleaningTex;
     //Texture2D cleaningInvalidTex;
     //Texture2D wallColTex;
@@ -78,6 +81,9 @@ public class AgentController : MonoBehaviour
         speechBubbleInvalidityImage = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleInvalid");
         speechBubbleDirectionText = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleDirectionText");
 
+        showValidActionsToggle = GameObject.FindWithTag("ValidActionsToggle").GetComponent<Toggle>();
+        showInvalidActionsToggle = GameObject.FindWithTag("InvalidActionsToggle").GetComponent<Toggle>();
+
         cleaningTex = Resources.Load<Texture2D>("Sprites/cleaningNew");
         //cleaningInvalidTex = Resources.Load<Texture2D>("Sprites/cleaningNewInvalid");
         //wallColTex = Resources.Load<Texture2D>("Sprites/wallCol");
@@ -96,6 +102,7 @@ public class AgentController : MonoBehaviour
         directionSprite = Sprite.Create(directionTex, new Rect(0.0f, 0.0f, directionTex.width, directionTex.height), new Vector2(0.5f, 0.5f), 100.0f);
 
         speechBubble.SetActive(false);
+
     }
 
     // Update is called once per frame
@@ -167,7 +174,6 @@ public class AgentController : MonoBehaviour
     public void MoveRobotTo(Vector3 position)
     {
         animator.SetBool("moving", true);
-        animator.SetFloat("speed", speed);
 
         this.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
         //StartCoroutine(LerpPosition(goalPosition, 1));
@@ -245,7 +251,7 @@ public class AgentController : MonoBehaviour
     {
         var rectTrans = speechBubbleContent.GetComponent<RectTransform>();
         var cam = Camera.main;
-        if (valid)
+        if (valid && showInvalidActionsToggle.isOn)
         {
             speechBubbleInvalidityImage.SetActive(false);
             speechBubble.GetComponent<Image>().color = new Color32(190, 255, 200, 255);
@@ -326,7 +332,7 @@ public class AgentController : MonoBehaviour
                 default: speechBubble.SetActive(false); break;
             }
         }
-        else
+        else if (!valid && showInvalidActionsToggle.isOn)
         {
             speechBubbleInvalidityImage.SetActive(true);
             speechBubble.GetComponent<Image>().color = new Color32(255, 190, 190, 255);
@@ -406,7 +412,10 @@ public class AgentController : MonoBehaviour
                 default: speechBubble.SetActive(false); break;
             }
         }
-        //speechBubble.transform.LookAt(cam.transform.position);
+        else
+        {
+            speechBubble.SetActive(false);
+        }
 
     }
 

@@ -22,6 +22,7 @@ public class OnMouseOverClass : MonoBehaviour
             toolTipCanvas.transform.position = new Vector3(mousePos.x, mousePos.y + 35, mousePos.z);
             FillTooltip();
             toolTipCanvas.GetComponent<Canvas>().enabled = true;
+            Cursor.visible = false;
         }
         Debug.Log("Mouse over: " + this.gameObject.name);
     }
@@ -31,6 +32,8 @@ public class OnMouseOverClass : MonoBehaviour
         if (toolTipCanvas != null)
         {
             toolTipCanvas.GetComponent<Canvas>().enabled = false;
+            Cursor.visible = true;
+
         }
     }
 
@@ -42,16 +45,24 @@ public class OnMouseOverClass : MonoBehaviour
         if (this.gameObject.name.Contains("Dirt"))
         {
             var dirt = statemachine.GetDirtByName(this.gameObject.name);
-            toolTipCanvas.transform.GetChild(1).gameObject.GetComponent<Text>().text = dirt.name;
-            toolTipCanvas.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Position: x: " + dirt.x + " y: " + dirt.y;
-            toolTipCanvas.transform.GetChild(3).gameObject.GetComponent<Text>().text = "Amount: " + dirt.amount;
+            if (dirt != null)
+            {
+                toolTipCanvas.transform.GetChild(1).gameObject.GetComponent<Text>().text = dirt.name;
+                toolTipCanvas.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Position: x: " + dirt.x + " y: " + dirt.y;
+                toolTipCanvas.transform.GetChild(3).gameObject.GetComponent<Text>().text = "Amount: " + dirt.amount;
+            }
         }
         else if (this.gameObject.name.Contains("Item"))
         {
             var item = statemachine.GetItemByName(this.gameObject.name);
-            toolTipCanvas.transform.GetChild(1).gameObject.GetComponent<Text>().text = item.name;
-            toolTipCanvas.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Position: x: " + item.x + " y: " + item.y;
-            toolTipCanvas.transform.GetChild(3).gameObject.GetComponent<Text>().text = "";
+            {
+                if (item != null)
+                {
+                    toolTipCanvas.transform.GetChild(1).gameObject.GetComponent<Text>().text = item.name;
+                    toolTipCanvas.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Position: x: " + item.x + " y: " + item.y;
+                    toolTipCanvas.transform.GetChild(3).gameObject.GetComponent<Text>().text = "";
+                }
+            }
         }
         else if (this.gameObject.name.Contains("Slider"))
         {

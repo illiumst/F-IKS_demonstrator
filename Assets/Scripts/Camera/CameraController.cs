@@ -34,6 +34,7 @@ public class CameraController : MonoBehaviour
 
     bool rotating;
     bool panning;
+    UIShowAndHide UIScript;
 
     void Start()
     {
@@ -51,6 +52,9 @@ public class CameraController : MonoBehaviour
         cameraPos = transform.position;
         cameraTurn = transform.eulerAngles;
         zoomActive = true;
+
+        UIScript = GameObject.FindWithTag("System").GetComponent<UIShowAndHide>();
+
 
     }
     // Update is called once per frame
@@ -98,7 +102,19 @@ public class CameraController : MonoBehaviour
             if ((zoomValue - axisInput >= 5f && axisInput > 0) || (zoomValue - axisInput <= 10f && axisInput < 0))
             {
                 Camera.main.orthographicSize -= axisInput;
+                if (axisInput > 0)
+                {
+                    UIScript.OnCameraInteractionStart("zoomIn");
+                }
+                if (axisInput < 0)
+                {
+                    UIScript.OnCameraInteractionStart("zoomOut");
+                }
             }
+        }
+        if (!Input.GetMouseButtonDown(1) && !zoomActive)
+        {
+            UIScript.OnCameraInteractionStop();
         }
         if (Input.GetMouseButtonDown(1) && zoomActive)
         {
@@ -114,11 +130,14 @@ public class CameraController : MonoBehaviour
                 rotating = true;
             }
         }
-
         if ((Input.GetMouseButtonUp(1)))
         {
             rotating = false;
             panning = false;
+            UIScript.OnCameraInteractionStop();
+            UIScript.cameraRotationYNew = Camera.main.transform.localEulerAngles.y;
+            UIScript.RotateCompass();
+
         }
         if (rotating && zoomActive)
         {
@@ -190,35 +209,45 @@ public class CameraController : MonoBehaviour
     void TaskOnClickZoomIn()
     {
         Camera.main.orthographicSize -= zoomAmount * Time.deltaTime;
+        UIScript.OnCameraInteractionStart("zoomIn");
     }
 
     void TaskOnClickZoomOut()
     {
         Camera.main.orthographicSize += zoomAmount * Time.deltaTime;
+        UIScript.OnCameraInteractionStart("zoomOut");
     }
 
     void TaskOnClickPanUp()
     {
         cameraPos.z -= panSpeed * Time.deltaTime * 0.5f;
         transform.position = cameraPos;
+        UIScript.OnCameraInteractionStart("pan");
+
     }
 
     void TaskOnClickPanLeft()
     {
         cameraPos.x += panSpeed * Time.deltaTime;
         transform.position = cameraPos;
+        UIScript.OnCameraInteractionStart("pan");
+
     }
 
     void TaskOnClickPanRight()
     {
         cameraPos.x -= panSpeed * Time.deltaTime;
         transform.position = cameraPos;
+        UIScript.OnCameraInteractionStart("pan");
+
     }
 
     void TaskOnClickPanDown()
     {
         cameraPos.z += panSpeed * Time.deltaTime * 0.5f;
         transform.position = cameraPos;
+        UIScript.OnCameraInteractionStart("pan");
+
     }
 
     void TaskOnClickTurnLeft()
@@ -227,6 +256,8 @@ public class CameraController : MonoBehaviour
         //cameraTurn.y += turnSpeed * Time.deltaTime;
         //transform.eulerAngles = cameraTurn;
         transform.RotateAround(targetPoint, new Vector3(0.0f, 1.0f, 0.0f), 5 * Time.deltaTime * turnSpeed);
+        UIScript.OnCameraInteractionStart("rotate");
+
     }
 
     void TaskOnClickTurnRight()
@@ -235,13 +266,19 @@ public class CameraController : MonoBehaviour
         //cameraTurn.y -= turnSpeed * Time.deltaTime;
         //transform.eulerAngles = cameraTurn;
         transform.RotateAround(targetPoint, new Vector3(0.0f, 1.0f, 0.0f), -5 * Time.deltaTime * turnSpeed);
+        UIScript.OnCameraInteractionStart("rotate");
+
     }
     void TaskOnClickTurnUp()
     {
         transform.RotateAround(targetPoint, new Vector3(1.0f, 0.0f, 0.0f), 5 * Time.deltaTime * turnSpeed);
+        UIScript.OnCameraInteractionStart("rotate");
+
     }
     void TaskOnClickTurnDown()
     {
         transform.RotateAround(targetPoint, new Vector3(1.0f, 0.0f, 0.0f), -5 * Time.deltaTime * turnSpeed);
+        UIScript.OnCameraInteractionStart("rotate");
+
     }
 }

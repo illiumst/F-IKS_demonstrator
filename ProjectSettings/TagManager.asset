@@ -35,6 +35,21 @@ TagManager:
   - AgentCanvas
   - SpeechBubbleInvalid
   - SpeechBubbleDirectionText
+  - CompassCanvas
+  - SettingsButton
+  - CameraControlsButton
+  - CameraCalibrationButton
+  - CameraControlsPanel
+  - ToggleMenu
+  - CameraCursorImage
+  - RobotScrollview
+  - CameraCursor
+  - FloorMarkerToggle
+  - ValidActionsToggle
+  - InvalidActionsToggle
+  - HideValidMovementToggle
+  - ShowAgentActionsButton
+  - HideAgentActionsButton
   layers:
   - Default
   - TransparentFX
