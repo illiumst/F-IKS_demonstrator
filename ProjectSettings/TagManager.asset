@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Wall
+  - Agent
+  - Trash
+  - Slider
+  - System
+  - WarningText
+  - UpcomingPositionText
+  - AgentBody
+  - AgentItemContent
+  - AgentItemHeader
+  - Door
+  - RobotControlToggle
+  - TrashBoundary
+  - PickupItem
+  - DropOffZone
+  - NameTag
+  - EpisodeSelectionDropdown
+  - AgentListItem
+  - PlaybackSpeedDropdown
+  - TooltipCanvas
+  - WallObjects
+  - AgentObjects
+  - ItemRegister
+  - ZoneObjects
+  - DirtRegister
+  - BufferFillArea
+  - SpeechBubbleContent
+  - SpeechBubble
+  - AgentCanvas
+  - SpeechBubbleInvalid
+  - SpeechBubbleDirectionText
+  - CompassCanvas
+  - SettingsButton
+  - CameraControlsButton
+  - CameraCalibrationButton
+  - CameraControlsPanel
+  - ToggleMenu
+  - CameraCursorImage
+  - RobotScrollview
+  - CameraCursor
+  - FloorMarkerToggle
+  - ValidActionsToggle
+  - InvalidActionsToggle
+  - HideValidMovementToggle
+  - ShowAgentActionsButton
+  - HideAgentActionsButton
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Post-Processing
+  - Trash
+  - Agent
+  - TrashBoundary
+  - Obstacle
+  - Target
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 4061794351
+    locked: 0

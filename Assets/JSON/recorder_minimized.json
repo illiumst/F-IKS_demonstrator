@@ -1,0 +1,258 @@
+{
+  "episodes": [
+    {
+      "timesteps": [
+        {
+          "step": 1,
+          "Doors": [
+            {
+              "name": "Door[0]",
+              "x": 6,
+              "y": 11,
+              "tile": "Tile#181",
+              "can_collide": false,
+              "state": "closed",
+              "time_to_close": -1
+            },
+            {
+              "name": "Door[1]",
+              "x": 9,
+              "y": 6,
+              "tile": "Tile#209",
+              "can_collide": false,
+              "state": "closed",
+              "time_to_close": -1
+            }
+          ],
+          "Agents": [
+            {
+              "name": "Agent[0]",
+              "x": 11,
+              "y": 7,
+              "tile": "Tile#234",
+              "can_collide": true,
+              "valid": false,
+              "action": "Action[CLEAN_UP]"
+            }
+          ],
+          "DirtRegister": [
+            {
+              "name": "Dirt#2",
+              "x": 10,
+              "y": 2,
+              "tile": "Tile#218",
+              "can_collide": false,
+              "amount": 0.1
+            },
+            {
+              "name": "Dirt#3",
+              "x": 5,
+              "y": 6,
+              "tile": "Tile#173",
+              "can_collide": false,
+              "amount": 0.1
+            },
+            {
+              "name": "Dirt#4",
+              "x": 5,
+              "y": 9,
+              "tile": "Tile#175",
+              "can_collide": false,
+              "amount": 0.1
+            },
+            {
+              "name": "Dirt#5",
+              "x": 5,
+              "y": 2,
+              "tile": "Tile#169",
+              "can_collide": false,
+              "amount": 0.1
+            }
+          ],
+          "DropOffLocations": [
+            {
+              "name": "DropOffLocation[0]",
+              "x": 7,
+              "y": 8,
+              "tile": "Tile#187",
+              "can_collide": false
+            },
+            {
+              "name": "DropOffLocation[1]",
+              "x": 3,
+              "y": 3,
+              "tile": "Tile#146",
+              "can_collide": false
+            },
+            {
+              "name": "DropOffLocation[2]",
+              "x": 1,
+              "y": 2,
+              "tile": "Tile#122",
+              "can_collide": false
+            },
+            {
+              "name": "DropOffLocation[3]",
+              "x": 2,
+              "y": 13,
+              "tile": "Tile#143",
+              "can_collide": false
+            },
+            {
+              "name": "DropOffLocation[4]",
+              "x": 1,
+              "y": 1,
+              "tile": "Tile#121",
+              "can_collide": false
+            }
+          ],
+          "ItemRegister": [
+            {
+              "name": "Item#5",
+              "x": 11,
+              "y": 11,
+              "tile": "Tile#238",
+              "can_collide": false
+            },
+            {
+              "name": "Item#6",
+              "x": 10,
+              "y": 7,
+              "tile": "Tile#222",
+              "can_collide": false
+            },
+            {
+              "name": "Item#7",
+              "x": 11,
+              "y": 4,
+              "tile": "Tile#232",
+              "can_collide": false
+            },
+            {
+              "name": "Item#8",
+              "x": 9,
+              "y": 2,
+              "tile": "Tile#205",
+              "can_collide": false
+            },
+            {
+              "name": "Item#9",
+              "x": 8,
+              "y": 10,
+              "tile": "Tile#201",
+              "can_collide": false
+            }
+          ],
+          "episode": 0
+        },
+        {
+          "step": 2,
+          "Doors": [
+            {
+              "name": "Door[0]",
+              "x": 6,
+              "y": 11,
+              "tile": "Tile#181",
+              "can_collide": false,
+              "state": "closed",
+              "time_to_close": -1
+            },
+            {
+              "name": "Door[1]",
+              "x": 9,
+              "y": 6,
+              "tile": "Tile#209",
+              "can_collide": false,
+              "state": "closed",
+              "time_to_close": -1
+            }
+          ],
+          "Agents": [
+            {
+              "name": "Agent[0]",
+              "x": 11,
+              "y": 8,
+              "tile": "Tile#235",
+              "can_collide": true,
+              "valid": true,
+              "action": "Action[EAST]"
+            }
+          ],
+          "DirtRegister": [
+            {
+              "name": "Dirt#2",
+              "x": 10,
+              "y": 2,
+              "tile": "Tile#218",
+              "can_collide": false,
+              "amount": 0.1
+            },
+            {
+              "name": "Dirt#3",
+              "x": 5,
+              "y": 6,
+              "tile": "Tile#173",
+              "can_collide": false,
+              "amount": 0.1
+            },
+            {
+              "name": "Dirt#4",
+              "x": 5,
+              "y": 9,
+              "tile": "Tile#175",
+              "can_collide": false,
+              "amount": 0.1
+            },
+            {
+              "name": "Dirt#5",
+              "x": 5,
+              "y": 2,
+              "tile": "Tile#169",
+              "can_collide": false,
+              "amount": 0.1
+            }
+          ],
+          "DropOffLocations": [null, null, null, null, null],
+          "ItemRegister": [
+            {
+              "name": "Item#5",
+              "x": 11,
+              "y": 11,
+              "tile": "Tile#238",
+              "can_collide": false
+            },
+            {
+              "name": "Item#6",
+              "x": 10,
+              "y": 7,
+              "tile": "Tile#222",
+              "can_collide": false
+            },
+            {
+              "name": "Item#7",
+              "x": 11,
+              "y": 4,
+              "tile": "Tile#232",
+              "can_collide": false
+            },
+            {
+              "name": "Item#8",
+              "x": 9,
+              "y": 2,
+              "tile": "Tile#205",
+              "can_collide": false
+            },
+            {
+              "name": "Item#9",
+              "x": 8,
+              "y": 10,
+              "tile": "Tile#201",
+              "can_collide": false
+            }
+          ],
+          "episode": 0
+        }
+      ]
+    }
+  ]
+}
