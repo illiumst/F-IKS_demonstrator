@@ -217,10 +217,17 @@ public class ObjectSpawner : MonoBehaviour
 
         var canvas = agentBody.transform.GetChild(4).gameObject;
         var nameTag = canvas.transform.GetChild(0).gameObject;
-        nameTag.GetComponent<TextMeshProUGUI>().SetText(name);
-        nameTag.GetComponent<TextMeshProUGUI>().color = textColor;
+        nameTag.GetComponent<TextMeshProUGUI>().SetText(GetAgentNumberFromNameAsString(name));
+        //nameTag.GetComponent<TextMeshProUGUI>().color = textColor;
         system.GetComponent<EnvironmentStateMachine>().agentObjects.Add(newRobot);
         system.GetComponent<EnvironmentStateMachine>().agentListObjects.Add(newListItem);
+    }
+
+    string GetAgentNumberFromNameAsString(string name)
+    {
+        var foundS1 = name.IndexOf("[");
+        var nameNew = name.Substring(foundS1 + 1, name.Length - 2 - foundS1);
+        return nameNew;
     }
 
     public void spawnAgents(int episode, int step)

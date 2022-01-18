@@ -332,9 +332,9 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
-    - _agent1Pos: {r: 0.6413195, g: 0.5388133, b: 11.617051, a: 0}
-    - _agent2Pos: {r: 0.4331405, g: 0.35378316, b: 9.132913, a: 0}
-    - _agent3Pos: {r: 0.35885212, g: 0.57074326, b: 12.04573, a: 0}
-    - _agent4Pos: {r: 0.2143979, g: 0.42618108, b: 10.104898, a: 0}
+    - _agent1Pos: {r: 0.62927806, g: 0.19166476, b: 6.804611, a: 0}
+    - _agent2Pos: {r: 0.3888341, g: 0.39564502, b: 10.0682955, a: 0}
+    - _agent3Pos: {r: 0.5361637, g: 0.5164149, b: 12.000614, a: 0}
+    - _agent4Pos: {r: 0.45496225, g: 0.36541444, b: 9.584606, a: 0}
     - _agentPos: {r: 0.55217344, g: 0.73890376, b: 16.261501, a: 0}
   m_BuildTextureStacks: []

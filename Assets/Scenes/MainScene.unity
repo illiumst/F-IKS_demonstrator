@@ -2386,7 +2386,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1333348178}
   m_HandleRect: {fileID: 1333348177}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2804,6 +2804,7 @@ RectTransform:
   - {fileID: 1576336781}
   - {fileID: 1912698165}
   - {fileID: 780670059}
+  - {fileID: 832600401}
   m_Father: {fileID: 425254000}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9164,13 +9165,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1065328197}
-  m_Father: {fileID: 1842255722}
-  m_RootOrder: 2
+  m_Father: {fileID: 267205654}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -12, y: 63.39998}
-  m_SizeDelta: {x: 14, y: 14}
+  m_AnchoredPosition: {x: -15.099976, y: 15.099976}
+  m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &832600402
 MonoBehaviour:
@@ -9248,7 +9249,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 26bac71ea59b6450e95ddb6dd15e6ab8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f0b8be9cc12b7450699350892a4b4814, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -11590,14 +11591,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1052446083}
-  m_LocalRotation: {x: 0.3564326, y: -0.48695883, z: 0.22707261, w: 0.76437217}
+  m_LocalRotation: {x: 0.3227519, y: -0.49640015, z: 0.20561567, w: 0.7791921}
   m_LocalPosition: {x: 7.5, y: 8.5, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 820827195}
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -65, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: -65, z: 0}
 --- !u!1 &1054808325
 GameObject:
   m_ObjectHideFlags: 0
@@ -15389,7 +15390,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2009376947}
   m_HandleRect: {fileID: 2009376946}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -17983,7 +17984,6 @@ RectTransform:
   m_Children:
   - {fileID: 1848052118}
   - {fileID: 707303475}
-  - {fileID: 832600401}
   m_Father: {fileID: 1309173121}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
