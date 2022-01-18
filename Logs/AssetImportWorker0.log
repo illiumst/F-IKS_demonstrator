@@ -131,3 +131,19 @@ System memory in use after: 240.0 MB.
 Unloading 8 unused Assets to reduce memory usage. Loaded Objects now: 3135.
 Total: 2.349073 ms (FindLiveObjects: 0.331988 ms CreateObjectMapping: 0.149533 ms MarkObjects: 1.848874 ms  DeleteObjects: 0.017599 ms)
 
+========================================================================
+Received Import Request.
+  Time since last request: 856.299224 seconds.
+  path: Assets/Resources/Sprites/cleaning.png
+  artifactKey: Guid(328269106d2d84c9fb29f40a970f2987) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Resources/Sprites/cleaning.png using Guid(328269106d2d84c9fb29f40a970f2987) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6fd7294dc8c138b9bc71e1bd8ccbe43f') in 0.084670 seconds
+  Import took 0.091361 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 183.083242 seconds.
+  path: ProjectSettings/TagManager.asset
+  artifactKey: Guid(00000000000000003000000000000000) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing ProjectSettings/TagManager.asset using Guid(00000000000000003000000000000000) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '843627f15b45a0d6b3b0b9ba02a825b9') in 0.188229 seconds
+  Import took 0.194226 seconds .
+

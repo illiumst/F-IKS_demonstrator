@@ -50,6 +50,10 @@ TagManager:
   - HideValidMovementToggle
   - ShowAgentActionsButton
   - HideAgentActionsButton
+  - ExitFullScreenButton
+  - FullScreenButton
+  - FullScreenUICanvas
+  - UICanvas
   layers:
   - Default
   - TransparentFX
