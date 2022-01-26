@@ -2,8 +2,7 @@
 
 using System;
 using System.IO;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
+using System.Windows;
 using Ookii.Dialogs;
 
 namespace SFB {
