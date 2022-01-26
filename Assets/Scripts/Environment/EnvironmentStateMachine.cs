@@ -36,6 +36,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     int stepsSkipped = 0;
 
     public JSONReader JSONReader;
+    public ObjectSpawner objectSpawner;
     public EnvironmentConstants environmentConstants;
     public float playBackSpeed = 0.25f;
 
@@ -50,16 +51,44 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     public Vector3 environmentCenter;
 
+    GameObject UICanvas;
+    GameObject LoadingCanvas;
+    GameObject AgentScrollView;
+    GameObject CursorCanvas;
+    GameObject CameraControllerCanvas;
+    GameObject ToggleMenuCanvas;
+
 
 
     void Start()
     {
-        system = GameObject.FindWithTag("System");
-        JSONReader = GetComponent<JSONReader>();
-        environmentConstants = JSONReader.ReadEnvironmentConstants();
-        currentEpisode = 0;
+        //TODO start JSON initialisation from here as coroutine 
 
+        system = GameObject.FindWithTag("System");
+        UICanvas = GameObject.FindWithTag("UICanvas");
+        LoadingCanvas = GameObject.FindWithTag("LoadingCanvas");
+        AgentScrollView = GameObject.FindWithTag("RobotScrollview");
+        CursorCanvas = GameObject.FindWithTag("CameraCursor");
+        CameraControllerCanvas = GameObject.FindWithTag("CameraControlsPanel");
+        ToggleMenuCanvas = GameObject.FindWithTag("ToggleMenu");
+        UICanvas.SetActive(false);
+        JSONReader = GetComponent<JSONReader>();
+        StartCoroutine(InitializeObjectSpawner());
+    }
+
+    IEnumerator InitializeObjectSpawner()
+    {
+        objectSpawner = system.GetComponent<ObjectSpawner>();
+        yield return new WaitForSeconds(3);
+        InitializeEnvironmentData();
+    }
+    void InizializeEnvironmentStateMachine()
+    {
         //UI Initialization
+        LoadingCanvas.SetActive(false);
+        UICanvas.SetActive(true);
+        system.GetComponent<UIShowAndHide>().InitializeUIShowAndHide();
+
         slider = system.GetComponent<UIGlobals>().slider;
         bufferSlider = system.GetComponent<UIGlobals>().bufferSlider;
         episodeSelectionDropdown = GameObject.FindWithTag("EpisodeSelectionDropdown");
@@ -105,13 +134,28 @@ public class EnvironmentStateMachine : MonoBehaviour
 
         });
         speedDrop.value = 1;
-
     }
+
+    void InitializeEnvironmentData()
+    {
+        environmentConstants = JSONReader.constants;
+        Debug.Log("Initializing ESM constants: " + environmentConstants.episodes.Count);
+        currentEpisode = 0;
+        objectSpawner.SpawnNewEpisode(environmentConstants, currentEpisode);
+        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.episodes[0].steps[0].WallTiles, 0);
+        InizializeEnvironmentStateMachine();
+    }
+
 
     void Update()
     {
-        if (!allAgentsInitialized)
+        if (!allAgentsInitialized && environmentConstants == null || !allAgentsInitialized && agentObjects.Count == 0)
         {
+
+        }
+        else if (!allAgentsInitialized && agentObjects.Count > 0)
+        {
+            //TODO find solution later
             allAgentsInitialized = AllAgentObjectsInitialized(currentEpisode);
         }
         else
@@ -214,9 +258,10 @@ public class EnvironmentStateMachine : MonoBehaviour
         bufferSlider.value = 0;
         slider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
         bufferSlider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
-        system.GetComponent<ObjectSpawner>().RemoveLastEpisode();
+        objectSpawner.RemoveLastEpisode();
         emptyObjectLists();
-        system.GetComponent<ObjectSpawner>().SpawnNewEpisode(currentEpisode);
+        objectSpawner.SpawnNewEpisode(environmentConstants, currentEpisode);
+        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.episodes[0].steps[0].WallTiles, 0);
         UpdateSliderLabel();
     }
 
@@ -299,8 +344,15 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     bool AllAgentObjectsInitialized(int episode)
     {
-        return (environmentConstants.episodes[episode].steps[0].Agents.Count == agentObjects.Count)
-        && (environmentConstants.episodes[episode].steps[0].Agents.Count == agentListObjects.Count);
+        if (environmentConstants == null || agentObjects == null)
+        {
+            return false;
+        }
+        else
+        {
+            return (environmentConstants.episodes[episode].steps[0].Agents.Count == agentObjects.Count)
+             && (environmentConstants.episodes[episode].steps[0].Agents.Count == agentListObjects.Count);
+        }
     }
 
     public Vector3 GetRecalculatedPosition(float x, float y, float z)
@@ -501,7 +553,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             else
             {
                 var pos = GetRecalculatedPosition(dirt.x, 0, dirt.y);
-                system.GetComponent<ObjectSpawner>().spawnDirt(pos, dirt.amount, dirt.name);
+                objectSpawner.spawnDirt(pos, dirt.amount, dirt.name);
             }
         }
         foreach (GameObject dirtObj in dirtObjects)

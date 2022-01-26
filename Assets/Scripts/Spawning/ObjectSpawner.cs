@@ -17,7 +17,7 @@ public class ObjectSpawner : MonoBehaviour
     GameObject positionMarkerObject;
     GameObject AgentListItem;
     public GameObject AgentListContent;
-    ObjectPooler objectPooler;
+    //ObjectPooler objectPooler;
 
     [SerializeField] GameObject WallObjects;
     [SerializeField] GameObject DoorObjects;
@@ -47,32 +47,28 @@ public class ObjectSpawner : MonoBehaviour
     int maxWallX;
     int maxWallY;
 
+    EnvironmentConstants constants;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
-        objectPooler = ObjectPooler.Instance;
+        //objectPooler = ObjectPooler.Instance;
         system = GameObject.FindWithTag("System");
-        var robot = Resources.Load("Prefabs/Robot");
-        var trashBoundary = Resources.Load("Prefabs/TrashBoundary");
-        var listItem = Resources.Load("Prefabs/AgentListItem");
-        var wallPiece = Resources.Load("Prefabs/Walls/Wall3");
-        var pickUpItem = Resources.Load("Prefabs/PickupItem");
-        var dropOffZone = Resources.Load("Prefabs/DropOffZone");
-        var door = Resources.Load("Prefabs/SlideDoor");
+
+        RobotSpawnObject = Resources.Load("Prefabs/Robot") as GameObject;
+        TrashBoundarySpawnObject = Resources.Load("Prefabs/TrashBoundary") as GameObject;
+        AgentListItem = Resources.Load("Prefabs/AgentListItem") as GameObject;
+        DoorObject = Resources.Load("Prefabs/SlideDoor") as GameObject;
+        WallSpawnObject = Resources.Load("Prefabs/Walls/Wall3") as GameObject;
+        PickupItemSpawnObject = Resources.Load("Prefabs/PickupItem") as GameObject;
+        DropOffZoneSpawnObject = Resources.Load("Prefabs/DropOffZone") as GameObject;
+        positionMarkerObject = Resources.Load("Prefabs/PositionMarker") as GameObject;
         wallRotation = transform.rotation;
 
-        RobotSpawnObject = robot as GameObject;
-        TrashBoundarySpawnObject = trashBoundary as GameObject;
-        AgentListItem = listItem as GameObject;
-        WallSpawnObject = wallPiece as GameObject;
-        PickupItemSpawnObject = pickUpItem as GameObject;
-        DropOffZoneSpawnObject = dropOffZone as GameObject;
-        DoorObject = door as GameObject;
-        positionMarkerObject = Resources.Load("Prefabs/PositionMarker") as GameObject;
 
-        SpawnNewEpisode(0);
+        Debug.Log("Instantiating Object Spawner...");
     }
 
     private void Update()
@@ -80,8 +76,11 @@ public class ObjectSpawner : MonoBehaviour
         FloorMarkerRegister.SetActive(floorMarkerToggle.isOn);
     }
 
-    public void SpawnNewEpisode(int episode)
+    public void SpawnNewEpisode(EnvironmentConstants constantsInput, int episode)
     {
+        constants = constantsInput;
+        Debug.Log("#Walls Spawner Input: " + constantsInput.episodes[0].steps[0].WallTiles.Count);
+        Debug.Log("#Walls Spawner: " + constants.episodes[0].steps[0].WallTiles.Count);
         spawnWalls(episode);
         spawnDoors(episode);
         spawnAgents(episode, 0);
@@ -144,7 +143,7 @@ public class ObjectSpawner : MonoBehaviour
         var tmpMinWallX = 0;
         var tmpMinWallY = 0;
 
-        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[0].WallTiles;
+        List<Wall> walls = constants.episodes[episode].steps[0].WallTiles;
 
         foreach (Wall wall in walls)
         {
@@ -216,7 +215,8 @@ public class ObjectSpawner : MonoBehaviour
         validityLight.GetComponent<Light>().color = color;
 
         var canvas = agentBody.transform.GetChild(4).gameObject;
-        var nameTag = canvas.transform.GetChild(0).gameObject;
+        var nameTagCanvas = FindGameObjectInChildWithTag(agentBody.transform.GetChild(0).gameObject, "AgentCanvas");
+        var nameTag = FindGameObjectInChildWithTag(nameTagCanvas, "NameTag");
         nameTag.GetComponent<TextMeshProUGUI>().SetText(GetAgentNumberFromNameAsString(name));
         //nameTag.GetComponent<TextMeshProUGUI>().color = textColor;
         system.GetComponent<EnvironmentStateMachine>().agentObjects.Add(newRobot);
@@ -232,7 +232,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnAgents(int episode, int step)
     {
-        List<Agent> agents = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[step].Agents;
+        List<Agent> agents = constants.episodes[episode].steps[step].Agents;
         foreach (Agent agent in agents)
         {
             Vector3 newPos = GetRecalculatedPosition(agent.x, 0.2f, agent.y);
@@ -243,7 +243,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnPickUpItems(int episode, int step)
     {
-        List<Item> items = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[step].ItemRegister;
+        List<Item> items = constants.episodes[episode].steps[step].ItemRegister;
         foreach (Item item in items)
         {
             spawnObject(PickupItemSpawnObject, GetRecalculatedPosition(item.x, 0.3f, item.y), item.name);
@@ -251,7 +251,7 @@ public class ObjectSpawner : MonoBehaviour
     }
     public void spawnDropOffZones(int episode, int step)
     {
-        List<DropOffLocation> zones = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[step].DropOffLocations;
+        List<DropOffLocation> zones = constants.episodes[episode].steps[step].DropOffLocations;
         foreach (DropOffLocation zone in zones)
         {
             if (zone != null)
@@ -298,7 +298,7 @@ public class ObjectSpawner : MonoBehaviour
 
     /*public void spawnDirtRegisterOld(int episode, int step)
     {
-        List<Dirt> dirtPiles = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[step].DirtRegister;
+        List<Dirt> dirtPiles = constants.episodes[episode].steps[step].DirtRegister;
         foreach (Dirt dirt in dirtPiles)
         {
             if (dirt != null)
@@ -314,7 +314,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnDirtRegister(int episode, int step)
     {
-        List<Dirt> dirtPiles = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[step].DirtRegister;
+        List<Dirt> dirtPiles = constants.episodes[episode].steps[step].DirtRegister;
         foreach (Dirt dirt in dirtPiles)
         {
             if (dirt != null)
@@ -328,8 +328,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnWalls(int episode)
     {
-        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[0].WallTiles;
-        system.GetComponent<EnvironmentStateMachine>().environmentCenter = GetWallCenter(walls, episode);
+        List<Wall> walls = constants.episodes[episode].steps[0].WallTiles;
         wallCenter = GetWallCenter(walls, episode);
 
         foreach (Wall wall in walls)
@@ -479,9 +478,8 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnDoors(int episode)
     {
-        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[0].WallTiles;
-        List<Door> doors = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[episode].steps[0].Doors;
-        system.GetComponent<EnvironmentStateMachine>().environmentCenter = GetWallCenter(walls, episode);
+        List<Wall> walls = constants.episodes[episode].steps[0].WallTiles;
+        List<Door> doors = constants.episodes[episode].steps[0].Doors;
         wallCenter = GetWallCenter(walls, episode);
 
         foreach (Door door in doors)
@@ -541,7 +539,7 @@ public class ObjectSpawner : MonoBehaviour
     }
     public bool CheckIfWallExistsAtPosition(int x, int y)
     {
-        List<Wall> walls = system.GetComponent<EnvironmentStateMachine>().environmentConstants.episodes[0].steps[0].WallTiles;
+        List<Wall> walls = constants.episodes[0].steps[0].WallTiles;
         foreach (Wall wall in walls)
         {
             if (wall.x == x && wall.y == y)
@@ -550,6 +548,22 @@ public class ObjectSpawner : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public static GameObject FindGameObjectInChildWithTag(GameObject parent, string tag)
+    {
+        Transform t = parent.transform;
+
+        for (int i = 0; i < t.childCount; i++)
+        {
+            if (t.GetChild(i).gameObject.tag == tag)
+            {
+                return t.GetChild(i).gameObject;
+            }
+
+        }
+
+        return null;
     }
 
     public int GetMaxWallX()

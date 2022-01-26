@@ -256,11 +256,11 @@ public class AgentController : MonoBehaviour
 
         //rectTrans.LookAt(targetPoint, Vector3.up);
 
-
-        if (valid && showInvalidActionsToggle.isOn)
+        if (valid && showValidActionsToggle.isOn)
         {
             speechBubbleInvalidityImage.SetActive(false);
             speechBubble.GetComponent<Image>().color = new Color32(60, 255, 140, 255);
+            speechBubble.GetComponent<Blinking>().startBlinking = false;
 
             switch (action)
             {
@@ -329,6 +329,7 @@ public class AgentController : MonoBehaviour
         {
             speechBubbleInvalidityImage.SetActive(true);
             speechBubble.GetComponent<Image>().color = new Color32(255, 60, 80, 255);
+            speechBubble.GetComponent<Blinking>().startBlinking = true;
             switch (action)
             {
                 case "Action[CLEAN_UP]":

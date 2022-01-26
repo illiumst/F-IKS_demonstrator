@@ -21,14 +21,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SlideDoorMaterial
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: e1a57e69bc24b493e8bf1bdb9c80c586, type: 3}
   m_ShaderKeywords: _ALPHATEST_ON _SPECULAR_SETUP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2450
-  stringTagMap:
-    RenderType: TransparentCutout
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses:
   - TransparentDepthPrepass
   - TransparentDepthPostpass
@@ -313,9 +312,9 @@ Material:
     - _size4: 0
     - _smoothness: 0.7
     m_Colors:
-    - Color_8f052fad1f734c69b65fa3e4414bff65: {r: 0.36267355, g: 0.39560285, b: 0.4716981, a: 0}
+    - Color_8f052fad1f734c69b65fa3e4414bff65: {r: 0.52429694, g: 0.6165546, b: 0.8113208, a: 0}
     - Vector2_778966a213664052a83ea88f482e88f9: {r: 0.5, g: -1.5, b: 0, a: 0}
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.6166341, g: 0.6230723, b: 0.8773585, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
@@ -332,9 +331,9 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
-    - _agent1Pos: {r: 0.68598515, g: 0.35522413, b: 9.704402, a: 0}
-    - _agent2Pos: {r: 0.3396205, g: 0.34734288, b: 9.578301, a: 0}
-    - _agent3Pos: {r: 0.4374034, g: 0.502159, b: 12.05536, a: 0}
-    - _agent4Pos: {r: 0.5521995, g: 0.71570593, b: 15.47211, a: 0}
+    - _agent1Pos: {r: 0.5584358, g: 0.28935394, b: 8.367636, a: 0}
+    - _agent2Pos: {r: 0.2738563, g: 0.22004288, b: 7.2586594, a: 0}
+    - _agent3Pos: {r: 0.31000838, g: 0.43628877, b: 10.718594, a: 0}
+    - _agent4Pos: {r: 0.3375733, g: 0.2573974, b: 7.8563313, a: 0}
     - _agentPos: {r: 0.55217344, g: 0.73890376, b: 16.261501, a: 0}
   m_BuildTextureStacks: []

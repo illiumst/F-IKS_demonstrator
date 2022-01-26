@@ -54,6 +54,9 @@ TagManager:
   - FullScreenButton
   - FullScreenUICanvas
   - UICanvas
+  - ImportEpisodeButton
+  - LoadingCanvas
+  - SequenceSelectionWarning
   layers:
   - Default
   - TransparentFX

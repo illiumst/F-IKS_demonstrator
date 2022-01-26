@@ -46,6 +46,17 @@ public class UIShowAndHide : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    public void InitializeUIShowAndHide()
+    {
         CameraControlsCanvas = GameObject.FindWithTag("CameraControlsPanel");
         CameraControlsCanvas.GetComponent<Canvas>().enabled = false;
 
@@ -74,19 +85,11 @@ public class UIShowAndHide : MonoBehaviour
         SettingsButton = GameObject.FindWithTag("SettingsButton").GetComponent<Button>();
         CameraControlsButton = GameObject.FindWithTag("CameraControlsButton").GetComponent<Button>();
         CameraCalibrationButton = GameObject.FindWithTag("CameraCalibrationButton").GetComponent<Button>();
-        //ShowAgentActionsButton = GameObject.FindWithTag("ShowAgentActionsButton").GetComponent<Button>();
-        //HideAgentActionsButton = GameObject.FindWithTag("HideAgentActionsButton").GetComponent<Button>();
 
         camControlsCounter = 0;
         settingsCounter = 0;
         compassPosition = CompassCanvas.transform.position;
         cameraRotationY = Camera.main.transform.localEulerAngles.y;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void OnCameraInteractionStart(string interactionType)
@@ -123,7 +126,7 @@ public class UIShowAndHide : MonoBehaviour
     {
         Camera.main.transform.position = new Vector3(7.5f, 8.5f, -1);
         Camera.main.orthographicSize = 8;
-        Camera.main.transform.eulerAngles = new Vector3(50, -65, 0);
+        Camera.main.transform.eulerAngles = new Vector3(45, -65, 0);
         SetCompassDefaultRotation();
     }
 
@@ -131,25 +134,34 @@ public class UIShowAndHide : MonoBehaviour
     {
         if (camControlsCounter % 2 == 0)
         {
-            CameraControlsCanvas.GetComponent<Canvas>().enabled = true;
-            ToggleMenuCanvas.GetComponent<Canvas>().enabled = false;
-            MoveCompassLeft(Screen.width / 8);
+            ShowCameraControls();
         }
         else
         {
-            CameraControlsCanvas.GetComponent<Canvas>().enabled = false;
-            RepositionCompass();
+            HideCameraControls();
         }
         camControlsCounter += 1;
+    }
+
+
+    public void HideCameraControls()
+    {
+        CameraControlsCanvas.GetComponent<Canvas>().enabled = false;
+        RepositionCompass();
+    }
+
+    public void ShowCameraControls()
+    {
+        CameraControlsCanvas.GetComponent<Canvas>().enabled = true;
+        ToggleMenuCanvas.GetComponent<Canvas>().enabled = false;
+        MoveCompassLeft(Screen.width / 8);
     }
 
     public void ShowHideSettigs()
     {
         if (settingsCounter % 2 == 0)
         {
-            ToggleMenuCanvas.GetComponent<Canvas>().enabled = true;
-            CameraControlsCanvas.GetComponent<Canvas>().enabled = false;
-            MoveCompassLeft(Screen.width / 5.5f);
+            ShowSettings();
         }
         else
         {
@@ -157,6 +169,13 @@ public class UIShowAndHide : MonoBehaviour
             RepositionCompass();
         }
         settingsCounter += 1;
+    }
+
+    public void ShowSettings()
+    {
+        ToggleMenuCanvas.GetComponent<Canvas>().enabled = true;
+        CameraControlsCanvas.GetComponent<Canvas>().enabled = false;
+        MoveCompassLeft(Screen.width / 5.5f);
     }
 
     void MoveCompassLeft(float amount)
@@ -183,7 +202,7 @@ public class UIShowAndHide : MonoBehaviour
 
     void SetCompassDefaultRotation()
     {
-        CompassCanvas.transform.eulerAngles = new Vector3(0, 0, 0);
+        CompassCanvas.transform.eulerAngles = new Vector3(0, 0, 20);
     }
 
     public void ShowAgentActions()
