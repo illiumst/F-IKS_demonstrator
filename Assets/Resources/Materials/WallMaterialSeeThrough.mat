@@ -307,8 +307,8 @@ Material:
     - _opacity: 0.6
     - _size: 1
     - _size1: 0.7
-    - _size2: 0
-    - _size3: 0.7
+    - _size2: 0.7
+    - _size3: 0
     - _size4: 0
     - _smoothness: 0.5
     m_Colors:
@@ -331,9 +331,9 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
-    - _agent1Pos: {r: 0.5584358, g: 0.28935394, b: 8.367636, a: 0}
-    - _agent2Pos: {r: 0.2738563, g: 0.22004288, b: 7.2586594, a: 0}
-    - _agent3Pos: {r: 0.31000838, g: 0.43628877, b: 10.718594, a: 0}
-    - _agent4Pos: {r: 0.3375733, g: 0.2573974, b: 7.8563313, a: 0}
+    - _agent1Pos: {r: 0.63911414, g: 0.37660038, b: 10.046422, a: 0}
+    - _agent2Pos: {r: 0.3843219, g: 0.22718233, b: 7.655732, a: 0}
+    - _agent3Pos: {r: 0.34405988, g: 0.5449115, b: 12.739401, a: 0}
+    - _agent4Pos: {r: 0.3397676, g: 0.34734288, b: 9.578301, a: 0}
     - _agentPos: {r: 0.55217344, g: 0.73890376, b: 16.261501, a: 0}
   m_BuildTextureStacks: []
