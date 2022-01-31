@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SFB;
+//using SFB;
+using SimpleFileBrowser;
 using UnityEngine.Networking;
 using System.IO;
 using UnityEditor;
@@ -26,13 +27,13 @@ public class JSONReader : MonoBehaviour
 
     private void Start()
     {
-        if (FileBrowser.selectedFileName == null)
+        if (FileBrowserNew.selectedFileName == null)
         {
             _filename = "recorder_out_DQN.json";
         }
         else
         {
-            _filename = FileBrowser.selectedFileName;
+            _filename = FileBrowserNew.selectedFileName;
         }
         ReadSelectedJSONFile(_filename);
         ReadEnvironmentConstants();
