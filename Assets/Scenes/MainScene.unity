@@ -2580,7 +2580,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1333348178}
   m_HandleRect: {fileID: 1333348177}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -10818,10 +10818,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 906522896}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de82f8309b9dd476ab95f05c1e8b758c, type: 3}
+  m_Script: {fileID: 11500000, guid: 3440e4d4f3854554ea1faea2b0582e1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dropdown: {fileID: 0}
+  StartButton: {fileID: 0}
+  SequenceSelectionWarningText: {fileID: 0}
   dropDownOptions: []
 --- !u!1 &924052410
 GameObject:
@@ -14609,7 +14611,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -75, y: -12.5}
+  m_AnchoredPosition: {x: -75, y: -12.5000305}
   m_SizeDelta: {x: 150, y: -25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1309173122
