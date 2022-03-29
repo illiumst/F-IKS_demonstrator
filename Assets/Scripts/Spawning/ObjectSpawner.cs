@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -165,15 +166,21 @@ public class ObjectSpawner : MonoBehaviour
             }
         }
 
+        SetUpPositionMarkers(tmpMinWallX, tmpMinWallY, tmpMaxWallX, tmpMaxWallY);
+    }
+
+    void SetUpPositionMarkers(int tmpMinWallX, int tmpMinWallY, int tmpMaxWallX, int tmpMaxWallY)
+    {
         for (int i = tmpMinWallX; i <= tmpMaxWallX; i++)
         {
             for (int j = tmpMinWallY; j <= tmpMaxWallY; j++)
             {
                 var posMarker = Instantiate(positionMarkerObject) as GameObject;
-                posMarker.transform.parent = FloorMarkerRegister.transform;
+                posMarker.gameObject.GetComponent<Canvas>().worldCamera = Camera.main;
+                posMarker.transform.SetParent(FloorMarkerRegister.gameObject.transform);
                 posMarker.transform.position = GetRecalculatedPosition((float)i, 0f, (float)j);
-                var canvas = posMarker.transform.GetChild(0).gameObject;
-                var text = canvas.transform.GetChild(0).gameObject;
+                //var canvas = posMarker.transform.GetChild(0).gameObject;
+                var text = posMarker.transform.GetChild(0).gameObject;
                 text.GetComponent<Text>().text = "x:" + i + " y:" + j;
             }
         }

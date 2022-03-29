@@ -57,6 +57,32 @@ TagManager:
   - ImportEpisodeButton
   - LoadingCanvas
   - SequenceSelectionWarning
+  - PopUpDialog
+  - HomeButton
+  - SequenceName
+  - CloseTabButton
+  - AddTabButton
+  - CursorButton
+  - MoveButton
+  - TurnButton
+  - ZoomInButton
+  - ZoomOutButton
+  - FileItemButton
+  - FileNameLabel
+  - PathNameLabel
+  - LastOpenendLabel
+  - FileScrollViewContent
+  - QuickFactsOverview
+  - NrAgentsText
+  - NrItemsText
+  - NrDirtText
+  - NrValidText
+  - NrInvalidText
+  - DetailsDisplay
+  - SpeechBubblePositiontext
+  - Tooltip
+  - TooltipText
+  - SpeechBubbleAgentNumber
   layers:
   - Default
   - TransparentFX

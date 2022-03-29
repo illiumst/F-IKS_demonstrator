@@ -93,5 +93,10 @@ public class JSONReader : MonoBehaviour
     {
         //textAsset.text = textAsset.text.Replace("\\", ""); // --> not working since .text is ReadOnly.... 
     }
+
+    public string GetFileName()
+    {
+        return this._filename;
+    }
 }
 

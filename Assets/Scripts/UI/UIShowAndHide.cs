@@ -57,11 +57,11 @@ public class UIShowAndHide : MonoBehaviour
 
     public void InitializeUIShowAndHide()
     {
-        CameraControlsCanvas = GameObject.FindWithTag("CameraControlsPanel");
-        CameraControlsCanvas.GetComponent<Canvas>().enabled = false;
+        //CameraControlsCanvas = GameObject.FindWithTag("CameraControlsPanel");
+        //CameraControlsCanvas.GetComponent<Canvas>().enabled = false;
 
-        RobotScrollView = GameObject.FindWithTag("RobotScrollview");
-        RobotScrollView.GetComponent<Canvas>().enabled = false;
+        //RobotScrollView = GameObject.FindWithTag("RobotScrollview");
+        //RobotScrollView.GetComponent<Canvas>().enabled = false;
 
         CompassCanvas = GameObject.FindWithTag("CompassCanvas");
 
@@ -69,8 +69,8 @@ public class UIShowAndHide : MonoBehaviour
         CameraCursorCanvas.GetComponent<Canvas>().enabled = false;
         CameraCursorImage = GameObject.FindWithTag("CameraCursorImage").transform.GetComponent<Image>();
 
-        ToggleMenuCanvas = GameObject.FindWithTag("ToggleMenu");
-        ToggleMenuCanvas.GetComponent<Canvas>().enabled = false;
+        //ToggleMenuCanvas = GameObject.FindWithTag("ToggleMenu");
+        //ToggleMenuCanvas.GetComponent<Canvas>().enabled = false;
 
         CameraCursorTextureZoomIn = Resources.Load<Texture2D>("Sprites/zoom-in");
         CameraCursorTextureZoomOut = Resources.Load<Texture2D>("Sprites/zoom-out");
@@ -82,9 +82,9 @@ public class UIShowAndHide : MonoBehaviour
         CameraCursorSpriteRotate = Sprite.Create(CameraCursorTextureRotate, new Rect(0.0f, 0.0f, CameraCursorTextureRotate.width, CameraCursorTextureRotate.height), new Vector2(0.5f, 0.5f), 100.0f);
         CameraCursorSpritePan = Sprite.Create(CameraCursorTexturePan, new Rect(0.0f, 0.0f, CameraCursorTexturePan.width, CameraCursorTexturePan.height), new Vector2(0.5f, 0.5f), 100.0f);
 
-        SettingsButton = GameObject.FindWithTag("SettingsButton").GetComponent<Button>();
-        CameraControlsButton = GameObject.FindWithTag("CameraControlsButton").GetComponent<Button>();
-        CameraCalibrationButton = GameObject.FindWithTag("CameraCalibrationButton").GetComponent<Button>();
+        //SettingsButton = GameObject.FindWithTag("SettingsButton").GetComponent<Button>();
+        //CameraControlsButton = GameObject.FindWithTag("CameraControlsButton").GetComponent<Button>();
+        //CameraCalibrationButton = GameObject.FindWithTag("CameraCalibrationButton").GetComponent<Button>();
 
         camControlsCounter = 0;
         settingsCounter = 0;
