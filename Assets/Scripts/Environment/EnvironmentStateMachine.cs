@@ -250,7 +250,6 @@ public class EnvironmentStateMachine : MonoBehaviour
             Debug.Log("Timestep buffer: " + bufferSlider.value + " slider: " + slider.value + " currentstep: " + currentStep);
             if (bufferSlider.value % 1f == 0)
             {
-                Debug.Log("bufferSlider.value % 1 == 0");
                 if (bufferSlider.value == currentStep + 1f)
                 {
                     LoadNewTimeStep(currentEpisode, currentStep);
@@ -309,7 +308,6 @@ public class EnvironmentStateMachine : MonoBehaviour
     float SpeedDropdownValueChanged(Dropdown change)
     {
         var pbSpeed = 1f;
-        //adjust slider values to make sure values reach whole numbers
         Debug.Log("Speed dropdown value changed");
         slider.value = (int)slider.value;
         bufferSlider.value = (int)bufferSlider.value;
@@ -372,7 +370,6 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     void UpdateStepOverview()
     {
-        //stepOverviewText.gameObject.GetComponent<Text>().text = "Overview: Step " + currentStep;
         var step = environmentConstants.episodes[currentEpisode].steps[currentStep];
         var nrAgents = step.Agents.Count;
         var nrDirt = step.DirtRegister.Count;
@@ -387,7 +384,7 @@ public class EnvironmentStateMachine : MonoBehaviour
         agentNrText.gameObject.GetComponent<Text>().text = "" + nrAgents;
         dirtNrText.gameObject.GetComponent<Text>().text = "" + nrDirt;
         itemNrText.gameObject.GetComponent<Text>().text = "" + nrItems;
-        //TODO refelct what i want to show here
+        //TODO reflect what i want to show here
         validNrText.gameObject.GetComponent<Text>().text = "" + validCounter;
         invalidNrText.gameObject.GetComponent<Text>().text = "" + invalidCounter;
 
@@ -429,7 +426,6 @@ public class EnvironmentStateMachine : MonoBehaviour
         UpdateItemObjects(episode, step);
         UpdateSliderLabel();
         UpdateStepOverview();
-        Debug.Log("Loading new time step.....step: " + currentStep);
     }
 
     public void UpdateAgents(int episode, int step)
@@ -484,8 +480,6 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     private void UpdateAgentPositions(int episode, int step)
     {
-        //List<Agent> agents = environmentConstants.episodes[episode].steps[step].Agents;
-
         for (int i = 0; i < agents.Count; i++)
         {
             Vector3 recalcPos = GetRecalculatedPosition(agents[i].x, 0, agents[i].y);
@@ -497,7 +491,6 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     private void UpdateAgentAction(int episode, int step)
     {
-        //List<Agent> agents = environmentConstants.episodes[episode].steps[step].Agents;
         for (int i = 0; i < agents.Count; i++)
         {
             var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
@@ -535,7 +528,6 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     bool CheckForWallCollision(Agent agent, int episode, int step)
     {
-        //List<Agent> agents = environmentConstants.episodes[episode].steps[step].Agents;
         int index = agents.IndexOf(agent);
         var agentObjController = agentObjects[index].transform.GetChild(0).GetComponent<AgentController>();
 
@@ -577,8 +569,6 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     private void UpdateAgentUI(int episode, int step)
     {
-        //List<Agent> agents = environmentConstants.episodes[episode].steps[step].Agents;
-
         for (int i = 0; i < agents.Count; i++)
         {
             var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
@@ -589,8 +579,6 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     public Vector3 RequestAgentPosition(GameObject agent, int episode, int step)
     {
-        //List<Agent> agents = environmentConstants.episodes[episode].steps[step].Agents;
-
         int agentIndex = agentObjects.IndexOf(agent);
         Vector3 recalcPos = GetRecalculatedPosition(agents[agentIndex].x, 0, agents[agentIndex].y);
         return recalcPos;
@@ -686,16 +674,11 @@ public class EnvironmentStateMachine : MonoBehaviour
             if (stepsSkipped > 0)
             {
                 controller.backwardBuffer = false;
-                /*if (bufferSlider.value == 0f)
-                {
-                    bufferSlider.value = 1f;
-                }*/
                 if (controller.currentpos == controller.goalPosition && bufferSlider.value < slider.value)
                 {
                     float add = (playBackSpeed / factor);
                     Debug.Log("Adjusting buffer slider forward: adding " + add + " to " + bufferSlider.value);
                     bufferSlider.value = bufferSlider.value + add;
-                    //bufferSlider.value = bufferSlider.value + 1f;
                 }
                 else if (bufferSlider.value == slider.value)
                 {
@@ -741,7 +724,6 @@ public class EnvironmentStateMachine : MonoBehaviour
 
     void PlaySequence()
     {
-        Debug.Log("Playing Sequence.....");
         playingSequence = true;
         playButton.gameObject.SetActive(false);
         pauseButton.gameObject.SetActive(true);
@@ -783,7 +765,6 @@ public class EnvironmentStateMachine : MonoBehaviour
     IEnumerator BubbleSpawn(Vector3 pos)
     {
         //spawn bubbles
-        Debug.Log("Spawning Bubbles....");
         var particleRes = Resources.Load("Prefabs/CleaningParticlesNew") as GameObject;
         var particlePos = new Vector3(pos.x, 0.3f, pos.z);
         GameObject particles = Instantiate(particleRes, particlePos, Quaternion.identity, null) as GameObject;
