@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System;
 
 public class EnvironmentStateMachine : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     Button previousButton;
     Button previousPreviousButton;
 
-    GameObject episodeSelectionDropdown;
+    //GameObject episodeSelectionDropdown;
     GameObject playBackSpeedDropdown;
     GameObject stepOverviewText;
     GameObject agentNrText;
@@ -31,6 +32,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     GameObject validNrText;
     GameObject invalidNrText;
     GameObject sequenceName;
+    GameObject selectedEpisodeName;
 
 
 
@@ -52,7 +54,7 @@ public class EnvironmentStateMachine : MonoBehaviour
     public List<GameObject> itemObjects = new List<GameObject>();
     public List<GameObject> zoneObjects = new List<GameObject>();
     public List<GameObject> doorObjects = new List<GameObject>();
-
+    public List<GameObject> episodeItems = new List<GameObject>();
     public List<string> dropDownOptions = new List<string>();
 
     List<Agent> agents = new List<Agent>();
@@ -88,6 +90,7 @@ public class EnvironmentStateMachine : MonoBehaviour
         validNrText = GameObject.FindWithTag("NrValidText");
         invalidNrText = GameObject.FindWithTag("NrInvalidText");
         sequenceName = GameObject.FindWithTag("SequenceName");
+        selectedEpisodeName = GameObject.FindWithTag("SelectedEpisodeName");
 
         validCounter = 0;
         invalidCounter = 0;
@@ -114,7 +117,7 @@ public class EnvironmentStateMachine : MonoBehaviour
 
         slider = system.GetComponent<UIGlobals>().slider;
         bufferSlider = system.GetComponent<UIGlobals>().bufferSlider;
-        episodeSelectionDropdown = GameObject.FindWithTag("EpisodeSelectionDropdown");
+        //episodeSelectionDropdown = GameObject.FindWithTag("EpisodeSelectionDropdown");
         playBackSpeedDropdown = GameObject.FindWithTag("PlaybackSpeedDropdown");
         playButton = system.GetComponent<UIGlobals>().playButton;
         pauseButton = system.GetComponent<UIGlobals>().pauseButton;
@@ -146,13 +149,16 @@ public class EnvironmentStateMachine : MonoBehaviour
         //Dropdown
         agents.Clear();
         agents = environmentConstants.episodes[0].steps[0].Agents;
-        InitializeEpisodeSelectionDropdown();
+
+        SetUpEpisodeSelection();
+
+        //InitializeEpisodeSelectionDropdown();
         InitializePlaybackSpeedDropdown();
-        var drop = episodeSelectionDropdown.GetComponent<Dropdown>();
+        /*var drop = episodeSelectionDropdown.GetComponent<Dropdown>();
         drop.onValueChanged.AddListener(delegate
         {
             DropdownValueChanged(drop);
-        });
+        });*/
         var speedDrop = playBackSpeedDropdown.GetComponent<Dropdown>();
         speedDrop.onValueChanged.AddListener(delegate
         {
@@ -161,6 +167,31 @@ public class EnvironmentStateMachine : MonoBehaviour
 
         });
         speedDrop.value = 1;
+    }
+
+    void SetUpEpisodeSelection()
+    {
+        objectSpawner.SpawnEpisodeSelection();
+        selectedEpisodeName.GetComponent<Text>().text = "Episode 0";
+        Button[] allChildren = GameObject.FindWithTag("EpisodeScrollViewContent").GetComponentsInChildren<Button>();
+
+        foreach (Button child in allChildren)
+        {
+            child.onClick.AddListener(delegate { ChangeEpisode(Array.IndexOf(allChildren, child)); });
+        }
+        var selection = GameObject.FindWithTag("EpisodeSelectionScrollviewCanvas");
+        for (int i = 0; i < episodeItems.Count; i++)
+        {
+            if (i == 0)
+            {
+                FindGameObjectInChildWithTag(episodeItems[i], "EpisodeItemOutline").SetActive(true);
+            }
+            else
+            {
+                FindGameObjectInChildWithTag(episodeItems[i], "EpisodeItemOutline").SetActive(false);
+            }
+        }
+        selection.SetActive(false);
     }
 
     void InitializeEnvironmentData()
@@ -222,7 +253,7 @@ public class EnvironmentStateMachine : MonoBehaviour
                     stepsSkipped = ((int)slider.value - currentStep);
                     buffering = true;
                     PauseSequence();
-                    sliderFill.color = new Color(0, 125, 255, 255);
+                    sliderFill.color = new Color32(0, 125, 255, 255);
                     sliderFill.transform.SetSiblingIndex(0);
                     bufferFill.color = Color.white;
                     Debug.Log("Buffering forward: steps skipped: " + stepsSkipped);
@@ -235,7 +266,7 @@ public class EnvironmentStateMachine : MonoBehaviour
                     PauseSequence();
                     sliderFill.color = Color.white;
                     sliderFill.transform.SetSiblingIndex(1);
-                    bufferFill.color = new Color(0, 125, 255, 255);
+                    bufferFill.color = new Color32(0, 125, 255, 255);
                     Debug.Log("Buffering backwards: steps skipped: " + stepsSkipped);
                 }
             });
@@ -305,6 +336,36 @@ public class EnvironmentStateMachine : MonoBehaviour
         invalidCounter = 0;
     }
 
+    void ChangeEpisode(int change)
+    {
+        currentEpisode = change;
+        selectedEpisodeName.GetComponent<Text>().text = "Episode " + change;
+        slider.value = 0;
+        bufferSlider.value = 0;
+        slider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
+        bufferSlider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
+        objectSpawner.RemoveLastEpisode();
+        emptyObjectLists();
+        agents.Clear();
+        agents = environmentConstants.episodes[currentEpisode].steps[0].Agents;
+        objectSpawner.SpawnNewEpisode(environmentConstants, currentEpisode);
+        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.episodes[0].steps[0].WallTiles, 0);
+        UpdateSliderLabel();
+        validCounter = 0;
+        invalidCounter = 0;
+        for (int i = 0; i < episodeItems.Count; i++)
+        {
+            if (i == change)
+            {
+                FindGameObjectInChildWithTag(episodeItems[i], "EpisodeItemOutline").SetActive(true);
+            }
+            else
+            {
+                FindGameObjectInChildWithTag(episodeItems[i], "EpisodeItemOutline").SetActive(false);
+            }
+        }
+    }
+
     float SpeedDropdownValueChanged(Dropdown change)
     {
         var pbSpeed = 1f;
@@ -346,7 +407,7 @@ public class EnvironmentStateMachine : MonoBehaviour
         doorObjects.Clear();
     }
 
-    void InitializeEpisodeSelectionDropdown()
+    /*void InitializeEpisodeSelectionDropdown()
     {
         var drop = episodeSelectionDropdown.GetComponent<Dropdown>();
         drop.ClearOptions();
@@ -355,7 +416,7 @@ public class EnvironmentStateMachine : MonoBehaviour
             dropDownOptions.Add("Episode " + (i + 1));
         }
         drop.AddOptions(dropDownOptions);
-    }
+    }*/
 
     void InitializePlaybackSpeedDropdown()
     {
@@ -835,6 +896,20 @@ public class EnvironmentStateMachine : MonoBehaviour
         }
         return null;
     }
+    public static GameObject FindGameObjectInChildWithTag(GameObject parent, string tag)
+    {
+        Transform t = parent.transform;
 
+        for (int i = 0; i < t.childCount; i++)
+        {
+            if (t.GetChild(i).gameObject.tag == tag)
+            {
+                return t.GetChild(i).gameObject;
+            }
+
+        }
+
+        return null;
+    }
 
 }

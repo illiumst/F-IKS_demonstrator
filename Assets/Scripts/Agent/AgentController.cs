@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Text.RegularExpressions;
+
 
 
 public class AgentController : MonoBehaviour
@@ -38,6 +40,8 @@ public class AgentController : MonoBehaviour
     GameObject speechBubbleContent;
     GameObject speechBubbleInvalidityImage;
     GameObject speechBubbleDirectionText;
+    GameObject speechBubbleAgentName;
+
     public GameObject speechBubblePositionText;
 
 
@@ -83,7 +87,8 @@ public class AgentController : MonoBehaviour
         speechBubbleInvalidityImage = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleInvalid");
         speechBubbleDirectionText = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleDirectionText");
         speechBubblePositionText = FindGameObjectInChildWithTag(speechBubble, "SpeechBubblePositiontext");
-
+        speechBubbleAgentName = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleAgentNumber");
+        SetAgentNameInSpeechBubble(this.transform.parent.gameObject.name);
 
         //showValidActionsToggle = GameObject.FindWithTag("ValidActionsToggle").GetComponent<Toggle>();
         //showInvalidActionsToggle = GameObject.FindWithTag("InvalidActionsToggle").GetComponent<Toggle>();
@@ -407,6 +412,19 @@ public class AgentController : MonoBehaviour
             speechBubble.SetActive(false);
         }
 
+    }
+
+    public void SetAgentNameInSpeechBubble(string name)
+    {
+        Debug.Log("!!!!!!!!!!!!!!!!!! agent name: " + name);
+        speechBubbleAgentName.transform.GetComponent<Text>().text = GetAgentNumberFromNameAsString(name);
+
+    }
+
+    string GetAgentNumberFromNameAsString(string name)
+    {
+        string nameNew = Regex.Replace(name, "[^0-9]", "");
+        return nameNew;
     }
 
     public static GameObject FindGameObjectInChildWithTag(GameObject parent, string tag)

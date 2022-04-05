@@ -40,14 +40,14 @@ public class CameraController : MonoBehaviour
     {
         targetPoint = target.transform.position;
         //transform.LookAt(targetPoint);
-        ZoomInButton.onClick.AddListener(TaskOnClickZoomIn);
+        /*ZoomInButton.onClick.AddListener(TaskOnClickZoomIn);
         ZoomOutButton.onClick.AddListener(TaskOnClickZoomOut);
         PanUpButton.onClick.AddListener(TaskOnClickPanUp);
         PanLeftButton.onClick.AddListener(TaskOnClickPanLeft);
         PanRightButton.onClick.AddListener(TaskOnClickPanRight);
         PanDownButton.onClick.AddListener(TaskOnClickPanDown);
         TurnLeftButton.onClick.AddListener(TaskOnClickTurnLeft);
-        TurnRightButton.onClick.AddListener(TaskOnClickTurnRight);
+        TurnRightButton.onClick.AddListener(TaskOnClickTurnRight);*/
 
         cameraPos = transform.position;
         cameraTurn = transform.eulerAngles;

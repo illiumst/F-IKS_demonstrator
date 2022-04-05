@@ -30,6 +30,14 @@ public class Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             StartCoroutine(FillTooltip(tagName));
         }
         Debug.Log("Mouse over: " + this.gameObject.name);
+        if (this.gameObject.tag == "EpisodeSelectionButtonClosed")
+        {
+            MoveArrowDown();
+        }
+        else if (this.gameObject.tag == "EpisodeSelectionButtonOpen")
+        {
+            MoveArrowUp();
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -39,6 +47,14 @@ public class Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             toolTipCanvas.GetComponent<Canvas>().enabled = false;
             Cursor.visible = true;
 
+        }
+        if (this.gameObject.tag == "EpisodeSelectionButtonClosed")
+        {
+            MoveArrowUp();
+        }
+        else if (this.gameObject.tag == "EpisodeSelectionButtonOpen")
+        {
+            MoveArrowDown();
         }
     }
 
@@ -65,12 +81,21 @@ public class Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 toolTipText.gameObject.GetComponent<Text>().text = "Fullscreen";
                 toolTipCanvas.transform.position = new Vector3(this.transform.position.x, this.transform.position.y + 35, this.transform.position.z);
                 break;
-
-
             default:
                 toolTipCanvas.GetComponent<Canvas>().enabled = false;
                 break;
         }
+    }
+
+    void MoveArrowDown()
+    {
+        var arrow = GameObject.FindWithTag("EpisodeSelectionButtonArrow");
+        arrow.transform.position += new Vector3(0, -3, 0);
+    }
+    void MoveArrowUp()
+    {
+        var arrow = GameObject.FindWithTag("EpisodeSelectionButtonArrow");
+        arrow.transform.position += new Vector3(0, 3, 0);
     }
 
 }

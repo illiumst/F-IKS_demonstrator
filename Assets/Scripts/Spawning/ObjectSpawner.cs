@@ -17,9 +17,8 @@ public class ObjectSpawner : MonoBehaviour
     GameObject DoorObject;
     GameObject positionMarkerObject;
     GameObject AgentListItem;
+    GameObject EpisodeItem;
     public GameObject AgentListContent;
-    //ObjectPooler objectPooler;
-
     [SerializeField] GameObject WallObjects;
     [SerializeField] GameObject DoorObjects;
     [SerializeField] GameObject AgentObjects;
@@ -55,7 +54,6 @@ public class ObjectSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //objectPooler = ObjectPooler.Instance;
         system = GameObject.FindWithTag("System");
 
         RobotSpawnObject = Resources.Load("Prefabs/Robot") as GameObject;
@@ -66,6 +64,7 @@ public class ObjectSpawner : MonoBehaviour
         PickupItemSpawnObject = Resources.Load("Prefabs/PickupItem") as GameObject;
         DropOffZoneSpawnObject = Resources.Load("Prefabs/DropOffZone") as GameObject;
         positionMarkerObject = Resources.Load("Prefabs/PositionMarker") as GameObject;
+        EpisodeItem = Resources.Load("Prefabs/EpisodeItem") as GameObject;
         wallRotation = transform.rotation;
 
 
@@ -74,7 +73,7 @@ public class ObjectSpawner : MonoBehaviour
 
     private void Update()
     {
-        FloorMarkerRegister.SetActive(floorMarkerToggle.isOn);
+        FloorMarkerRegister.SetActive(false);
     }
 
     public void SpawnNewEpisode(EnvironmentConstants constantsInput, int episode)
@@ -104,6 +103,25 @@ public class ObjectSpawner : MonoBehaviour
         wallList.Clear();
         trashList.Clear();
         doorList.Clear();
+    }
+
+    public void SpawnEpisodeSelection()
+    {
+        foreach (EnvironmentEpisode ep in constants.episodes)
+        {
+            var newEpisodeItem = Instantiate(EpisodeItem) as GameObject;
+            var content = GameObject.FindWithTag("EpisodeScrollViewContent");
+            newEpisodeItem.transform.SetParent(content.transform, false);
+            var episodeName = FindGameObjectInChildWithTag(newEpisodeItem, "EpisodeItemName");
+            episodeName.transform.GetComponent<Text>().text = "Episode " + ep.episode;
+            var nrSteps = FindGameObjectInChildWithTag(newEpisodeItem, "EpisodeNrSteps");
+            nrSteps.transform.GetComponent<Text>().text = "" + ep.steps.Count;
+            var nrAgents = FindGameObjectInChildWithTag(newEpisodeItem, "EpisodeNrAgents");
+            nrAgents.transform.GetComponent<Text>().text = "" + ep.steps[0].Agents.Count;
+            var environmentSize = FindGameObjectInChildWithTag(newEpisodeItem, "EpisodeEnvironmentSize");
+            environmentSize.transform.GetComponent<Text>().text = GetMaxWallX(ep.episode) + " x " + GetMaxWallY(ep.episode);
+            system.GetComponent<EnvironmentStateMachine>().episodeItems.Add(newEpisodeItem);
+        }
     }
 
     void DestroyObjectsWithTag(string tag)
@@ -179,7 +197,6 @@ public class ObjectSpawner : MonoBehaviour
                 posMarker.gameObject.GetComponent<Canvas>().worldCamera = Camera.main;
                 posMarker.transform.SetParent(FloorMarkerRegister.gameObject.transform);
                 posMarker.transform.position = GetRecalculatedPosition((float)i, 0f, (float)j);
-                //var canvas = posMarker.transform.GetChild(0).gameObject;
                 var text = posMarker.transform.GetChild(0).gameObject;
                 text.GetComponent<Text>().text = "x:" + i + " y:" + j;
             }
@@ -225,7 +242,6 @@ public class ObjectSpawner : MonoBehaviour
         var nameTagCanvas = FindGameObjectInChildWithTag(agentBody.transform.GetChild(0).gameObject, "AgentCanvas");
         var nameTag = FindGameObjectInChildWithTag(nameTagCanvas, "NameTag");
         nameTag.GetComponent<TextMeshProUGUI>().SetText(GetAgentNumberFromNameAsString(name));
-        //nameTag.GetComponent<TextMeshProUGUI>().color = textColor;
         system.GetComponent<EnvironmentStateMachine>().agentObjects.Add(newRobot);
         system.GetComponent<EnvironmentStateMachine>().agentListObjects.Add(newListItem);
     }
@@ -303,22 +319,6 @@ public class ObjectSpawner : MonoBehaviour
         system.GetComponent<EnvironmentStateMachine>().dirtObjects.Add(dirtSpawn);
     }
 
-    /*public void spawnDirtRegisterOld(int episode, int step)
-    {
-        List<Dirt> dirtPiles = constants.episodes[episode].steps[step].DirtRegister;
-        foreach (Dirt dirt in dirtPiles)
-        {
-            if (dirt != null)
-            {
-                var pos = GetRecalculatedPosition(dirt.x, 0, dirt.y);
-                var size = (int)(dirt.amount * 10);
-                //TODO check sizing
-                spawnTrashObject(pos, size);
-
-            }
-        }
-    }*/
-
     public void spawnDirtRegister(int episode, int step)
     {
         List<Dirt> dirtPiles = constants.episodes[episode].steps[step].DirtRegister;
@@ -340,41 +340,35 @@ public class ObjectSpawner : MonoBehaviour
 
         foreach (Wall wall in walls)
         {
-            //.Log("------Wallpiece: x: " + wall.x + " y: " + wall.y);
             wallRotation = Quaternion.Euler(0, 0, 0);
 
             if (!CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
              && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
             {
-                //Debug.Log("------WallBlock");
                 var wallPiece = Resources.Load("Prefabs/Walls/WallBlock");
                 WallSpawnObject = wallPiece as GameObject;
             }
             if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
             && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
             {
-                //Debug.Log("------Wall1");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
                 WallSpawnObject = wallPiece as GameObject;
             }
             else if (!CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
             && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
             {
-                //Debug.Log("------Wall1 top hit");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
                 WallSpawnObject = wallPiece as GameObject;
             }
             else if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
             && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
             {
-                //Debug.Log("------Wall1 bottom hit");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
                 WallSpawnObject = wallPiece as GameObject;
             }
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
             {
-                //Debug.Log("------Wall2");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, 90, 0);
@@ -382,7 +376,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (!CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
             {
-                //Debug.Log("------Wall2 right hit");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, 90, 0);
@@ -390,7 +383,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
             {
-                //Debug.Log("------Wall2 left hit");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall1");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, 90, 0);
@@ -406,7 +398,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
             {
-                //Debug.Log("------Wall4");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, 0, 0);
@@ -415,7 +406,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1)
             && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y))
             {
-                //Debug.Log("------Wall5");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, -90, 0);
@@ -424,7 +414,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
             && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y))
             {
-                //Debug.Log("------Wall6");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall4");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, 180, 0);
@@ -433,7 +422,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
             && CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
             {
-                //Debug.Log("------Wall7");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, 270, 0);
@@ -442,7 +430,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
             && CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y))
             {
-                //Debug.Log("------Wall8");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, 90, 0);
@@ -451,7 +438,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1))
             {
-                //Debug.Log("------Wall9");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, 180, 0);
@@ -459,7 +445,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
             {
-                //Debug.Log("------Wall10");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall2");
                 WallSpawnObject = wallPiece as GameObject;
                 wallRotation = Quaternion.Euler(0, 0, 0);
@@ -467,7 +452,6 @@ public class ObjectSpawner : MonoBehaviour
             else if (CheckIfWallExistsAtPosition(wall.x - 1, wall.y) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
             && CheckIfWallExistsAtPosition(wall.x, wall.y - 1) && CheckIfWallExistsAtPosition(wall.x, wall.y + 1))
             {
-                //Debug.Log("------Wall11");
                 var wallPiece = Resources.Load("Prefabs/Walls/Wall3");
                 WallSpawnObject = wallPiece as GameObject;
             }
@@ -478,7 +462,6 @@ public class ObjectSpawner : MonoBehaviour
         }
         foreach (GameObject wall in wallList)
         {
-            //Debug.Log("------Converting Wall coordinates...");
             wall.transform.position = GetRecalculatedPosition(wall.transform.position.x, wall.transform.position.y, wall.transform.position.z);
         }
     }
@@ -491,7 +474,6 @@ public class ObjectSpawner : MonoBehaviour
 
         foreach (Door door in doors)
         {
-            //.Log("------Wallpiece: x: " + wall.x + " y: " + wall.y);
             doorRotation = Quaternion.Euler(0, 0, 0);
 
             if (CheckIfWallExistsAtPosition(door.x - 1, door.y) && CheckIfWallExistsAtPosition(door.x + 1, door.y)
@@ -576,6 +558,46 @@ public class ObjectSpawner : MonoBehaviour
     public int GetMaxWallX()
     {
         return this.maxWallX;
+    }
+
+    public int GetMaxWallX(int episode)
+    {
+        var walls = constants.episodes[episode].steps[0].WallTiles;
+        tempMaxWallX = 0;
+        tempMaxWallY = 0;
+
+        foreach (Wall wall in walls)
+        {
+            if (wall.x > tempMaxWallX)
+            {
+                tempMaxWallX = wall.x;
+            }
+            if (wall.y > tempMaxWallY)
+            {
+                tempMaxWallY = wall.y;
+            }
+        }
+        return tempMaxWallX;
+    }
+
+    public int GetMaxWallY(int episode)
+    {
+        var walls = constants.episodes[episode].steps[0].WallTiles;
+        tempMaxWallX = 0;
+        tempMaxWallY = 0;
+
+        foreach (Wall wall in walls)
+        {
+            if (wall.x > tempMaxWallX)
+            {
+                tempMaxWallX = wall.x;
+            }
+            if (wall.y > tempMaxWallY)
+            {
+                tempMaxWallY = wall.y;
+            }
+        }
+        return tempMaxWallY;
     }
 
     public int GetMaxWallY()

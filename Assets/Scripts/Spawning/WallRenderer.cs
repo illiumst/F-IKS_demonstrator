@@ -21,7 +21,6 @@ public class WallRenderer : MonoBehaviour
             {
                 TriggerList.Add(collider);
             }
-            //TODO: dont make transparent when max x or max y
             var spawner = GameObject.FindWithTag("System").GetComponent<ObjectSpawner>();
             if (this.gameObject.transform.position.x != spawner.GetMaxWallX() && this.gameObject.transform.position.y != spawner.GetMaxWallY())
             {

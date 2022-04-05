@@ -31,7 +31,6 @@ public class ObjectPooler : MonoBehaviour
     public List<Pool> pools;
     public Dictionary<string, Queue<GameObject>> poolDictionary;
 
-    // Start is called before the first frame update
     void Start()
     {
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
@@ -79,11 +78,9 @@ public class ObjectPooler : MonoBehaviour
 
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation, bool active)
     {
-        //Debug.Log("----------------------SpawnFromPool dictionary count : " + poolDictionary.Count);
 
         if (!poolDictionary.ContainsKey(tag))
         {
-            //Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
             return null;
         }
         if (poolDictionary[tag].Count == 0)

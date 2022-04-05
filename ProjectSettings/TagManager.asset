@@ -83,6 +83,17 @@ TagManager:
   - Tooltip
   - TooltipText
   - SpeechBubbleAgentNumber
+  - EpisodeScrollViewContent
+  - EpisodeItemName
+  - EpisodeNrSteps
+  - EpisodeNrAgents
+  - EpisodeEnvironmentSize
+  - SelectedEpisodeName
+  - EpisodeSelectionButtonArrow
+  - EpisodeSelectionScrollviewCanvas
+  - EpisodeSelectionButtonClosed
+  - EpisodeSelectionButtonOpen
+  - EpisodeItemOutline
   layers:
   - Default
   - TransparentFX
