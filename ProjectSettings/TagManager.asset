@@ -94,6 +94,9 @@ TagManager:
   - EpisodeSelectionButtonClosed
   - EpisodeSelectionButtonOpen
   - EpisodeItemOutline
+  - SliderFill
+  - BufferFill
+  - StepText
   layers:
   - Default
   - TransparentFX

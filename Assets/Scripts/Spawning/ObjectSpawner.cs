@@ -120,7 +120,7 @@ public class ObjectSpawner : MonoBehaviour
             nrAgents.transform.GetComponent<Text>().text = "" + ep.steps[0].Agents.Count;
             var environmentSize = FindGameObjectInChildWithTag(newEpisodeItem, "EpisodeEnvironmentSize");
             environmentSize.transform.GetComponent<Text>().text = GetMaxWallX(ep.episode) + " x " + GetMaxWallY(ep.episode);
-            system.GetComponent<EnvironmentStateMachine>().episodeItems.Add(newEpisodeItem);
+            system.GetComponent<EnvironmentStateManager>().episodeItems.Add(newEpisodeItem);
         }
     }
 
@@ -142,7 +142,7 @@ public class ObjectSpawner : MonoBehaviour
             var newPickupItem = Instantiate(objectToSpawn, SpawnPosition, transform.rotation) as GameObject;
             newPickupItem.name = name;
             newPickupItem.transform.parent = ItemRegister.transform;
-            system.GetComponent<EnvironmentStateMachine>().itemObjects.Add(newPickupItem);
+            system.GetComponent<EnvironmentStateManager>().itemObjects.Add(newPickupItem);
 
         }
         if (objectToSpawn.tag == "DropOffZone")
@@ -150,7 +150,7 @@ public class ObjectSpawner : MonoBehaviour
             var newDropOffZone = Instantiate(objectToSpawn, SpawnPosition, transform.rotation) as GameObject;
             newDropOffZone.name = name;
             newDropOffZone.transform.parent = ZoneObjects.transform;
-            system.GetComponent<EnvironmentStateMachine>().zoneObjects.Add(newDropOffZone);
+            system.GetComponent<EnvironmentStateManager>().zoneObjects.Add(newDropOffZone);
 
         }
     }
@@ -235,15 +235,12 @@ public class ObjectSpawner : MonoBehaviour
         contentValidityText.GetComponent<Text>().text = validityString;
         contentValidityText.GetComponent<Text>().color = textColor;
 
-        var validityLight = agentBody.transform.GetChild(5).gameObject;
-        validityLight.GetComponent<Light>().color = color;
-
         var canvas = agentBody.transform.GetChild(4).gameObject;
         var nameTagCanvas = FindGameObjectInChildWithTag(agentBody.transform.GetChild(0).gameObject, "AgentCanvas");
         var nameTag = FindGameObjectInChildWithTag(nameTagCanvas, "NameTag");
         nameTag.GetComponent<TextMeshProUGUI>().SetText(GetAgentNumberFromNameAsString(name));
-        system.GetComponent<EnvironmentStateMachine>().agentObjects.Add(newRobot);
-        system.GetComponent<EnvironmentStateMachine>().agentListObjects.Add(newListItem);
+        system.GetComponent<EnvironmentStateManager>().agentObjects.Add(newRobot);
+        system.GetComponent<EnvironmentStateManager>().agentListObjects.Add(newListItem);
     }
 
     string GetAgentNumberFromNameAsString(string name)
@@ -293,7 +290,7 @@ public class ObjectSpawner : MonoBehaviour
         newTrashBoundary.GetComponent<Trash>().setSize(size);
         newTrashBoundary.GetComponent<Trash>().setIndex(trashList.Count);
         newTrashBoundary.transform.localScale = new Vector3(boundarySize, boundarySize, boundarySize);
-        system.GetComponent<EnvironmentStateMachine>().dirtObjects.Add(newTrashBoundary);
+        system.GetComponent<EnvironmentStateManager>().dirtObjects.Add(newTrashBoundary);
 
     }
 
@@ -316,7 +313,7 @@ public class ObjectSpawner : MonoBehaviour
         dirtSpawn.transform.localScale = new Vector3(scaleFactor, 0.001f, scaleFactor);
         dirtSpawn.transform.eulerAngles = new Vector3(0, randRot, 0);
         trashList.Add(dirtSpawn);
-        system.GetComponent<EnvironmentStateMachine>().dirtObjects.Add(dirtSpawn);
+        system.GetComponent<EnvironmentStateManager>().dirtObjects.Add(dirtSpawn);
     }
 
     public void spawnDirtRegister(int episode, int step)
@@ -497,7 +494,7 @@ public class ObjectSpawner : MonoBehaviour
         foreach (GameObject door in doorList)
         {
             door.transform.position = GetRecalculatedPosition(door.transform.position.x, door.transform.position.y, door.transform.position.z);
-            system.GetComponent<EnvironmentStateMachine>().doorObjects.Add(door);
+            system.GetComponent<EnvironmentStateManager>().doorObjects.Add(door);
         }
     }
 

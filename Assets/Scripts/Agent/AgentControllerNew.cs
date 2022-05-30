@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 
 
-public class AgentController : MonoBehaviour
+public class AgentControllerNew : MonoBehaviour
 {
 
     #region Attribute declarations
@@ -34,12 +34,21 @@ public class AgentController : MonoBehaviour
     Texture2D directionTex;
     Sprite cleaningSprite;
     Sprite itemPickSprite;
-    //Sprite itemOffSprite;
     Sprite directionSprite;
     //TODO initialize in EnvironmentStateManager
     Agent agentModel;
-
     public bool finished = false;
+    public string action;
+
+    //Animation states
+    string currentAnimationState = "";
+    const string AGENT_IDLE = "Agent_idle";
+    const string AGENT_PICKUP = "Agent_pickup";
+    const string AGENT_MOVING = "Agent_moving";
+    const string AGENT_INVALID = "Agent_invalid";
+    const string AGENT_CLEANING = "Agent_cleaning";
+    const string AGENT_DAMAGE = "Agent_damage";
+
     #endregion
 
     // Start is called before the first frame update
@@ -102,95 +111,78 @@ public class AgentController : MonoBehaviour
             MoveRobotTo(goalPosition);
         }
 
-        if (currentpos == goalPosition)
+        if (currentpos == goalPosition && (action != "Action[CLEAN_UP]" || action != "Action[ITEM_ACTION]"))
         {
-            finished = true;
+            //finished = true;
             animator.SetBool("moving", false);
         }
 
-        #region manual agent control
-        if (manualRobotControl)
+    }
+    //TODO maybe move this functionality to agent controller
+    public void UpdateAgentAction()
+    {
+        var stateManager = system.GetComponent<EnvironmentStateManager>();
+        UpdateSpeechBubble(agentModel.action, agentModel.valid);
+        speechBubblePositionText.GetComponent<Text>().text = "x:" + agentModel.x + " y:" + agentModel.y;
+        action = agentModel.action;
+        finished = false;
+
+        if (!agentModel.valid)
         {
-            if (Input.GetKey("left"))
-            {
-                MoveRobotLeft();
-            }
-            if (Input.GetKey("right"))
-            {
-                MoveRobotRight();
-            }
-            if (Input.GetKey("up"))
-            {
-                MoveRobotUp();
-            }
-            if (Input.GetKey("down"))
-            {
-                MoveRobotDown();
+            valid = false;
+            speed = 0;
+            animator.SetBool("moving", false);
+            animator.SetBool("invalid", true);
+            stateManager.AddToValidCounter(1);
+            ChangeAnimationState(AGENT_INVALID);
+        }
+        if (agentModel.valid)
+        {
+            valid = true;
+            animator.SetBool("invalid", false);
+            stateManager.AddToInValidCounter(1);
+            switch(agentModel.action){
+                case "Action[CLEAN_UP]" : 
+                    StartCoroutine(BubblesAction());
+                    ChangeAnimationState(AGENT_CLEANING);break;
+                case "Action[ITEM_ACTION]" :  
+                    ChangeAnimationState(AGENT_PICKUP); break;
+                case "Action[NORTH]": 
+                case "Action[NORTHEAST]": 
+                case "Action[NORTHWEST]": 
+                case "Action[EAST]": 
+                case "Action[SOUTHEAST]": 
+                case "Action[SOUTH]": 
+                case "Action[SOUTHWEST]" :
+                    ChangeAnimationState(AGENT_MOVING); break;
+                default: ChangeAnimationState(AGENT_IDLE); break;
             }
         }
-        #endregion
     }
 
-    /*private void UpdateAgentAction(int episode, int step)
-    {
-        speechBubblePositionText.GetComponent<Text>().text = "x:" + agents[i].x + " y:" + agents[i].y;
-
-
-        if (!agents[i].valid)
-        {
-            agentObjController.valid = false;
-            agentObjController.speed = 0;
-            agentObjController.animator.SetBool("moving", false);
-            invalidCounter++;
+    float GetActionLength(string action){
+        switch(action){
+                case AGENT_CLEANING : 
+                    return 2f;
+                case AGENT_PICKUP :  
+                    return 2f;
+                case AGENT_MOVING:
+                    return 0.5f;
+                default: return 1f;
         }
-        if (agents[i].valid)
-        {
-            agentObjController.valid = true;
-            validCounter++;
-            if (agents[i].action.Equals("Action[CLEAN_UP]"))
-            {
-                agentObjController.animator.SetTrigger("foundTrash");
-                SpawnCleaningBubbles(agentObjController.goalPosition);
-            }
-            if (agents[i].action.Equals("Action[ITEM_ACTION]"))
-            {
-                agentObjController.animator.SetTrigger("foundTrash");
-            }
-        }
-    }*/
+    }
 
-    #region move robot left, right, up, down
-    void MoveRobotLeft()
+
+    IEnumerator BubblesAction()
     {
-        Vector3 position = this.transform.position;
-        position.x -= Time.deltaTime * speed;
-        this.transform.position = position;
+        var stateManager = system.GetComponent<EnvironmentStateManager>();
+        yield return StartCoroutine(WaitFor.Frames(10));
+        stateManager.SpawnCleaningBubbles(goalPosition);
     }
-    void MoveRobotRight()
-    {
-        Vector3 position = this.transform.position;
-        position.x += Time.deltaTime * speed;
-        this.transform.position = position;
-    }
-    void MoveRobotUp()
-    {
-        Vector3 position = this.transform.position;
-        position.z += Time.deltaTime * speed;
-        this.transform.position = position;
-    }
-    void MoveRobotDown()
-    {
-        Vector3 position = this.transform.position;
-        position.z -= Time.deltaTime * speed;
-        this.transform.position = position;
-    }
-    #endregion
 
     public void MoveRobotTo(Vector3 position)
     {
         animator.SetBool("moving", true);
-        finished = false;
-
         this.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
 
         if (backwardBuffer)
@@ -199,13 +191,29 @@ public class AgentController : MonoBehaviour
         }
         Vector3 difference = goalPosition - currentpos;
         var name = this.transform.GetChild(4);
-        var wallVisualizer = this.transform.GetChild(6);
         if (difference != Vector3.zero)
         {
             this.transform.forward = difference;
             name.transform.eulerAngles = Vector3.zero;
-            wallVisualizer.eulerAngles = Vector3.zero;
         }
+    }
+
+    void ChangeAnimationState(string state)
+    {
+        if (currentAnimationState == state)
+        {
+            StartCoroutine(WaitToFinishAnimation(state));
+        }
+        animator.Play(state);
+        currentAnimationState = state;
+        StartCoroutine(WaitToFinishAnimation(state));
+    }
+
+//TODO change length according to action
+    IEnumerator WaitToFinishAnimation(string action)
+    {
+        yield return new WaitForSeconds(GetActionLength(action));
+        finished = true;
     }
 
     public void UpdateAgentListItems(GameObject agentObject, GameObject listItem, int x, int y, string name, string action, bool valid)
@@ -245,7 +253,6 @@ public class AgentController : MonoBehaviour
         rectTrans.LookAt(transform.position + camera.transform.rotation * Vector3.forward, camera.transform.rotation * Vector3.up);
         Vector3 contentRotation = rectTrans.rotation.eulerAngles;
 
-        //if (valid && showValidActionsToggle.isOn)
         if (valid)
         {
             speechBubbleInvalidityImage.SetActive(false);
@@ -317,12 +324,9 @@ public class AgentController : MonoBehaviour
                 default: speechBubble.SetActive(false); break;
             }
         }
-        //else if (!valid && showInvalidActionsToggle.isOn)
         else if (!valid)
         {
-            //speechBubbleInvalidityImage.SetActive(true);
             speechBubble.GetComponent<Image>().color = new Color32(255, 60, 80, 255);
-            //speechBubble.GetComponent<Blinking>().startBlinking = true;
             switch (action)
             {
                 case "Action[CLEAN_UP]":
@@ -441,6 +445,11 @@ public class AgentController : MonoBehaviour
     {
         Vector3 center = system.GetComponent<EnvironmentStateManager>().environmentCenter;
         return new Vector3(x - center.x, y, z - center.z);
+    }
+
+    public void SetAgentModel(Agent agent)
+    {
+        this.agentModel = agent;
     }
     #endregion
 

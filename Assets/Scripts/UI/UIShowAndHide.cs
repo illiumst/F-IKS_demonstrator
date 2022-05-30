@@ -122,14 +122,34 @@ public class UIShowAndHide : MonoBehaviour
     public void MoveOverviewCanvasDown()
     {
         var canvas = QuickOverview;
-        var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y - 75, canvas.transform.position.z);
+        var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y - 0.17f * Screen.height, canvas.transform.position.z);
         canvas.transform.position = newPos;
     }
     public void MoveOverviewCanvasUp()
     {
         var canvas = QuickOverview;
-        var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y + 75, canvas.transform.position.z);
+        var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y + 0.17f * Screen.height, canvas.transform.position.z);
         canvas.transform.position = newPos;
+    }
+
+    public void MoveAgentCanvasDown()
+    {
+        var canvas = GameObject.FindWithTag("DetailsDisplay");
+        if (canvas != null)
+        {
+            var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y - 0.17f * Screen.height, canvas.transform.position.z);
+            canvas.transform.position = newPos;
+        }
+
+    }
+    public void MoveAgentCanvasUp()
+    {
+        var canvas = GameObject.FindWithTag("DetailsDisplay");
+        if (canvas != null)
+        {
+            var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y + 0.17f * Screen.height, canvas.transform.position.z);
+            canvas.transform.position = newPos;
+        }
     }
 
 

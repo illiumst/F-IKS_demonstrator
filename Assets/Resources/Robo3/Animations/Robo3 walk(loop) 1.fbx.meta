@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8f4bc1b544537e845a1d34de0a48d23f
+guid: ce68073f7663d47b797b64f91766db7c
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
@@ -161,8 +161,8 @@ ModelImporter:
       name: Robo3 Walk(loop)
       takeName: Take 001
       internalID: 0
-      firstFrame: 90
-      lastFrame: 565
+      firstFrame: 81
+      lastFrame: 170
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

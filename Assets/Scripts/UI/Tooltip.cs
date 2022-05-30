@@ -63,7 +63,7 @@ public class Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         yield return new WaitForSeconds(2f); // Wait 5 seconds
 
         Debug.Log("________Trying to fill tooltip: " + this.gameObject.name);
-        var statemachine = GameObject.FindWithTag("System").GetComponent<EnvironmentStateMachine>();
+        var statemachine = GameObject.FindWithTag("System").GetComponent<EnvironmentStateManager>();
         toolTipCanvas.GetComponent<Canvas>().enabled = true;
 
         switch (tagName)

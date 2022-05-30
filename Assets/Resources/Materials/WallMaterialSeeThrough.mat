@@ -306,11 +306,11 @@ Material:
     - _ZWrite: 1
     - _opacity: 0.6
     - _size: 1
-    - _size1: 0
-    - _size2: 0
-    - _size3: 0.7
-    - _size4: 0.7
-    - _smoothness: 0.5
+    - _size1: 0.7
+    - _size2: 0.7
+    - _size3: 0
+    - _size4: 0
+    - _smoothness: 0.49
     m_Colors:
     - Color_8f052fad1f734c69b65fa3e4414bff65: {r: 1, g: 1, b: 1, a: 0}
     - Vector2_778966a213664052a83ea88f482e88f9: {r: 0.5, g: -1.5, b: 0, a: 0}
@@ -331,9 +331,9 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
-    - _agent1Pos: {r: 0.5521735, g: 0.72454464, b: 15.330688, a: 0}
-    - _agent2Pos: {r: 0.36941567, g: 0.27607465, b: 8.155168, a: 0}
-    - _agent3Pos: {r: 0.5648841, g: 0.58570683, b: 13.109283, a: 0}
-    - _agent4Pos: {r: 0.28868622, g: 0.17998937, b: 6.6178036, a: 0}
+    - _agent1Pos: {r: 0.5903173, g: 0.29919237, b: 8.807894, a: 0}
+    - _agent2Pos: {r: 0.32052484, g: 0.18982777, b: 7.0580597, a: 0}
+    - _agent3Pos: {r: 0.34397382, g: 0.5449115, b: 12.739401, a: 0}
+    - _agent4Pos: {r: 0.3226722, g: 0.2886121, b: 8.63861, a: 0}
     - _agentPos: {r: 0.55217344, g: 0.73890376, b: 16.261501, a: 0}
   m_BuildTextureStacks: []
