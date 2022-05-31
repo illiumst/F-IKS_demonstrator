@@ -8717,7 +8717,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 965286632}
   m_Direction: 1
   m_Value: 0
-  m_Size: 0.9999999
+  m_Size: 1
   m_NumberOfSteps: 11
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11028,8 +11028,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62e3928a73d6a4786af7d8b475de1d66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buffering: 0
-  playBackSpeed: 0.25
   agentObjects: []
   agentListObjects: []
   dirtObjects: []
@@ -11038,6 +11036,9 @@ MonoBehaviour:
   doorObjects: []
   episodeItems: []
   dropDownOptions: []
+  agents: []
+  buffering: 0
+  playBackSpeed: 0.25
   environmentCenter: {x: 0, y: 0, z: 0}
 --- !u!114 &906522901
 MonoBehaviour:

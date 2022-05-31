@@ -845,14 +845,14 @@ public class EnvironmentStateManager : MonoBehaviour
 
         switch (agent.action)
         {
-            case "Action[NORTH]": return CheckForWall(x, y - 1, episode, agentObjController);
-            case "Action[NORTHEAST]": return CheckForWall(x + 1, y - 1, episode, agentObjController);
-            case "Action[EAST]": return CheckForWall(x + 1, y, episode, agentObjController);
-            case "Action[SOUTHEAST]": return CheckForWall(x + 1, y + 1, episode, agentObjController);
-            case "Action[SOUTH]": return CheckForWall(x, y + 1, episode, agentObjController);
-            case "Action[SOUTHWEST]": return CheckForWall(x - 1, y + 1, episode, agentObjController);
-            case "Action[WEST]": return CheckForWall(x - 1, y, episode, agentObjController);
-            case "Action[NORTHWEST]": return CheckForWall(x - 1, y - 1, episode, agentObjController);
+            case AgentConstants.ACTION_NORTH: return CheckForWall(x, y - 1, episode, agentObjController);
+            case AgentConstants.ACTION_NORTHEAST: return CheckForWall(x + 1, y - 1, episode, agentObjController);
+            case AgentConstants.ACTION_EAST: return CheckForWall(x + 1, y, episode, agentObjController);
+            case AgentConstants.ACTION_SOUTHEAST: return CheckForWall(x + 1, y + 1, episode, agentObjController);
+            case AgentConstants.ACTION_SOUTH: return CheckForWall(x, y + 1, episode, agentObjController);
+            case AgentConstants.ACTION_SOUTHWEST: return CheckForWall(x - 1, y + 1, episode, agentObjController);
+            case AgentConstants.ACTION_WEST: return CheckForWall(x - 1, y, episode, agentObjController);
+            case AgentConstants.ACTION_NORTHWEST: return CheckForWall(x - 1, y - 1, episode, agentObjController);
             default: return false; ;
         }
     }
