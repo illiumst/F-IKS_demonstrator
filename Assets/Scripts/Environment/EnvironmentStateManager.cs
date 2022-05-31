@@ -10,11 +10,37 @@ using System;
 public class EnvironmentStateManager : MonoBehaviour
 {
     #region Object and Variable Declarations
+
+    //========================================================================================================//
+    //================================= GLOBAL OBJECTS =======================================================//
+    //========================================================================================================//
     GameObject system;
+    JSONReader JSONReader;
+    ObjectSpawner objectSpawner;
+    public EnvironmentConstants environmentConstants;
+
+    //========================================================================================================//
+    //================================= UI ELEMENTS ==========================================================//
+    //========================================================================================================//
+
+    //********************************** CANVASES / AREAS ***************************************************//
+
+    GameObject UICanvas;
+    GameObject PopUpDialog;
+    GameObject LoadingCanvas;
+    GameObject AgentScrollView;
+    GameObject CursorCanvas;
+    GameObject CameraControllerCanvas;
+    GameObject ToggleMenuCanvas;
+
+    //********************************** SLIDER **************************************************************//
+
     Slider slider;
     Slider bufferSlider;
     Image sliderFill;
     Image bufferFill;
+
+    //********************************** SLIDER NAVIGATION ***************************************************//
 
     GameObject steptext;
     Button playButton;
@@ -23,28 +49,25 @@ public class EnvironmentStateManager : MonoBehaviour
     Button nextNextButton;
     Button previousButton;
     Button previousPreviousButton;
-
     GameObject playBackSpeedDropdown;
+
+    //********************************** STEP OVERVIEW *******************************************************//
+
     GameObject stepOverviewText;
     GameObject agentNrText;
     GameObject dirtNrText;
     GameObject itemNrText;
     GameObject validNrText;
     GameObject invalidNrText;
+
+    //********************************** SEQUENCE SELECTION **************************************************//
+
     GameObject sequenceName;
     GameObject selectedEpisodeName;
 
-    int currentEpisode;
-    int currentStep;
-    bool allAgentsInitialized = false;
-    bool playingSequence = false;
-    [SerializeField] bool buffering;
-    int stepsSkipped = 0;
-
-    JSONReader JSONReader;
-    ObjectSpawner objectSpawner;
-    public EnvironmentConstants environmentConstants;
-    public float playBackSpeed = 0.25f;
+    //========================================================================================================//
+    //================================= OBJECT LISTS =========================================================//
+    //========================================================================================================//
 
     public List<GameObject> agentObjects = new List<GameObject>();
     public List<GameObject> agentListObjects = new List<GameObject>();
@@ -54,24 +77,36 @@ public class EnvironmentStateManager : MonoBehaviour
     public List<GameObject> doorObjects = new List<GameObject>();
     public List<GameObject> episodeItems = new List<GameObject>();
     public List<string> dropDownOptions = new List<string>();
-    List<Agent> agents = new List<Agent>();
+    public List<Agent> agents = new List<Agent>();
+
+    //========================================================================================================//
+    //================================= HELPING FIELDS =======================================================//
+    //========================================================================================================//
+
+    int currentEpisode;
+    int currentStep;
+
+    bool allAgentsInitialized = false;
+    bool playingSequence = false;
+    [SerializeField] bool buffering;
+    int stepsSkipped = 0;
+
+    public float playBackSpeed = 0.25f;
+
     public Vector3 environmentCenter;
-    GameObject UICanvas;
-    GameObject PopUpDialog;
-    GameObject LoadingCanvas;
-    GameObject AgentScrollView;
-    GameObject CursorCanvas;
-    GameObject CameraControllerCanvas;
-    GameObject ToggleMenuCanvas;
+
     int validCounter;
     int invalidCounter;
 
-    int stepFrameDuration = 60;
+    // delcare some value to store the accumulated time
+    float totalSliderTime = 0f;
+
     #endregion
 
     void Start()
     {
         #region Initializing GameObjects by Tag
+
         system = GameObject.FindWithTag("System");
         UICanvas = GameObject.FindWithTag("UICanvas");
         PopUpDialog = GameObject.FindWithTag("PopUpDialog");
@@ -90,6 +125,7 @@ public class EnvironmentStateManager : MonoBehaviour
         sliderFill = GameObject.FindWithTag("SliderFill").GetComponent<Image>();
         bufferFill = GameObject.FindWithTag("BufferFill").GetComponent<Image>();
         steptext = GameObject.FindWithTag("StepText");
+
         #endregion
 
         validCounter = 0;
@@ -103,15 +139,18 @@ public class EnvironmentStateManager : MonoBehaviour
     }
 
     #region Initializations
+
     IEnumerator InitializeObjectSpawner()
     {
         objectSpawner = system.GetComponent<ObjectSpawner>();
         yield return new WaitForSeconds(3);
         InitializeEnvironmentData();
     }
+
     void InitializeEnvironmentStateMachine()
     {
-        //UI Initialization
+        //********************************** UI INITIALIZATION **********************************************//
+
         LoadingCanvas.SetActive(false);
         UICanvas.SetActive(true);
         system.GetComponent<UIShowAndHide>().InitializeUIShowAndHide();
@@ -127,7 +166,8 @@ public class EnvironmentStateManager : MonoBehaviour
         previousPreviousButton = system.GetComponent<UIGlobals>().previousPreviousButton;
 
 
-        //slider
+        //********************************** SLIDER SETUP ***************************************************//
+
         InitializeTimelineSlider();
         InitializeBufferSlider();
         slider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
@@ -138,7 +178,8 @@ public class EnvironmentStateManager : MonoBehaviour
         steptext.SetActive(false);
         buffering = false;
 
-        //Button Listner set-up
+        //********************************** BUTTON LISTENER SET-UP *****************************************//
+
         playButton.onClick.AddListener(PlaySequence);
         pauseButton.onClick.AddListener(PauseSequence);
         nextButton.onClick.AddListener(delegate { SkipSteps(1); });
@@ -146,10 +187,16 @@ public class EnvironmentStateManager : MonoBehaviour
         previousButton.onClick.AddListener(delegate { SkipSteps(-1); });
         previousPreviousButton.onClick.AddListener(delegate { SkipSteps(-10); });
 
+        //********************************** AGENTS SET-UP **************************************************//
+
         agents.Clear();
         agents = environmentConstants.episodes[0].steps[0].Agents;
 
+        //********************************** EPISODE SELECTION SET-UP ***************************************//
+
         SetUpEpisodeSelection();
+
+        //********************************** SPEED DROP-DOWN ***********************************************//
 
         InitializePlaybackSpeedDropdown();
     }
@@ -207,6 +254,8 @@ public class EnvironmentStateManager : MonoBehaviour
         });
         speedDrop.value = 1;
     }
+
+
     void InitializeTimelineSlider()
     {
         slider.onValueChanged.AddListener(delegate
@@ -337,6 +386,20 @@ public class EnvironmentStateManager : MonoBehaviour
         LoadNewTimeStep(currentEpisode, currentStep);
     }
 
+    IEnumerator AnimateSliderOverTime(float start, float finish, float seconds)
+    {
+        float animationTime = 0f;
+        while (animationTime < seconds)
+        {
+            animationTime += Time.deltaTime;
+            float lerpValue = animationTime / seconds;
+            bufferSlider.value = Mathf.Lerp(start, finish, lerpValue);
+            slider.value = Mathf.Lerp(start, finish, lerpValue);
+
+            yield return null;
+        }
+    }
+
     void ChangeEpisode(int change)
     {
         currentEpisode = change;
@@ -380,11 +443,9 @@ public class EnvironmentStateManager : MonoBehaviour
     public void LoadNewTimeStep(int episode, int step)
     {
         Debug.Log("Loading new timestep...");
-        //currentStep = (int)bufferSlider.value;
         currentStep += 1;
-        slider.value = currentStep;
-        bufferSlider.value = currentStep;
-        //make sure that all agents have reached their goal position
+        //slider.value = currentStep;
+        //bufferSlider.value = currentStep;
         agents = environmentConstants.episodes[currentEpisode].steps[currentStep].Agents;
         UpdateAgents(episode, step);
         UpdateDirtPiles(episode, step);
@@ -393,13 +454,9 @@ public class EnvironmentStateManager : MonoBehaviour
         UpdateSliderLabel();
         UpdateStepOverview();
 
+        StartCoroutine(AnimateSliderOverTime(currentStep - 1, currentStep, GetLongestAgentAction()));
     }
 
-    /*    IEnumerator TryLoadingTimeStep(int episode, int step)
-        {
-            yield return StartCoroutine(WaitFor.Frames(30));
-            LoadNewTimeStep(episode, step);
-        }*/
 
     bool checkIfAllAgentsFinished()
     {
@@ -451,7 +508,6 @@ public class EnvironmentStateManager : MonoBehaviour
     }
     #endregion
 
-    //TODO UI Funktionalität in eigenes Script verschieben
     #region UI
     void UpdateStepOverview()
     {
@@ -483,7 +539,7 @@ public class EnvironmentStateManager : MonoBehaviour
     }
     #endregion
 
-    #region Update Functions
+    #region Update Objects - Functions
     private void UpdateDoors(int episode, int step)
     {
         var doors = environmentConstants.episodes[episode].steps[step].Doors;
@@ -531,17 +587,18 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         for (int i = 0; i < agents.Count; i++)
         {
+            //********************************** FIND AGENT CONTROLLERS ************************************//
             var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentControllerNew>();
             agentObjController.SetAgentModel(agents[i]);
 
-            //position
+            //********************************** UPDATE AGENT POSITIONS ************************************//
             UpdateAgentPositions(agents[i], agentObjController);
 
-            //UI
+            //********************************** UPDATE AGENT UI *******************************************//
             agentObjController.UpdateAgentListItems(agentObjects[i], agentListObjects[i],
             agents[i].x, agents[i].y, agents[i].name, agents[i].action, agents[i].valid);
 
-            //action
+            //********************************** UPDATE AGENT ACTION ***************************************//
             agentObjController.UpdateAgentAction();
         }
     }
@@ -636,11 +693,8 @@ public class EnvironmentStateManager : MonoBehaviour
 
     IEnumerator HandleSequencePlay()
     {
-        yield return new WaitForSeconds(2); // wait for 5 frames
-                                            //if (checkIfAllAgentsFinished())
-                                            //{
+        yield return new WaitForSeconds(2);
         LoadNewTimeStep(currentEpisode, currentStep + 1);
-        //}
     }
 
 
@@ -761,13 +815,16 @@ public class EnvironmentStateManager : MonoBehaviour
 
     IEnumerator BubbleSpawn(Vector3 pos)
     {
-        //spawn bubbles
+        //********************************** SPAWN BUBBLES ************************************************//
         var particleRes = Resources.Load("Prefabs/CleaningParticlesNew") as GameObject;
         var particlePos = new Vector3(pos.x, 0.3f, pos.z);
         GameObject particles = Instantiate(particleRes, particlePos, Quaternion.identity, null) as GameObject;
         ParticleSystem ps = particles.GetComponent<ParticleSystem>();
+
+        //********************************** WAIT ************************************************//
         yield return new WaitForSeconds(2);
-        //destroy bubbles
+
+        //********************************** DESTROY BUBBLES ***********************************************//
         Destroy(particles);
     }
 
@@ -922,9 +979,29 @@ public class EnvironmentStateManager : MonoBehaviour
         this.invalidCounter *= i;
     }
 
+    float GetLongestAgentAction()
+    {
+        float longest = 0f;
+        for (int i = 0; i < agentObjects.Count; i++)
+        {
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentControllerNew>();
+            var time = agentObjController.GetCurrentActionLength();
+
+            if (time > longest)
+            {
+                longest = time;
+            }
+        }
+        return longest;
+    }
+
     #endregion
 
 }
+
+//==========================================================================================================//
+//================================ HELPER CLASS - WAIT FRAME AMOUNT ========================================//
+//==========================================================================================================//
 
 public static class WaitFor
 {

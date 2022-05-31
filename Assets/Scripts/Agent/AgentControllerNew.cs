@@ -39,6 +39,7 @@ public class AgentControllerNew : MonoBehaviour
     Agent agentModel;
     public bool finished = false;
     public string action;
+    float currentActionLength = 0;
 
     //Animation states
     string currentAnimationState = "";
@@ -141,34 +142,37 @@ public class AgentControllerNew : MonoBehaviour
             valid = true;
             animator.SetBool("invalid", false);
             stateManager.AddToInValidCounter(1);
-            switch(agentModel.action){
-                case "Action[CLEAN_UP]" : 
+            switch (agentModel.action)
+            {
+                case "Action[CLEAN_UP]":
                     StartCoroutine(BubblesAction());
-                    ChangeAnimationState(AGENT_CLEANING);break;
-                case "Action[ITEM_ACTION]" :  
+                    ChangeAnimationState(AGENT_CLEANING); break;
+                case "Action[ITEM_ACTION]":
                     ChangeAnimationState(AGENT_PICKUP); break;
-                case "Action[NORTH]": 
-                case "Action[NORTHEAST]": 
-                case "Action[NORTHWEST]": 
-                case "Action[EAST]": 
-                case "Action[SOUTHEAST]": 
-                case "Action[SOUTH]": 
-                case "Action[SOUTHWEST]" :
+                case "Action[NORTH]":
+                case "Action[NORTHEAST]":
+                case "Action[NORTHWEST]":
+                case "Action[EAST]":
+                case "Action[SOUTHEAST]":
+                case "Action[SOUTH]":
+                case "Action[SOUTHWEST]":
                     ChangeAnimationState(AGENT_MOVING); break;
                 default: ChangeAnimationState(AGENT_IDLE); break;
             }
         }
     }
 
-    float GetActionLength(string action){
-        switch(action){
-                case AGENT_CLEANING : 
-                    return 2f;
-                case AGENT_PICKUP :  
-                    return 2f;
-                case AGENT_MOVING:
-                    return 0.5f;
-                default: return 1f;
+    float GetActionLength(string action)
+    {
+        switch (action)
+        {
+            case AGENT_CLEANING:
+                return 2f;
+            case AGENT_PICKUP:
+                return 2f;
+            case AGENT_MOVING:
+                return 0.5f;
+            default: return 1f;
         }
     }
 
@@ -209,10 +213,11 @@ public class AgentControllerNew : MonoBehaviour
         StartCoroutine(WaitToFinishAnimation(state));
     }
 
-//TODO change length according to action
+    //TODO change length according to action
     IEnumerator WaitToFinishAnimation(string action)
     {
-        yield return new WaitForSeconds(GetActionLength(action));
+        currentActionLength = GetActionLength(action);
+        yield return new WaitForSeconds(currentActionLength);
         finished = true;
     }
 
@@ -450,6 +455,11 @@ public class AgentControllerNew : MonoBehaviour
     public void SetAgentModel(Agent agent)
     {
         this.agentModel = agent;
+    }
+
+    public float GetCurrentActionLength()
+    {
+        return this.currentActionLength;
     }
     #endregion
 
