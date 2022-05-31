@@ -10956,7 +10956,6 @@ GameObject:
   - component: {fileID: 906522901}
   - component: {fileID: 906522902}
   - component: {fileID: 906522903}
-  - component: {fileID: 906522904}
   m_Layer: 0
   m_Name: System
   m_TagString: System
@@ -11086,27 +11085,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraRotationYNew: 0
---- !u!114 &906522904
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 906522896}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3440e4d4f3854554ea1faea2b0582e1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dropdown: {fileID: 0}
-  StartButton: {fileID: 0}
-  SequenceSelectionWarningText: {fileID: 0}
-  dropDownOptions: []
-  fileNames: []
-  filePaths: []
-  itemButtons: []
-  ListItemObject: {fileID: 0}
-  FileScrollViewContent: {fileID: 0}
 --- !u!1 &924052410
 GameObject:
   m_ObjectHideFlags: 0
@@ -19117,7 +19095,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5905215707602257156, guid: 0b293610312e943b399731c83a48de2e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5905215707602257157, guid: 0b293610312e943b399731c83a48de2e, type: 3}
       propertyPath: m_RootOrder

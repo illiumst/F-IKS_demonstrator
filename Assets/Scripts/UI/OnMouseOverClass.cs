@@ -39,7 +39,6 @@ public class OnMouseOverClass : MonoBehaviour
 
     void FillTooltip()
     {
-        Debug.Log("________Trying to fill tooltip: " + this.gameObject.name);
         var statemachine = GameObject.FindWithTag("System").GetComponent<EnvironmentStateManager>();
 
         if (this.gameObject.name.Contains("Dirt"))

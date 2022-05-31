@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-//using SFB;
 using UnityEngine.Networking;
 using System.IO;
 using UnityEditor;
@@ -14,7 +13,7 @@ using SimpleFileBrowser;
 using TMPro;
 
 
-public class FileBrowserNew : MonoBehaviour
+public class FileBrowserCustom : MonoBehaviour
 {
 
     private string _path;

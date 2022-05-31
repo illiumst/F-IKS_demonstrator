@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-//using SFB;
 using SimpleFileBrowser;
 using UnityEngine.Networking;
 using System.IO;
@@ -27,13 +26,13 @@ public class JSONReader : MonoBehaviour
 
     private void Start()
     {
-        if (FileBrowserNew.selectedFileName == null)
+        if (FileBrowserCustom.selectedFileName == null)
         {
             _filename = "recorder_out_DQN.json";
         }
         else
         {
-            _filename = FileBrowserNew.selectedFileName;
+            _filename = FileBrowserCustom.selectedFileName;
         }
         ReadSelectedJSONFile(_filename);
         ReadEnvironmentConstants();
@@ -60,24 +59,11 @@ public class JSONReader : MonoBehaviour
                 var source = new StreamReader(file.FullName);
                 episodeDataString = source.ReadToEnd();
                 source.Close();
-                //Debug.Log("File content: " + episodeDataString);
             }
         }
 #if UNITY_EDITOR
      UnityEditor.AssetDatabase.Refresh ();
 #endif
-    }
-
-    public List<EnvironmentInfo> CreateEnvironmentInfoListFromFile()
-    {
-        List<List<double>> agent_coords = new List<List<double>>();
-        var settings = new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore,
-            MissingMemberHandling = MissingMemberHandling.Ignore
-        };
-        List<EnvironmentInfo> environmentInfoList = JsonConvert.DeserializeObject<List<EnvironmentInfo>>(environmentData.text, settings);
-        return environmentInfoList;
     }
     private void ReadEnvironmentConstants()
     {

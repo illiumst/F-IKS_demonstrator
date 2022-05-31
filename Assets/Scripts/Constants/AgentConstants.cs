@@ -32,4 +32,10 @@ public static class AgentConstants
     public const string BUBBLE_WEST = "W";
     public const string BUBBLE_NORTHWEST = "N/W";
 
+    //********************************** VALIDITY ************************************************************//
+
+    public const string VALID = "valid";
+    public const string INVALID = "invalid";
+
+
 }

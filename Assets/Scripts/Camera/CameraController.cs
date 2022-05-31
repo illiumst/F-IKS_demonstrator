@@ -39,16 +39,6 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         targetPoint = target.transform.position;
-        //transform.LookAt(targetPoint);
-        /*ZoomInButton.onClick.AddListener(TaskOnClickZoomIn);
-        ZoomOutButton.onClick.AddListener(TaskOnClickZoomOut);
-        PanUpButton.onClick.AddListener(TaskOnClickPanUp);
-        PanLeftButton.onClick.AddListener(TaskOnClickPanLeft);
-        PanRightButton.onClick.AddListener(TaskOnClickPanRight);
-        PanDownButton.onClick.AddListener(TaskOnClickPanDown);
-        TurnLeftButton.onClick.AddListener(TaskOnClickTurnLeft);
-        TurnRightButton.onClick.AddListener(TaskOnClickTurnRight);*/
-
         cameraPos = transform.position;
         cameraTurn = transform.eulerAngles;
         zoomActive = true;
@@ -60,9 +50,6 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //targetPoint = target.transform.position;
-        //transform.LookAt(targetPoint);
-
         if (Input.GetKey("w"))
         {
             TaskOnClickPanUp();
@@ -126,7 +113,6 @@ public class CameraController : MonoBehaviour
             }
             else
             {
-                //panning = true;
                 rotating = true;
             }
         }
@@ -155,17 +141,6 @@ public class CameraController : MonoBehaviour
                 TaskOnClickTurnLeft();
                 tempMouseX += diffX;
             }
-            //TODO still buggy
-            /*if (diffY > 40)
-            {
-                TaskOnClickTurnUp();
-                tempMouseY += diffY;
-            }
-            if (diffY < 40)
-            {
-                TaskOnClickTurnDown();
-                tempMouseY += diffY;
-            }*/
         }
         if (panning && zoomActive)
         {
@@ -197,7 +172,6 @@ public class CameraController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftCommand))
         {
-            Debug.Log("...........Left command pressed....");
             if (Input.GetMouseButtonDown(1))
             {
                 rotating = true;
@@ -252,9 +226,6 @@ public class CameraController : MonoBehaviour
 
     void TaskOnClickTurnLeft()
     {
-        //TODO 360 degrees abfragen
-        //cameraTurn.y += turnSpeed * Time.deltaTime;
-        //transform.eulerAngles = cameraTurn;
         transform.RotateAround(targetPoint, new Vector3(0.0f, 1.0f, 0.0f), 5 * Time.deltaTime * turnSpeed);
         UIScript.OnCameraInteractionStart("rotate");
 
@@ -262,9 +233,6 @@ public class CameraController : MonoBehaviour
 
     void TaskOnClickTurnRight()
     {
-        //TODO 360 degrees abfragen
-        //cameraTurn.y -= turnSpeed * Time.deltaTime;
-        //transform.eulerAngles = cameraTurn;
         transform.RotateAround(targetPoint, new Vector3(0.0f, 1.0f, 0.0f), -5 * Time.deltaTime * turnSpeed);
         UIScript.OnCameraInteractionStart("rotate");
 

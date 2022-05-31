@@ -98,9 +98,6 @@ public class EnvironmentStateManager : MonoBehaviour
     int validCounter;
     int invalidCounter;
 
-    // delcare some value to store the accumulated time
-    float totalSliderTime = 0f;
-
     #endregion
 
     void Start()
@@ -463,7 +460,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
         for (int i = 0; i < agentObjects.Count; i++)
         {
-            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentControllerNew>();
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
 
             if (!agentObjController.finished)
             {
@@ -588,7 +585,7 @@ public class EnvironmentStateManager : MonoBehaviour
         for (int i = 0; i < agents.Count; i++)
         {
             //********************************** FIND AGENT CONTROLLERS ************************************//
-            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentControllerNew>();
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
             agentObjController.SetAgentModel(agents[i]);
 
             //********************************** UPDATE AGENT POSITIONS ************************************//
@@ -603,7 +600,7 @@ public class EnvironmentStateManager : MonoBehaviour
         }
     }
 
-    private void UpdateAgentPositions(Agent agent, AgentControllerNew controller)
+    private void UpdateAgentPositions(Agent agent, AgentController controller)
     {
         Vector3 recalcPos = GetRecalculatedPosition(agent.x, 0, agent.y);
         BroadCastSliderValueToAgentObj(controller);
@@ -710,7 +707,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
         foreach (GameObject agentObj in agentObjects)
         {
-            var controller = agentObj.transform.GetChild(0).GetComponent<AgentControllerNew>();
+            var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
             controller.playingSequence = true;
         }
     }
@@ -723,7 +720,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
         foreach (GameObject agentObj in agentObjects)
         {
-            var controller = agentObj.transform.GetChild(0).GetComponent<AgentControllerNew>();
+            var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
             controller.playingSequence = false;
         }
     }
@@ -735,7 +732,7 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         foreach (GameObject agentObj in agentObjects)
         {
-            var controller = agentObj.transform.GetChild(0).GetComponent<AgentControllerNew>();
+            var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
             playingSequence = false;
             controller.playingSequence = true;
             float setPBSpeed = GetSpeedDropDownValue(playBackSpeedDropdown.GetComponent<Dropdown>());
@@ -838,7 +835,7 @@ public class EnvironmentStateManager : MonoBehaviour
     bool CheckForWallCollision(Agent agent, int episode, int step)
     {
         int index = agents.IndexOf(agent);
-        var agentObjController = agentObjects[index].transform.GetChild(0).GetComponent<AgentControllerNew>();
+        var agentObjController = agentObjects[index].transform.GetChild(0).GetComponent<AgentController>();
 
         var x = agent.x;
         var y = agent.y;
@@ -857,7 +854,7 @@ public class EnvironmentStateManager : MonoBehaviour
         }
     }
 
-    bool CheckForWall(int x, int y, int episode, AgentControllerNew ctr)
+    bool CheckForWall(int x, int y, int episode, AgentController ctr)
     {
         bool wallExists = false;
         List<Wall> walls = environmentConstants.episodes[episode].steps[0].WallTiles;
@@ -871,7 +868,7 @@ public class EnvironmentStateManager : MonoBehaviour
         return wallExists;
     }
 
-    private void BroadCastSliderValueToAgentObj(AgentControllerNew controller)
+    private void BroadCastSliderValueToAgentObj(AgentController controller)
     {
         controller.sliderValue = bufferSlider.value;
     }
@@ -984,7 +981,7 @@ public class EnvironmentStateManager : MonoBehaviour
         float longest = 0f;
         for (int i = 0; i < agentObjects.Count; i++)
         {
-            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentControllerNew>();
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
             var time = agentObjController.GetCurrentActionLength();
 
             if (time > longest)

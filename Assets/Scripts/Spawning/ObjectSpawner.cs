@@ -8,9 +8,7 @@ using TMPro;
 
 public class ObjectSpawner : MonoBehaviour
 {
-
     GameObject RobotSpawnObject;
-    GameObject TrashBoundarySpawnObject;
     GameObject WallSpawnObject;
     GameObject PickupItemSpawnObject;
     GameObject DropOffZoneSpawnObject;
@@ -57,7 +55,6 @@ public class ObjectSpawner : MonoBehaviour
         system = GameObject.FindWithTag("System");
 
         RobotSpawnObject = Resources.Load("Prefabs/Robot") as GameObject;
-        TrashBoundarySpawnObject = Resources.Load("Prefabs/TrashBoundary") as GameObject;
         AgentListItem = Resources.Load("Prefabs/AgentListItem") as GameObject;
         DoorObject = Resources.Load("Prefabs/SlideDoor") as GameObject;
         WallSpawnObject = Resources.Load("Prefabs/Walls/Wall3") as GameObject;
@@ -97,7 +94,6 @@ public class ObjectSpawner : MonoBehaviour
         DestroyObjectsWithTag("PickupItem");
         DestroyObjectsWithTag("DropOffZone");
         DestroyObjectsWithTag("Trash");
-        DestroyObjectsWithTag("TrashBoundary");
         DestroyObjectsWithTag("AgentListItem");
         DestroyObjectsWithTag("Door");
         wallList.Clear();
@@ -279,19 +275,6 @@ public class ObjectSpawner : MonoBehaviour
                 spawnObject(DropOffZoneSpawnObject, GetRecalculatedPosition(zone.x, 0.05f, zone.y), zone.name);
             }
         }
-    }
-
-    public void spawnTrashObject(Vector3 trashPosition, int size)
-    {
-        var boundarySize = 2f * (float)size / Mathf.PI;
-        var newTrashBoundary = Instantiate(TrashBoundarySpawnObject, trashPosition, transform.rotation) as GameObject;
-        trashList.Add(newTrashBoundary);
-        newTrashBoundary.name = "Trash" + trashList.Count;
-        newTrashBoundary.GetComponent<Trash>().setSize(size);
-        newTrashBoundary.GetComponent<Trash>().setIndex(trashList.Count);
-        newTrashBoundary.transform.localScale = new Vector3(boundarySize, boundarySize, boundarySize);
-        system.GetComponent<EnvironmentStateManager>().dirtObjects.Add(newTrashBoundary);
-
     }
 
     public void spawnDirt(Vector3 trashPosition, double amount, string name)
