@@ -44,8 +44,7 @@ public class AgentController : MonoBehaviour
 
     public Vector3 currentpos;
     public Vector3 goalPosition;
-    [SerializeField] float playBackSpeed;
-    public float speed;
+    public float playBackSpeed;
     public float sliderValue;
     public bool playingSequence;
     public bool valid;
@@ -78,6 +77,7 @@ public class AgentController : MonoBehaviour
         speechBubble = FindGameObjectInChildWithTag(agentCanvas, "SpeechBubble");
         speechBubbleContent = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleContent");
         speechBubbleInvalidityImage = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleInvalid");
+        speechBubbleInvalidityImage.SetActive(false);
         speechBubbleDirectionText = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleDirectionText");
         speechBubblePositionText = FindGameObjectInChildWithTag(speechBubble, "SpeechBubblePositiontext");
         speechBubbleAgentName = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleAgentNumber");
@@ -100,13 +100,14 @@ public class AgentController : MonoBehaviour
     void Update()
     {
         currentpos = this.transform.position;
-        playBackSpeed = 1;
+        var stateManager = system.GetComponent<EnvironmentStateManager>();
 
+        playBackSpeed = stateManager.playBackSpeed;
+        animator.SetFloat("animSpeed", playBackSpeed);
 
         //sequence with playbutton is being played
         if (playingSequence && valid)
         {
-            speed = playBackSpeed * 3;
             MoveRobotTo(goalPosition);
         }
 
@@ -126,7 +127,6 @@ public class AgentController : MonoBehaviour
         if (!agentModel.valid)
         {
             valid = false;
-            speed = 0;
             stateManager.AddToValidCounter(1);
             ChangeAnimationState(AgentConstants.ANIMATION_INVALID);
         }
@@ -160,14 +160,14 @@ public class AgentController : MonoBehaviour
         switch (action)
         {
             case AgentConstants.ANIMATION_CLEANING:
-                return 2f;
+                return 2f / playBackSpeed;
             case AgentConstants.ANIMATION_PICKUP:
-                return 2f;
+                return 2f / playBackSpeed;
             case AgentConstants.ANIMATION_MOVING:
-                return 0.3f;
+                return 0.3f / playBackSpeed;
             case AgentConstants.ANIMATION_INVALID:
-                return 1f;
-            default: return 0.5f;
+                return 1f / playBackSpeed;
+            default: return 0.5f / playBackSpeed;
         }
     }
 
@@ -181,6 +181,7 @@ public class AgentController : MonoBehaviour
 
     public void MoveRobotTo(Vector3 position)
     {
+        var speed = 3f * playBackSpeed;
         this.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
 
         if (backwardBuffer)
@@ -251,144 +252,48 @@ public class AgentController : MonoBehaviour
         rectTrans.LookAt(transform.position + camera.transform.rotation * Vector3.forward, camera.transform.rotation * Vector3.up);
         Vector3 contentRotation = rectTrans.rotation.eulerAngles;
 
+        switch (action)
+        {
+            case AgentConstants.ACTION_CLEAN_UP:
+                SetSpeechBubbleContent(cleaningSprite, contentRotation, "", 0, false); break;
+
+            case AgentConstants.ACTION_ITEM:
+                SetSpeechBubbleContent(itemPickSprite, contentRotation, "", 0, false); break;
+
+            case AgentConstants.ACTION_NORTH:
+                SetSpeechBubbleContent(directionSprite, contentRotation, AgentConstants.BUBBLE_NORTH, 0, true); break;
+
+            case AgentConstants.ACTION_NORTHEAST:
+                SetSpeechBubbleContent(directionSprite, contentRotation, AgentConstants.BUBBLE_NORTHEAST, 315, true); break;
+
+            case AgentConstants.ACTION_EAST:
+                SetSpeechBubbleContent(directionSprite, contentRotation, AgentConstants.BUBBLE_EAST, 270, true); break;
+
+            case AgentConstants.ACTION_SOUTHEAST:
+                SetSpeechBubbleContent(directionSprite, contentRotation, AgentConstants.BUBBLE_SOUTHEAST, 225, true); break;
+
+            case AgentConstants.ACTION_SOUTH:
+                SetSpeechBubbleContent(directionSprite, contentRotation, AgentConstants.BUBBLE_SOUTH, 180, true); break;
+
+            case AgentConstants.ACTION_SOUTHWEST:
+                SetSpeechBubbleContent(directionSprite, contentRotation, AgentConstants.BUBBLE_SOUTHWEST, 135, true); break;
+
+            case AgentConstants.ACTION_WEST:
+                SetSpeechBubbleContent(directionSprite, contentRotation, AgentConstants.BUBBLE_WEST, 90, true); break;
+
+            case AgentConstants.ACTION_NORTHWEST:
+                SetSpeechBubbleContent(directionSprite, contentRotation, AgentConstants.BUBBLE_NORTHWEST, 45, true); break;
+
+            default: speechBubble.SetActive(false); break;
+        }
         if (valid)
         {
-            speechBubbleInvalidityImage.SetActive(false);
             speechBubble.GetComponent<Image>().color = new Color32(60, 255, 140, 255);
-            speechBubble.GetComponent<Blinking>().startBlinking = false;
 
-            switch (action)
-            {
-                case AgentConstants.ACTION_CLEAN_UP:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = cleaningSprite;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z));
-                    speechBubbleDirectionText.SetActive(false);
-                    speechBubble.SetActive(true);
-                    break;
-                case AgentConstants.ACTION_ITEM:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = itemPickSprite;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z));
-                    speechBubbleDirectionText.SetActive(false);
-                    speechBubble.SetActive(true);
-                    break;
-                case AgentConstants.ACTION_NORTH:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_NORTH;
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_NORTHEAST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_NORTHEAST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 315));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_EAST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_EAST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 270));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_SOUTHEAST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_SOUTHEAST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 225));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_SOUTH:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_SOUTH;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 180));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_SOUTHWEST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_SOUTHWEST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 135));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_WEST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_WEST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 90));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_NORTHWEST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_NORTHWEST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 45));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-
-                default: speechBubble.SetActive(false); break;
-            }
         }
         else if (!valid)
         {
             speechBubble.GetComponent<Image>().color = new Color32(255, 60, 80, 255);
-            switch (action)
-            {
-                case AgentConstants.ACTION_CLEAN_UP:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = cleaningSprite;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z));
-                    speechBubbleDirectionText.SetActive(false);
-                    speechBubble.SetActive(true);
-                    break;
-                case AgentConstants.ACTION_ITEM:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = itemPickSprite;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z));
-                    speechBubbleDirectionText.SetActive(false);
-                    speechBubble.SetActive(true);
-                    break;
-                case AgentConstants.ACTION_NORTH:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_NORTH;
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_NORTHEAST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_NORTHEAST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 315));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_EAST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_EAST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 270));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_SOUTHEAST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_SOUTHEAST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 225));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_SOUTH:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_SOUTH;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 180));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_SOUTHWEST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_SOUTHWEST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 135));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_WEST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_WEST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 90));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-                case AgentConstants.ACTION_NORTHWEST:
-                    speechBubbleContent.transform.GetComponent<Image>().sprite = directionSprite;
-                    speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = AgentConstants.BUBBLE_NORTHWEST;
-                    speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + 45));
-                    speechBubbleDirectionText.SetActive(true);
-                    speechBubble.SetActive(true); break;
-
-                default: speechBubble.SetActive(false); break;
-            }
         }
         else
         {
@@ -397,6 +302,14 @@ public class AgentController : MonoBehaviour
 
     }
 
+    void SetSpeechBubbleContent(Sprite sprite, Vector3 contentRotation, string text, float rotation, bool directionText)
+    {
+        speechBubbleContent.transform.GetComponent<Image>().sprite = sprite;
+        speechBubbleDirectionText.GetComponent<TextMeshProUGUI>().text = text;
+        speechBubbleContent.transform.rotation = Quaternion.Euler(new Vector3(contentRotation.x, contentRotation.y, contentRotation.z + rotation));
+        speechBubbleDirectionText.SetActive(directionTex);
+        speechBubble.SetActive(true);
+    }
     public void SetAgentNameInSpeechBubble(string name)
     {
         speechBubbleAgentName.transform.GetComponent<Text>().text = GetAgentNumberFromNameAsString(name);

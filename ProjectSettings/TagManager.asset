@@ -97,6 +97,12 @@ TagManager:
   - SliderFill
   - BufferFill
   - StepText
+  - PlayButton
+  - PauseButton
+  - NextButton
+  - NextNextButton
+  - PreviousButton
+  - PreviousPreviousButton
   layers:
   - Default
   - TransparentFX

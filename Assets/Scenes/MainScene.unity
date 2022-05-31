@@ -500,7 +500,7 @@ GameObject:
   - component: {fileID: 36910662}
   m_Layer: 5
   m_Name: Slider
-  m_TagString: Untagged
+  m_TagString: Slider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2223,7 +2223,7 @@ GameObject:
   - component: {fileID: 181910527}
   m_Layer: 5
   m_Name: NextNextButton
-  m_TagString: Untagged
+  m_TagString: NextNextButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5738,7 +5738,7 @@ GameObject:
   - component: {fileID: 532511379}
   m_Layer: 5
   m_Name: PreviousButton
-  m_TagString: Untagged
+  m_TagString: PreviousButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9086,7 +9086,7 @@ GameObject:
   - component: {fileID: 752927745}
   m_Layer: 5
   m_Name: PreviousPreviousButton
-  m_TagString: Untagged
+  m_TagString: PreviousPreviousButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10951,7 +10951,6 @@ GameObject:
   m_Component:
   - component: {fileID: 906522897}
   - component: {fileID: 906522899}
-  - component: {fileID: 906522898}
   - component: {fileID: 906522900}
   - component: {fileID: 906522901}
   - component: {fileID: 906522902}
@@ -10977,30 +10976,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &906522898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 906522896}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 122ca6baccdb04615994ff20f930c622, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  warningText: {fileID: 0}
-  positionText: {fileID: 0}
-  slider: {fileID: 36910662}
-  bufferSlider: {fileID: 1213711181}
-  playButton: {fileID: 1199365860}
-  pauseButton: {fileID: 957273213}
-  nextButton: {fileID: 1043031334}
-  nextNextButton: {fileID: 181910528}
-  previousButton: {fileID: 532511380}
-  previousPreviousButton: {fileID: 752927746}
-  redScreenFlashImage: {fileID: 0}
-  sliderStepCount: {fileID: 605340490}
 --- !u!114 &906522899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11685,11 +11660,11 @@ GameObject:
   - component: {fileID: 957273213}
   m_Layer: 5
   m_Name: PauseButton
-  m_TagString: Untagged
+  m_TagString: PauseButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &957273212
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13102,7 +13077,7 @@ GameObject:
   - component: {fileID: 1043031333}
   m_Layer: 5
   m_Name: NextButton
-  m_TagString: Untagged
+  m_TagString: NextButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14788,7 +14763,7 @@ GameObject:
   - component: {fileID: 1199365864}
   m_Layer: 5
   m_Name: PlayButton
-  m_TagString: Untagged
+  m_TagString: PlayButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

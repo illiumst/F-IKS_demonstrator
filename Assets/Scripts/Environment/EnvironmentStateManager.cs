@@ -43,6 +43,7 @@ public class EnvironmentStateManager : MonoBehaviour
     //********************************** SLIDER NAVIGATION ***************************************************//
 
     GameObject steptext;
+    GameObject sliderHandleLabel;
     Button playButton;
     Button pauseButton;
     Button nextButton;
@@ -122,6 +123,7 @@ public class EnvironmentStateManager : MonoBehaviour
         sliderFill = GameObject.FindWithTag("SliderFill").GetComponent<Image>();
         bufferFill = GameObject.FindWithTag("BufferFill").GetComponent<Image>();
         steptext = GameObject.FindWithTag("StepText");
+        sliderHandleLabel = GameObject.FindWithTag("SliderHandleLabel");
 
         #endregion
 
@@ -152,16 +154,16 @@ public class EnvironmentStateManager : MonoBehaviour
         UICanvas.SetActive(true);
         system.GetComponent<UIShowAndHide>().InitializeUIShowAndHide();
 
-        slider = system.GetComponent<UIGlobals>().slider;
-        bufferSlider = system.GetComponent<UIGlobals>().bufferSlider;
+        slider = GameObject.FindWithTag("Slider").GetComponent<Slider>();
+        bufferSlider = GameObject.FindWithTag("BufferFillArea").GetComponent<Slider>();
         playBackSpeedDropdown = GameObject.FindWithTag("PlaybackSpeedDropdown");
-        playButton = system.GetComponent<UIGlobals>().playButton;
-        pauseButton = system.GetComponent<UIGlobals>().pauseButton;
-        nextButton = system.GetComponent<UIGlobals>().nextButton;
-        nextNextButton = system.GetComponent<UIGlobals>().nextNextButton;
-        previousButton = system.GetComponent<UIGlobals>().previousButton;
-        previousPreviousButton = system.GetComponent<UIGlobals>().previousPreviousButton;
-
+        playButton = GameObject.FindWithTag("PlayButton").GetComponent<Button>();
+        pauseButton = GameObject.FindWithTag("PauseButton").GetComponent<Button>();
+        pauseButton.gameObject.SetActive(false);
+        nextButton = GameObject.FindWithTag("NextButton").GetComponent<Button>();
+        nextNextButton = GameObject.FindWithTag("NextNextButton").GetComponent<Button>();
+        previousButton = GameObject.FindWithTag("PreviousButton").GetComponent<Button>();
+        previousPreviousButton = GameObject.FindWithTag("PreviousPreviousButton").GetComponent<Button>();
 
         //********************************** SLIDER SETUP ***************************************************//
 
@@ -532,7 +534,8 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         var sliderHandleArea = slider.transform.GetChild(2).gameObject;
         steptext.GetComponent<Text>().text = "" + (int)slider.value;
-        system.GetComponent<UIGlobals>().sliderStepCount.gameObject.GetComponent<Text>().text = "Step " + currentStep + " / " + slider.maxValue;
+        sliderHandleLabel.GetComponent<Text>().text = "Step" + currentStep;
+
     }
     #endregion
 
