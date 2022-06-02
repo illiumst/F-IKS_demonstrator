@@ -134,13 +134,13 @@ public class AgentController : MonoBehaviour
         if (!agentModel.valid)
         {
             valid = false;
-            stateManager.AddToValidCounter(1);
+            stateManager.AddToInValidCounter(1);
             ChangeAnimationState(AgentConstants.ANIMATION_INVALID);
         }
         if (agentModel.valid)
         {
             valid = true;
-            stateManager.AddToInValidCounter(1);
+            stateManager.AddToValidCounter(1);
             switch (agentModel.action)
             {
                 case AgentConstants.ACTION_CLEAN_UP:
@@ -182,7 +182,7 @@ public class AgentController : MonoBehaviour
     IEnumerator BubblesAction()
     {
         var stateManager = system.GetComponent<EnvironmentStateManager>();
-        yield return StartCoroutine(WaitFor.Frames(10));
+        yield return StartCoroutine(WaitFor.Frames((int)(10 / playBackSpeed)));
         stateManager.SpawnCleaningBubbles(goalPosition);
     }
 
@@ -219,6 +219,7 @@ public class AgentController : MonoBehaviour
     {
         currentActionLength = GetActionLength(action);
         yield return new WaitForSeconds(currentActionLength);
+        Debug.Log("Action finished...");
         finished = true;
     }
 

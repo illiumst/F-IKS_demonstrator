@@ -259,7 +259,7 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         slider.onValueChanged.AddListener(delegate
             {
-                Debug.Log("Slider changed to " + slider.value);
+                Debug.Log("Slider changed to " + slider.value + ", currentStep: " + currentStep);
 
                 //slider.value = Mathf.Round(slider.value * 10f) / 10f;
                 //Debug.Log("Timestep slider: " + slider.value);
@@ -300,7 +300,7 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         bufferSlider.onValueChanged.AddListener(delegate
         {
-            Debug.Log("Bufferslider changed...");
+            //Debug.Log("Bufferslider changed...");
             //var bufferCheckValue = Mathf.Round(bufferSlider.value * 100f) / 100f;
             /*bufferSlider.value = Mathf.Round(bufferSlider.value * 10f) / 10f;
             //Debug.Log("Timestep buffer: " + bufferSlider.value + " slider: " + slider.value + " currentstep: " + currentStep);
@@ -376,6 +376,7 @@ public class EnvironmentStateManager : MonoBehaviour
     //TODO check if matches concept of buffering
     void SkipSteps(int i)
     {
+        Debug.Log("Skipping steps...");
         PauseSequence();
         if (i > 0)
         {
@@ -402,14 +403,30 @@ public class EnvironmentStateManager : MonoBehaviour
         LoadNewTimeStep(currentEpisode, currentStep);
     }
 
-    IEnumerator AnimateSliderOverTime(Slider s, float start, float finish, float seconds)
+    IEnumerator AnimateBufferSliderOverTime(float start, float finish, float seconds)
     {
         float animationTime = 0f;
         while (animationTime < seconds)
         {
             animationTime += Time.deltaTime;
             float lerpValue = animationTime / seconds;
-            s.value = Mathf.Lerp(start, finish, lerpValue);
+            bufferSlider.value = Mathf.Lerp(start, finish, lerpValue);
+
+            yield return null;
+        }
+    }
+    IEnumerator AnimateBothSlidersOverTime(float start, float finish, float seconds)
+    {
+        float animationTime = 0f;
+        while (animationTime < seconds)
+        {
+            animationTime += Time.deltaTime;
+            float lerpValue = animationTime / seconds;
+            slider.value = Mathf.Lerp(start, finish, lerpValue);
+            bufferSlider.value = Mathf.Lerp(start, finish, lerpValue);
+            Debug.Log("LERPING slider: " + slider.value);
+            Debug.Log("LERPING buffer: " + bufferSlider.value);
+
 
             yield return null;
         }
@@ -466,10 +483,16 @@ public class EnvironmentStateManager : MonoBehaviour
         UpdateItemObjects(episode, step);
         UpdateSliderLabel();
         UpdateStepOverview();
+        for (int i = 0; i < agentObjects.Count; i++)
+        {
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
 
-        StartCoroutine(AnimateSliderOverTime(slider, currentStep - 1, currentStep, GetLongestAgentAction()));
-        StartCoroutine(AnimateSliderOverTime(bufferSlider, currentStep - 1, currentStep, GetLongestAgentAction()));
-
+            agentObjController.bufferAcceleration = 1;
+        }
+        var from = currentStep - 1;
+        var to = currentStep;
+        var longestAgentAction = GetLongestAgentAction();
+        StartCoroutine(AnimateBothSlidersOverTime(from, to, longestAgentAction));
     }
 
     public void LoadNewTimeStepBuffer(int episode, int step)
@@ -490,7 +513,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
             agentObjController.bufferAcceleration = stepsSkipped / 10;
         }
-        StartCoroutine(AnimateSliderOverTime(bufferSlider, currentStep - 1, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
+        StartCoroutine(AnimateBufferSliderOverTime(currentStep - 1, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
 
     }
 
@@ -713,22 +736,6 @@ public class EnvironmentStateManager : MonoBehaviour
          }
      }*/
 
-    void HandleSliderUpdate()
-    {
-        Debug.Log("Slider update: slider: " + slider.value + " buffer: " + bufferSlider.value);
-
-        if (slider.value == (slider.maxValue - 1f))
-        {
-            slider.value = 0f;
-            bufferSlider.value = slider.value;
-        }
-        else
-        {
-            slider.value = slider.value + (playBackSpeed / 10f);
-            bufferSlider.value = slider.value;
-        }
-    }
-
     IEnumerator HandleSequencePlay()
     {
         yield return new WaitForSeconds(2);
@@ -766,77 +773,6 @@ public class EnvironmentStateManager : MonoBehaviour
         }
     }
 
-    #endregion
-
-    #region BufferSequence
-    void HandleBufferSequenceUpdate(int stepsSkipped)
-    {
-        foreach (GameObject agentObj in agentObjects)
-        {
-            var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
-            playingSequence = false;
-            controller.playingSequence = true;
-            float setPBSpeed = GetSpeedDropDownValue(playBackSpeedDropdown.GetComponent<Dropdown>());
-            Debug.Log("Buffering sequence update: buffer: " + bufferSlider.value + " slider: " + slider.value);
-            var factor = 0f;
-            if ((stepsSkipped <= 30 && stepsSkipped > 0) || (stepsSkipped >= -30 && stepsSkipped < 0))
-            {
-                factor = 10f;
-            }
-            else if ((stepsSkipped <= 100 && stepsSkipped > 0) || (stepsSkipped >= -100 && stepsSkipped < 0))
-            {
-                factor = 5f;
-            }
-            else if ((stepsSkipped > 100 && stepsSkipped > 0) || (stepsSkipped < -100 && stepsSkipped < 0))
-            {
-                factor = 2f;
-            }
-            //buffering forward
-            if (stepsSkipped > 0)
-            {
-                controller.backwardBuffer = false;
-                if (controller.currentpos == controller.goalPosition && bufferSlider.value < slider.value)
-                {
-                    float add = (playBackSpeed / factor);
-                    //Debug.Log("Adjusting buffer slider forward: adding " + add + " to " + bufferSlider.value);
-                    bufferSlider.value = bufferSlider.value + add;
-                }
-                else if (bufferSlider.value == slider.value)
-                {
-                    //Debug.Log("Finished Buffering forward");
-                    controller.playingSequence = false;
-                    stepsSkipped = 0;
-                    buffering = false;
-                    controller.backwardBuffer = false;
-                    playBackSpeed = setPBSpeed;
-                }
-            }
-            //buffering backwards
-            else if (stepsSkipped < 0)
-            {
-                controller.backwardBuffer = true;
-
-                if (controller.currentpos == controller.goalPosition && bufferSlider.value > slider.value)
-                {
-                    bufferSlider.value = bufferSlider.value - (playBackSpeed / factor);
-                    //Debug.Log("Adjusting buffer slider backwards: " + bufferSlider.value);
-
-                }
-                else if (bufferSlider.value == slider.value)
-                {
-                    //Debug.Log("Finished Buffering backward");
-                    controller.playingSequence = false;
-                    controller.backwardBuffer = false;
-                    stepsSkipped = 0;
-                    buffering = false;
-                    playBackSpeed = setPBSpeed;
-                    sliderFill.color = Color.blue;
-                    sliderFill.transform.SetSiblingIndex(0);
-                    bufferFill.color = Color.white;
-                }
-            }
-        }
-    }
     #endregion
 
     #region Helper Methods
