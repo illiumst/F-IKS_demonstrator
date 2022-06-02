@@ -45,6 +45,7 @@ public class AgentController : MonoBehaviour
     public Vector3 currentpos;
     public Vector3 goalPosition;
     public float playBackSpeed;
+    public float bufferAcceleration = 1f;
     public float sliderValue;
     public bool playingSequence;
     public bool valid;
@@ -102,7 +103,7 @@ public class AgentController : MonoBehaviour
         currentpos = this.transform.position;
         var stateManager = system.GetComponent<EnvironmentStateManager>();
 
-        playBackSpeed = stateManager.playBackSpeed;
+        playBackSpeed = stateManager.playBackSpeed * bufferAcceleration;
         animator.SetFloat("animSpeed", playBackSpeed);
 
         //sequence with playbutton is being played
@@ -114,6 +115,12 @@ public class AgentController : MonoBehaviour
         if (!playingSequence && currentpos != goalPosition && goalPosition != null && valid)
         {
             MoveRobotTo(goalPosition);
+        }
+
+        if (!playingSequence)
+        {
+            ChangeAnimationState(AgentConstants.ANIMATION_IDLE);
+            speechBubble.SetActive(false);
         }
     }
     public void UpdateAgentAction()

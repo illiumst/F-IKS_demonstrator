@@ -259,48 +259,59 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         slider.onValueChanged.AddListener(delegate
             {
-                slider.value = Mathf.Round(slider.value * 10f) / 10f;
+                Debug.Log("Slider changed to " + slider.value);
+
+                //slider.value = Mathf.Round(slider.value * 10f) / 10f;
                 //Debug.Log("Timestep slider: " + slider.value);
 
-                if ((int)slider.value > currentStep + 2)
+                if (((int)slider.value > currentStep + 2) && !buffering && !playingSequence)
                 {
-                    stepsSkipped = ((int)slider.value - currentStep);
-                    buffering = true;
-                    Debug.Log("Set to buffering on slider change");
-                    PauseSequence();
+                    StartBuffering();
                     sliderFill.color = new Color32(0, 125, 255, 255);
                     sliderFill.transform.SetSiblingIndex(0);
                     bufferFill.color = Color.white;
-                    //Debug.Log("Buffering forward: steps skipped: " + stepsSkipped);
-
                 }
-                else if ((int)slider.value < currentStep - 2)
+                else if (((int)slider.value < currentStep - 2) && !buffering && !playingSequence)
                 {
-                    stepsSkipped = ((int)slider.value - currentStep);
-                    buffering = true;
-                    PauseSequence();
+                    StartBuffering();
                     sliderFill.color = Color.white;
                     sliderFill.transform.SetSiblingIndex(1);
                     bufferFill.color = new Color32(0, 125, 255, 255);
-                    //Debug.Log("Buffering backwards: steps skipped: " + stepsSkipped);
                 }
+
             });
+    }
+
+    void StartBuffering()
+    {
+        Debug.Log("Start buffering...");
+        stepsSkipped = ((int)slider.value - currentStep);
+        buffering = true;
+        LoadNewTimeStepBuffer(currentEpisode, currentStep);
+        PauseSequence();
+    }
+
+    void StopBuffering()
+    {
+        buffering = false;
     }
 
     void InitializeBufferSlider()
     {
         bufferSlider.onValueChanged.AddListener(delegate
         {
+            Debug.Log("Bufferslider changed...");
             //var bufferCheckValue = Mathf.Round(bufferSlider.value * 100f) / 100f;
-            bufferSlider.value = Mathf.Round(bufferSlider.value * 10f) / 10f;
+            /*bufferSlider.value = Mathf.Round(bufferSlider.value * 10f) / 10f;
             //Debug.Log("Timestep buffer: " + bufferSlider.value + " slider: " + slider.value + " currentstep: " + currentStep);
             if (bufferSlider.value % 1f == 0)
             {
                 if (bufferSlider.value == currentStep + 1f)
                 {
+                    Debug.Log("_____Load new timestep bufferslider");
                     LoadNewTimeStep(currentEpisode, currentStep);
                 }
-            }
+            }*/
         });
     }
 
@@ -334,23 +345,29 @@ public class EnvironmentStateManager : MonoBehaviour
 
             if (bufferSlider.value != slider.value)
             {
+                Debug.Log("______UPDATE: SET BUFFERING________");
                 buffering = true;
             }
 
             if (playingSequence)
             {
-                //HandleSliderUpdate();
                 if (checkIfAllAgentsFinished())
                 {
+                    Debug.Log("______UPDATE: LOADING NEW TIMESTEP________");
                     LoadNewTimeStep(currentEpisode, currentStep + 1);
                 }
                 //StartCoroutine(HandleSequencePlay());
             }
-            if (buffering)
+            if (buffering && bufferSlider.value <= slider.value)
             {
-                HandleBufferSequenceUpdate(stepsSkipped);
-                steptext.SetActive(true);
-                Debug.Log("Buffering...");
+                if (checkIfAllAgentsFinished())
+                {
+                    LoadNewTimeStepBuffer(currentEpisode, currentStep + 1);
+                }
+            }
+            if (bufferSlider.value >= slider.value)
+            {
+                StopBuffering();
             }
         }
     }
@@ -385,15 +402,14 @@ public class EnvironmentStateManager : MonoBehaviour
         LoadNewTimeStep(currentEpisode, currentStep);
     }
 
-    IEnumerator AnimateSliderOverTime(float start, float finish, float seconds)
+    IEnumerator AnimateSliderOverTime(Slider s, float start, float finish, float seconds)
     {
         float animationTime = 0f;
         while (animationTime < seconds)
         {
             animationTime += Time.deltaTime;
             float lerpValue = animationTime / seconds;
-            bufferSlider.value = Mathf.Lerp(start, finish, lerpValue);
-            slider.value = Mathf.Lerp(start, finish, lerpValue);
+            s.value = Mathf.Lerp(start, finish, lerpValue);
 
             yield return null;
         }
@@ -443,8 +459,6 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         Debug.Log("Loading new timestep...");
         currentStep += 1;
-        //slider.value = currentStep;
-        //bufferSlider.value = currentStep;
         agents = environmentConstants.episodes[currentEpisode].steps[currentStep].Agents;
         UpdateAgents(episode, step);
         UpdateDirtPiles(episode, step);
@@ -453,7 +467,31 @@ public class EnvironmentStateManager : MonoBehaviour
         UpdateSliderLabel();
         UpdateStepOverview();
 
-        StartCoroutine(AnimateSliderOverTime(currentStep - 1, currentStep, GetLongestAgentAction()));
+        StartCoroutine(AnimateSliderOverTime(slider, currentStep - 1, currentStep, GetLongestAgentAction()));
+        StartCoroutine(AnimateSliderOverTime(bufferSlider, currentStep - 1, currentStep, GetLongestAgentAction()));
+
+    }
+
+    public void LoadNewTimeStepBuffer(int episode, int step)
+    {
+        Debug.Log("Loading new timestep buffer...");
+        currentStep += 1;
+        //bufferSlider.value += 1;
+        agents = environmentConstants.episodes[currentEpisode].steps[currentStep].Agents;
+        UpdateAgents(episode, step);
+        UpdateDirtPiles(episode, step);
+        UpdateDoors(episode, step);
+        UpdateItemObjects(episode, step);
+        UpdateSliderLabel();
+        UpdateStepOverview();
+        for (int i = 0; i < agentObjects.Count; i++)
+        {
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
+
+            agentObjController.bufferAcceleration = stepsSkipped / 10;
+        }
+        StartCoroutine(AnimateSliderOverTime(bufferSlider, currentStep - 1, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
+
     }
 
 
@@ -700,11 +738,10 @@ public class EnvironmentStateManager : MonoBehaviour
 
     void PlaySequence()
     {
+        Debug.Log("Play Sequence...");
         playingSequence = true;
         playButton.gameObject.SetActive(false);
         pauseButton.gameObject.SetActive(true);
-        bufferSlider.value = (int)bufferSlider.value;
-        slider.value = bufferSlider.value;
         LoadNewTimeStep(currentEpisode, currentStep);
         buffering = false;
 
@@ -717,6 +754,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
     public void PauseSequence()
     {
+        Debug.Log("Pause Sequence...");
         playingSequence = false;
         playButton.gameObject.SetActive(true);
         pauseButton.gameObject.SetActive(false);
@@ -739,7 +777,7 @@ public class EnvironmentStateManager : MonoBehaviour
             playingSequence = false;
             controller.playingSequence = true;
             float setPBSpeed = GetSpeedDropDownValue(playBackSpeedDropdown.GetComponent<Dropdown>());
-            //Debug.Log("Buffering sequence update: buffer: " + bufferSlider.value + " slider: " + slider.value);
+            Debug.Log("Buffering sequence update: buffer: " + bufferSlider.value + " slider: " + slider.value);
             var factor = 0f;
             if ((stepsSkipped <= 30 && stepsSkipped > 0) || (stepsSkipped >= -30 && stepsSkipped < 0))
             {

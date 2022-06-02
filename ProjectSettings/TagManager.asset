@@ -103,6 +103,7 @@ TagManager:
   - NextNextButton
   - PreviousButton
   - PreviousPreviousButton
+  - SliderHandleLabel
   layers:
   - Default
   - TransparentFX
