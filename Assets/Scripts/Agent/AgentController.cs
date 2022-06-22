@@ -164,6 +164,7 @@ public class AgentController : MonoBehaviour
 
     float GetActionLength(string action)
     {
+        Debug.Log("__Getting Action length: playbackSpeed " + playBackSpeed);
         switch (action)
         {
             case AgentConstants.ANIMATION_CLEANING:
@@ -174,7 +175,7 @@ public class AgentController : MonoBehaviour
                 return 0.3f / playBackSpeed;
             case AgentConstants.ANIMATION_INVALID:
                 return 1f / playBackSpeed;
-            default: return 0.5f / playBackSpeed;
+            default: return 1f / playBackSpeed;
         }
     }
 
@@ -206,6 +207,7 @@ public class AgentController : MonoBehaviour
 
     void ChangeAnimationState(string state)
     {
+        finished = false;
         if (currentAnimationState == state)
         {
             StartCoroutine(WaitToFinishAnimation(state));
@@ -219,7 +221,7 @@ public class AgentController : MonoBehaviour
     {
         currentActionLength = GetActionLength(action);
         yield return new WaitForSeconds(currentActionLength);
-        Debug.Log("Action finished...");
+        //Debug.Log("Action finished...");
         finished = true;
     }
 

@@ -90,6 +90,7 @@ public class EnvironmentStateManager : MonoBehaviour
     bool allAgentsInitialized = false;
     bool playingSequence = false;
     [SerializeField] bool buffering;
+    bool lerping = false;
     int stepsSkipped = 0;
 
     public float playBackSpeed = 0.25f;
@@ -171,7 +172,7 @@ public class EnvironmentStateManager : MonoBehaviour
         InitializeBufferSlider();
         slider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
         bufferSlider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
-        currentStep = (int)bufferSlider.value;
+        currentStep = 0;
         UpdateSliderLabel();
         UpdateStepOverview();
         steptext.SetActive(false);
@@ -264,20 +265,20 @@ public class EnvironmentStateManager : MonoBehaviour
                 //slider.value = Mathf.Round(slider.value * 10f) / 10f;
                 //Debug.Log("Timestep slider: " + slider.value);
 
-                if (((int)slider.value > currentStep + 2) && !buffering && !playingSequence)
-                {
-                    StartBuffering();
-                    sliderFill.color = new Color32(0, 125, 255, 255);
-                    sliderFill.transform.SetSiblingIndex(0);
-                    bufferFill.color = Color.white;
-                }
-                else if (((int)slider.value < currentStep - 2) && !buffering && !playingSequence)
-                {
-                    StartBuffering();
-                    sliderFill.color = Color.white;
-                    sliderFill.transform.SetSiblingIndex(1);
-                    bufferFill.color = new Color32(0, 125, 255, 255);
-                }
+                /* if (((int)slider.value > currentStep + 2) && !buffering && !playingSequence)
+                 {
+                     //StartBuffering();
+                     sliderFill.color = new Color32(0, 125, 255, 255);
+                     sliderFill.transform.SetSiblingIndex(0);
+                     bufferFill.color = Color.white;
+                 }
+                 else if (((int)slider.value < currentStep - 2) && !buffering && !playingSequence)
+                 {
+                     //StartBuffering();
+                     sliderFill.color = Color.white;
+                     sliderFill.transform.SetSiblingIndex(1);
+                     bufferFill.color = new Color32(0, 125, 255, 255);
+                 }*/
 
             });
     }
@@ -285,9 +286,8 @@ public class EnvironmentStateManager : MonoBehaviour
     void StartBuffering()
     {
         Debug.Log("Start buffering...");
-        stepsSkipped = ((int)slider.value - currentStep);
+        stepsSkipped = ((int)(slider.value - currentStep));
         buffering = true;
-        LoadNewTimeStepBuffer(currentEpisode, currentStep);
         PauseSequence();
     }
 
@@ -345,30 +345,41 @@ public class EnvironmentStateManager : MonoBehaviour
 
             if (bufferSlider.value != slider.value)
             {
-                Debug.Log("______UPDATE: SET BUFFERING________");
-                buffering = true;
+                StartBuffering();
             }
 
             if (playingSequence)
             {
-                if (checkIfAllAgentsFinished())
-                {
-                    Debug.Log("______UPDATE: LOADING NEW TIMESTEP________");
-                    LoadNewTimeStep(currentEpisode, currentStep + 1);
-                }
-                //StartCoroutine(HandleSequencePlay());
+                HandleSequenceUpdate();
             }
-            if (buffering && bufferSlider.value <= slider.value)
+            if (buffering)
             {
-                if (checkIfAllAgentsFinished())
-                {
-                    LoadNewTimeStepBuffer(currentEpisode, currentStep + 1);
-                }
+                HandleBufferUpdate();
             }
-            if (bufferSlider.value >= slider.value)
+        }
+    }
+
+    void HandleSequenceUpdate()
+    {
+        if (checkIfAllAgentsFinished() && !lerping)
+        {
+            Debug.Log("______UPDATE: LOADING NEW TIMESTEP________");
+            LoadNewTimeStep(currentEpisode, currentStep + 1);
+        }
+    }
+
+    void HandleBufferUpdate()
+    {
+        if (bufferSlider.value < slider.value)
+        {
+            if (checkIfAllAgentsFinished())
             {
-                StopBuffering();
+                LoadNewTimeStepBuffer(currentEpisode, currentStep + 1);
             }
+        }
+        if (bufferSlider.value >= slider.value)
+        {
+            StopBuffering();
         }
     }
 
@@ -408,27 +419,31 @@ public class EnvironmentStateManager : MonoBehaviour
         float animationTime = 0f;
         while (animationTime < seconds)
         {
+            lerping = true;
             animationTime += Time.deltaTime;
             float lerpValue = animationTime / seconds;
             bufferSlider.value = Mathf.Lerp(start, finish, lerpValue);
 
             yield return null;
+            lerping = false;
         }
     }
     IEnumerator AnimateBothSlidersOverTime(float start, float finish, float seconds)
     {
         float animationTime = 0f;
+        Debug.Log("START LERPING");
         while (animationTime < seconds)
         {
             animationTime += Time.deltaTime;
             float lerpValue = animationTime / seconds;
             slider.value = Mathf.Lerp(start, finish, lerpValue);
             bufferSlider.value = Mathf.Lerp(start, finish, lerpValue);
-            Debug.Log("LERPING slider: " + slider.value);
-            Debug.Log("LERPING buffer: " + bufferSlider.value);
-
+            Debug.Log("LERPING slider from " + start + " to " + finish + " = " + slider.value);
+            Debug.Log("LERPING buffer from " + start + " to " + finish + " = " + bufferSlider.value);
 
             yield return null;
+            Debug.Log("FINISH LERPING");
+
         }
     }
 
@@ -514,7 +529,6 @@ public class EnvironmentStateManager : MonoBehaviour
             agentObjController.bufferAcceleration = stepsSkipped / 10;
         }
         StartCoroutine(AnimateBufferSliderOverTime(currentStep - 1, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
-
     }
 
 
@@ -711,37 +725,6 @@ public class EnvironmentStateManager : MonoBehaviour
     #endregion
 
     #region Sequence
-
-    //TODO hier richtet sich das nach nur einem agenten statt nach allen
-    /* void HandleSequencePlayUpdate()
-     {
-
-         foreach (GameObject agentObj in agentObjects)
-         {
-             var controller = agentObj.transform.GetChild(0).GetComponent<AgentControllerNew>();
-
-             if (controller.currentpos == controller.goalPosition && slider.value < (slider.maxValue - 1f))
-             {
-                 slider.value = slider.value + (playBackSpeed / 10f);
-                 bufferSlider.value = slider.value;
-             }
-             //Ende der timeline erreicht
-             else if ((controller.currentpos == controller.goalPosition) && (slider.value == (slider.maxValue - 1f)))
-             {
-                 var pos = RequestAgentPosition(agentObj, currentEpisode, 0);
-                 RepositionAgent(agentObj, pos);
-                 slider.value = 0f;
-                 bufferSlider.value = slider.value;
-             }
-         }
-     }*/
-
-    IEnumerator HandleSequencePlay()
-    {
-        yield return new WaitForSeconds(2);
-        LoadNewTimeStep(currentEpisode, currentStep + 1);
-    }
-
 
     void PlaySequence()
     {
