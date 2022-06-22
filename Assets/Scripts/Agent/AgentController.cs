@@ -160,11 +160,15 @@ public class AgentController : MonoBehaviour
                 default: ChangeAnimationState(AgentConstants.ANIMATION_IDLE); break;
             }
         }
+        else
+        {
+            Debug.Log(" No validity data");
+        }
     }
 
     float GetActionLength(string action)
     {
-        Debug.Log("__Getting Action length: playbackSpeed " + playBackSpeed);
+        //Debug.Log("__Getting Action length: playbackSpeed " + playBackSpeed);
         switch (action)
         {
             case AgentConstants.ANIMATION_CLEANING:
@@ -175,7 +179,7 @@ public class AgentController : MonoBehaviour
                 return 0.3f / playBackSpeed;
             case AgentConstants.ANIMATION_INVALID:
                 return 1f / playBackSpeed;
-            default: return 1f / playBackSpeed;
+            default: return 0.5f / playBackSpeed;
         }
     }
 
@@ -221,7 +225,7 @@ public class AgentController : MonoBehaviour
     {
         currentActionLength = GetActionLength(action);
         yield return new WaitForSeconds(currentActionLength);
-        //Debug.Log("Action finished...");
+        Debug.Log("Action finished...");
         finished = true;
     }
 

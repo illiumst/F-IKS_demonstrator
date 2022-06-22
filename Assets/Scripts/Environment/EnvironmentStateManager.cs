@@ -260,7 +260,7 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         slider.onValueChanged.AddListener(delegate
             {
-                Debug.Log("Slider changed to " + slider.value + ", currentStep: " + currentStep);
+                //Debug.Log("Slider changed to " + slider.value + ", currentStep: " + currentStep);
 
                 //slider.value = Mathf.Round(slider.value * 10f) / 10f;
                 //Debug.Log("Timestep slider: " + slider.value);
@@ -364,7 +364,8 @@ public class EnvironmentStateManager : MonoBehaviour
         if (checkIfAllAgentsFinished() && !lerping)
         {
             Debug.Log("______UPDATE: LOADING NEW TIMESTEP________");
-            LoadNewTimeStep(currentEpisode, currentStep + 1);
+            currentStep += 1;
+            LoadNewTimeStep(currentEpisode, currentStep);
         }
     }
 
@@ -374,7 +375,8 @@ public class EnvironmentStateManager : MonoBehaviour
         {
             if (checkIfAllAgentsFinished())
             {
-                LoadNewTimeStepBuffer(currentEpisode, currentStep + 1);
+                currentStep += 1;
+                LoadNewTimeStepBuffer(currentEpisode, currentStep);
             }
         }
         if (bufferSlider.value >= slider.value)
@@ -388,30 +390,30 @@ public class EnvironmentStateManager : MonoBehaviour
     void SkipSteps(int i)
     {
         Debug.Log("Skipping steps...");
-        PauseSequence();
-        if (i > 0)
-        {
-            if (slider.value + i > slider.maxValue)
-            {
-                slider.value = (slider.value + i) - slider.maxValue;
-            }
-            else
-            {
-                slider.value = slider.value + i;
-            }
-        }
-        else
-        {
-            if (slider.value + i < 0)
-            {
-                slider.value = (slider.value + i) + slider.maxValue;
-            }
-            else
-            {
-                slider.value = slider.value + i;
-            }
-        }
-        LoadNewTimeStep(currentEpisode, currentStep);
+        /* PauseSequence();
+         if (i > 0)
+         {
+             if (slider.value + i > slider.maxValue)
+             {
+                 slider.value = (slider.value + i) - slider.maxValue;
+             }
+             else
+             {
+                 slider.value = slider.value + i;
+             }
+         }
+         else
+         {
+             if (slider.value + i < 0)
+             {
+                 slider.value = (slider.value + i) + slider.maxValue;
+             }
+             else
+             {
+                 slider.value = slider.value + i;
+             }
+         }
+         LoadNewTimeStep(currentEpisode, currentStep);*/
     }
 
     IEnumerator AnimateBufferSliderOverTime(float start, float finish, float seconds)
@@ -419,21 +421,20 @@ public class EnvironmentStateManager : MonoBehaviour
         float animationTime = 0f;
         while (animationTime < seconds)
         {
-            lerping = true;
             animationTime += Time.deltaTime;
             float lerpValue = animationTime / seconds;
             bufferSlider.value = Mathf.Lerp(start, finish, lerpValue);
 
             yield return null;
-            lerping = false;
         }
     }
     IEnumerator AnimateBothSlidersOverTime(float start, float finish, float seconds)
     {
         float animationTime = 0f;
-        Debug.Log("START LERPING");
+        Debug.Log("START LERPING: currentStep: " + currentStep);
         while (animationTime < seconds)
         {
+            lerping = true;
             animationTime += Time.deltaTime;
             float lerpValue = animationTime / seconds;
             slider.value = Mathf.Lerp(start, finish, lerpValue);
@@ -443,6 +444,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
             yield return null;
             Debug.Log("FINISH LERPING");
+            lerping = false;
 
         }
     }
@@ -490,7 +492,7 @@ public class EnvironmentStateManager : MonoBehaviour
     public void LoadNewTimeStep(int episode, int step)
     {
         Debug.Log("Loading new timestep...");
-        currentStep += 1;
+        //currentStep = step;
         agents = environmentConstants.episodes[currentEpisode].steps[currentStep].Agents;
         UpdateAgents(episode, step);
         UpdateDirtPiles(episode, step);
@@ -504,16 +506,18 @@ public class EnvironmentStateManager : MonoBehaviour
 
             agentObjController.bufferAcceleration = 1;
         }
-        var from = currentStep - 1;
+        var temp = currentStep;
+        var from = temp - 1;
         var to = currentStep;
         var longestAgentAction = GetLongestAgentAction();
+        Debug.Log("____ Longest action: " + longestAgentAction);
         StartCoroutine(AnimateBothSlidersOverTime(from, to, longestAgentAction));
     }
 
     public void LoadNewTimeStepBuffer(int episode, int step)
     {
         Debug.Log("Loading new timestep buffer...");
-        currentStep += 1;
+        //currentStep = step;
         //bufferSlider.value += 1;
         agents = environmentConstants.episodes[currentEpisode].steps[currentStep].Agents;
         UpdateAgents(episode, step);
@@ -528,7 +532,9 @@ public class EnvironmentStateManager : MonoBehaviour
 
             agentObjController.bufferAcceleration = stepsSkipped / 10;
         }
-        StartCoroutine(AnimateBufferSliderOverTime(currentStep - 1, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
+        var temp = currentStep;
+        var from = temp - 1;
+        StartCoroutine(AnimateBufferSliderOverTime(from, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
     }
 
 
@@ -609,7 +615,7 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         var sliderHandleArea = slider.transform.GetChild(2).gameObject;
         steptext.GetComponent<Text>().text = "" + (int)slider.value;
-        sliderHandleLabel.GetComponent<Text>().text = "Step" + currentStep;
+        sliderHandleLabel.GetComponent<Text>().text = "Step " + currentStep;
 
     }
     #endregion
@@ -732,7 +738,6 @@ public class EnvironmentStateManager : MonoBehaviour
         playingSequence = true;
         playButton.gameObject.SetActive(false);
         pauseButton.gameObject.SetActive(true);
-        LoadNewTimeStep(currentEpisode, currentStep);
         buffering = false;
 
         foreach (GameObject agentObj in agentObjects)
@@ -863,9 +868,10 @@ public class EnvironmentStateManager : MonoBehaviour
 
     public Dirt GetDirtByNamePrevStep(string name)
     {
+        var temp = currentStep;
         if (currentStep > 0)
         {
-            foreach (Dirt dirt in environmentConstants.episodes[currentEpisode].steps[currentStep - 1].DirtRegister)
+            foreach (Dirt dirt in environmentConstants.episodes[currentEpisode].steps[temp - 1].DirtRegister)
             {
                 if (dirt.name.Equals(name))
                 {
