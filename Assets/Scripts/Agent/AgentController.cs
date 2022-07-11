@@ -48,6 +48,7 @@ public class AgentController : MonoBehaviour
     public float bufferAcceleration = 1f;
     public float sliderValue;
     public bool playingSequence;
+    public bool buffering;
     public bool valid;
     public bool backwardBuffer;
     public bool finished = false;
@@ -105,6 +106,7 @@ public class AgentController : MonoBehaviour
 
         playBackSpeed = stateManager.playBackSpeed * bufferAcceleration;
         animator.SetFloat("animSpeed", playBackSpeed);
+        buffering = stateManager.buffering;
 
         //sequence with playbutton is being played
         if (playingSequence && valid)
@@ -112,12 +114,13 @@ public class AgentController : MonoBehaviour
             MoveRobotTo(goalPosition);
         }
 
+        //buffering? no
         if (!playingSequence && currentpos != goalPosition && goalPosition != null && valid)
         {
             MoveRobotTo(goalPosition);
         }
 
-        if (!playingSequence)
+        if (!playingSequence && !buffering)
         {
             ChangeAnimationState(AgentConstants.ANIMATION_IDLE);
             speechBubble.SetActive(false);
@@ -225,7 +228,7 @@ public class AgentController : MonoBehaviour
     {
         currentActionLength = GetActionLength(action);
         yield return new WaitForSeconds(currentActionLength);
-        Debug.Log("Action finished...");
+        //Debug.Log("Action finished...");
         finished = true;
     }
 

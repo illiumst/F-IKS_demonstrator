@@ -104,6 +104,7 @@ TagManager:
   - PreviousButton
   - PreviousPreviousButton
   - SliderHandleLabel
+  - BatteryFillStation
   layers:
   - Default
   - TransparentFX

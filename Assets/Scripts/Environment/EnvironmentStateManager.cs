@@ -89,7 +89,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
     bool allAgentsInitialized = false;
     bool playingSequence = false;
-    [SerializeField] bool buffering;
+    public bool buffering;
     bool lerping = false;
     int stepsSkipped = 0;
 
@@ -260,27 +260,41 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         slider.onValueChanged.AddListener(delegate
             {
-                //Debug.Log("Slider changed to " + slider.value + ", currentStep: " + currentStep);
+                Debug.Log("Slider changed to " + slider.value + ", currentStep: " + currentStep);
 
-                //slider.value = Mathf.Round(slider.value * 10f) / 10f;
+                slider.value = Mathf.Round(slider.value * 10f) / 10f;
                 //Debug.Log("Timestep slider: " + slider.value);
 
-                /* if (((int)slider.value > currentStep + 2) && !buffering && !playingSequence)
-                 {
-                     //StartBuffering();
-                     sliderFill.color = new Color32(0, 125, 255, 255);
-                     sliderFill.transform.SetSiblingIndex(0);
-                     bufferFill.color = Color.white;
-                 }
-                 else if (((int)slider.value < currentStep - 2) && !buffering && !playingSequence)
-                 {
-                     //StartBuffering();
-                     sliderFill.color = Color.white;
-                     sliderFill.transform.SetSiblingIndex(1);
-                     bufferFill.color = new Color32(0, 125, 255, 255);
-                 }*/
+                if (((int)slider.value > currentStep + 2) && !buffering && !playingSequence)
+                {
+                    StartCoroutine(WaitForFinalSliderPositionForward());
+                }
+                else if (((int)slider.value < currentStep - 2) && !buffering && !playingSequence)
+                {
+                    StartCoroutine(WaitForFinalSliderPositionBackward());
+                }
 
             });
+    }
+
+    IEnumerator WaitForFinalSliderPositionForward()
+    {
+        yield return new WaitForSeconds(1);
+        Debug.Log("Buffering forward");
+        StartBuffering();
+        sliderFill.color = new Color32(0, 125, 255, 255);
+        sliderFill.transform.SetSiblingIndex(0);
+        bufferFill.color = Color.white;
+    }
+
+    IEnumerator WaitForFinalSliderPositionBackward()
+    {
+        yield return new WaitForSeconds(1);
+        Debug.Log("Buffering backward");
+        //StartBuffering();
+        sliderFill.color = Color.white;
+        sliderFill.transform.SetSiblingIndex(1);
+        bufferFill.color = new Color32(0, 125, 255, 255);
     }
 
     void StartBuffering()
@@ -343,10 +357,10 @@ public class EnvironmentStateManager : MonoBehaviour
         {
             //Debug.Log("Update: slider: " + slider.value + " buffer: " + bufferSlider.value);
 
-            if (bufferSlider.value != slider.value)
+            /*if (bufferSlider.value != slider.value)
             {
                 StartBuffering();
-            }
+            }*/
 
             if (playingSequence)
             {
@@ -382,6 +396,7 @@ public class EnvironmentStateManager : MonoBehaviour
         if (bufferSlider.value >= slider.value)
         {
             StopBuffering();
+            resetBufferAccelleration();
         }
     }
 
@@ -421,11 +436,14 @@ public class EnvironmentStateManager : MonoBehaviour
         float animationTime = 0f;
         while (animationTime < seconds)
         {
+            lerping = true;
             animationTime += Time.deltaTime;
             float lerpValue = animationTime / seconds;
             bufferSlider.value = Mathf.Lerp(start, finish, lerpValue);
+            Debug.Log("LERPING buffer from " + start + " to " + finish + " = " + bufferSlider.value);
 
             yield return null;
+            lerping = false;
         }
     }
     IEnumerator AnimateBothSlidersOverTime(float start, float finish, float seconds)
@@ -514,9 +532,20 @@ public class EnvironmentStateManager : MonoBehaviour
         StartCoroutine(AnimateBothSlidersOverTime(from, to, longestAgentAction));
     }
 
+    public void resetBufferAccelleration()
+    {
+        agents = environmentConstants.episodes[currentEpisode].steps[currentStep].Agents;
+        for (int i = 0; i < agentObjects.Count; i++)
+        {
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
+
+            agentObjController.bufferAcceleration = 1;
+        }
+    }
+
     public void LoadNewTimeStepBuffer(int episode, int step)
     {
-        Debug.Log("Loading new timestep buffer...");
+        Debug.Log("Loading new timestep buffer...stepsSkipped: " + stepsSkipped);
         //currentStep = step;
         //bufferSlider.value += 1;
         agents = environmentConstants.episodes[currentEpisode].steps[currentStep].Agents;
@@ -524,17 +553,18 @@ public class EnvironmentStateManager : MonoBehaviour
         UpdateDirtPiles(episode, step);
         UpdateDoors(episode, step);
         UpdateItemObjects(episode, step);
-        UpdateSliderLabel();
+        UpdateSliderLabelBuffer();
         UpdateStepOverview();
         for (int i = 0; i < agentObjects.Count; i++)
         {
             var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
 
-            agentObjController.bufferAcceleration = stepsSkipped / 10;
+            agentObjController.bufferAcceleration = stepsSkipped / 20;
         }
         var temp = currentStep;
         var from = temp - 1;
-        StartCoroutine(AnimateBufferSliderOverTime(from, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
+        bufferSlider.value = currentEpisode;
+        //StartCoroutine(AnimateBufferSliderOverTime(from, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
     }
 
 
@@ -616,6 +646,13 @@ public class EnvironmentStateManager : MonoBehaviour
         var sliderHandleArea = slider.transform.GetChild(2).gameObject;
         steptext.GetComponent<Text>().text = "" + (int)slider.value;
         sliderHandleLabel.GetComponent<Text>().text = "Step " + currentStep;
+
+    }
+    void UpdateSliderLabelBuffer()
+    {
+        var sliderHandleArea = slider.transform.GetChild(2).gameObject;
+        steptext.GetComponent<Text>().text = "" + (int)slider.value;
+        sliderHandleLabel.GetComponent<Text>().text = "Loading step " + currentStep + "/" + (int)slider.value;
 
     }
     #endregion
