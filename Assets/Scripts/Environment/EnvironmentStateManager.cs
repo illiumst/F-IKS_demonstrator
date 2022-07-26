@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -291,7 +292,7 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1);
         Debug.Log("Buffering backward");
-        //StartBuffering();
+        StartBuffering();
         sliderFill.color = Color.white;
         sliderFill.transform.SetSiblingIndex(1);
         bufferFill.color = new Color32(0, 125, 255, 255);
@@ -368,7 +369,14 @@ public class EnvironmentStateManager : MonoBehaviour
             }
             if (buffering)
             {
-                HandleBufferUpdate();
+                if (stepsSkipped > 0)
+                {
+                    HandleBufferUpdateForward();
+                }
+                if (stepsSkipped < 0)
+                {
+                    HandleBufferUpdateBackward();
+                }
             }
         }
     }
@@ -383,18 +391,41 @@ public class EnvironmentStateManager : MonoBehaviour
         }
     }
 
-    void HandleBufferUpdate()
+    void HandleBufferUpdateForward()
     {
         if (bufferSlider.value < slider.value)
         {
+            EnablePlayerInteraction(false);
             if (checkIfAllAgentsFinished())
             {
                 currentStep += 1;
-                LoadNewTimeStepBuffer(currentEpisode, currentStep);
+                LoadNewTimeStepBufferForward(currentEpisode, currentStep);
             }
         }
-        if (bufferSlider.value >= slider.value)
+        if (bufferSlider.value >= slider.value - 1)
         {
+            EnablePlayerInteraction(true);
+            UpdateSliderLabel();
+            StopBuffering();
+            resetBufferAccelleration();
+        }
+    }
+
+    void HandleBufferUpdateBackward()
+    {
+        if (bufferSlider.value > slider.value)
+        {
+            EnablePlayerInteraction(false);
+            if (checkIfAllAgentsFinished())
+            {
+                currentStep -= 1;
+                LoadNewTimeStepBufferBackward(currentEpisode, currentStep);
+            }
+        }
+        if (bufferSlider.value <= slider.value + 1)
+        {
+            EnablePlayerInteraction(true);
+            UpdateSliderLabel();
             StopBuffering();
             resetBufferAccelleration();
         }
@@ -543,7 +574,7 @@ public class EnvironmentStateManager : MonoBehaviour
         }
     }
 
-    public void LoadNewTimeStepBuffer(int episode, int step)
+    public void LoadNewTimeStepBufferForward(int episode, int step)
     {
         Debug.Log("Loading new timestep buffer...stepsSkipped: " + stepsSkipped);
         //currentStep = step;
@@ -559,11 +590,36 @@ public class EnvironmentStateManager : MonoBehaviour
         {
             var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
 
-            agentObjController.bufferAcceleration = stepsSkipped / 20;
+            agentObjController.bufferAcceleration = stepsSkipped / 5;
         }
         var temp = currentStep;
         var from = temp - 1;
-        bufferSlider.value = currentEpisode;
+        bufferSlider.value = currentStep;
+        //StartCoroutine(AnimateBufferSliderOverTime(from, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
+    }
+    public void LoadNewTimeStepBufferBackward(int episode, int step)
+    {
+        Debug.Log("Loading new timestep buffer...stepsSkipped: " + stepsSkipped);
+        //currentStep = step;
+        //bufferSlider.value += 1;
+        agents = environmentConstants.episodes[currentEpisode].steps[currentStep].Agents;
+        UpdateAgents(episode, step);
+        UpdateDirtPiles(episode, step);
+        UpdateDoors(episode, step);
+        UpdateItemObjects(episode, step);
+        UpdateSliderLabelBuffer();
+        UpdateStepOverview();
+        for (int i = 0; i < agentObjects.Count; i++)
+        {
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
+
+            agentObjController.bufferAcceleration = Mathf.Abs(stepsSkipped) / 5;
+            agentObjController.backwardBuffer = true;
+
+        }
+        var temp = currentStep;
+        var from = temp - 1;
+        bufferSlider.value = currentStep;
         //StartCoroutine(AnimateBufferSliderOverTime(from, currentStep, GetLongestAgentAction() * stepsSkipped / 10));
     }
 
@@ -654,6 +710,15 @@ public class EnvironmentStateManager : MonoBehaviour
         steptext.GetComponent<Text>().text = "" + (int)slider.value;
         sliderHandleLabel.GetComponent<Text>().text = "Loading step " + currentStep + "/" + (int)slider.value;
 
+    }
+
+    void EnablePlayerInteraction(bool active)
+    {
+        playButton.interactable = active;
+        nextButton.interactable = active;
+        nextNextButton.interactable = active;
+        previousButton.interactable = active;
+        previousPreviousButton.interactable = active;
     }
     #endregion
 
@@ -776,6 +841,7 @@ public class EnvironmentStateManager : MonoBehaviour
         playButton.gameObject.SetActive(false);
         pauseButton.gameObject.SetActive(true);
         buffering = false;
+        slider.enabled = false;
 
         foreach (GameObject agentObj in agentObjects)
         {
@@ -790,6 +856,8 @@ public class EnvironmentStateManager : MonoBehaviour
         playingSequence = false;
         playButton.gameObject.SetActive(true);
         pauseButton.gameObject.SetActive(false);
+        slider.enabled = true;
+
 
         foreach (GameObject agentObj in agentObjects)
         {
