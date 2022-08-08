@@ -891,7 +891,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 906522904}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FileBrowser, Assembly-CSharp
         m_MethodName: StartDemonstrator
         m_Mode: 1
@@ -3933,7 +3933,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 906522897}
-  - component: {fileID: 906522904}
+  - component: {fileID: 906522898}
   m_Layer: 0
   m_Name: System
   m_TagString: System
@@ -3955,7 +3955,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &906522904
+--- !u!114 &906522898
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3964,12 +3964,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 906522896}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3440e4d4f3854554ea1faea2b0582e1b, type: 3}
+  m_Script: {fileID: 11500000, guid: 6dfc7c53278f84eaeb1a682471f0ce1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropdown: {fileID: 633231221}
-  StartButton: {fileID: 206017924}
-  SequenceSelectionWarningText: {fileID: 1143089742}
+  dropdown: {fileID: 0}
+  StartButton: {fileID: 0}
+  SequenceSelectionWarningText: {fileID: 0}
   dropDownOptions: []
   fileNames: []
   filePaths: []
@@ -7887,7 +7887,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 906522904}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FileBrowser, Assembly-CSharp
         m_MethodName: OpenFileBrowser
         m_Mode: 1

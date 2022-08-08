@@ -52,6 +52,7 @@ public class AgentController : MonoBehaviour
     public bool valid;
     public bool backwardBuffer;
     public bool finished = false;
+    public bool batteryBlink = false;
     public string action;
     float currentActionLength = 0;
     string currentAnimationState = "";
@@ -99,6 +100,8 @@ public class AgentController : MonoBehaviour
         #endregion
     }
 
+    #region Update
+
     void Update()
     {
         currentpos = this.transform.position;
@@ -125,7 +128,14 @@ public class AgentController : MonoBehaviour
             ChangeAnimationState(AgentConstants.ANIMATION_IDLE);
             speechBubble.SetActive(false);
         }
+        if (batteryBlink)
+        {
+            this.transform.GetComponent<BatteryBlinkPulse>().enabled = true;
+        }
     }
+    #endregion
+
+    #region ActionUpdate
     public void UpdateAgentAction()
     {
         var stateManager = system.GetComponent<EnvironmentStateManager>();
@@ -185,15 +195,18 @@ public class AgentController : MonoBehaviour
             default: return 0.5f / playBackSpeed;
         }
     }
+    #endregion
 
-
+    #region Bubbles
     IEnumerator BubblesAction()
     {
         var stateManager = system.GetComponent<EnvironmentStateManager>();
         yield return StartCoroutine(WaitFor.Frames((int)(10 / playBackSpeed)));
         stateManager.SpawnCleaningBubbles(goalPosition);
     }
+    #endregion
 
+    #region Position and Moving
     public void MoveRobotTo(Vector3 position)
     {
         var speed = 3f * playBackSpeed;
@@ -210,6 +223,12 @@ public class AgentController : MonoBehaviour
             this.transform.forward = difference;
             name.transform.eulerAngles = Vector3.zero;
         }
+    }
+
+    public void SetRobotPosition(Vector3 pos)
+    {
+        this.transform.position = pos;
+        StartCoroutine(WaitToFinishAnimation(currentAnimationState));
     }
 
     void ChangeAnimationState(string state)
@@ -231,7 +250,9 @@ public class AgentController : MonoBehaviour
         //Debug.Log("Action finished...");
         finished = true;
     }
+    #endregion
 
+    #region List
     public void UpdateAgentListItems(GameObject agentObject, GameObject listItem, int x, int y, string name, string action, bool valid)
     {
         var agentBody = agentObject.transform.GetChild(0).gameObject;
@@ -261,7 +282,9 @@ public class AgentController : MonoBehaviour
         var canvas = agentBody.transform.GetChild(4).gameObject;
         var nameTag = canvas.transform.GetChild(0).gameObject;
     }
+    #endregion
 
+    #region SpeechBubble
     public void UpdateSpeechBubble(string action, bool valid)
     {
         var rectTrans = speechBubble.GetComponent<RectTransform>();
@@ -332,6 +355,7 @@ public class AgentController : MonoBehaviour
         speechBubbleAgentName.transform.GetComponent<Text>().text = GetAgentNumberFromNameAsString(name);
 
     }
+    #endregion
 
     #region helper methods
     string GetAgentNumberFromNameAsString(string name)

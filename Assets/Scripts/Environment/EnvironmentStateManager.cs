@@ -52,6 +52,7 @@ public class EnvironmentStateManager : MonoBehaviour
     Button previousButton;
     Button previousPreviousButton;
     GameObject playBackSpeedDropdown;
+    Toggle timelapseToggle;
 
     //********************************** STEP OVERVIEW *******************************************************//
 
@@ -87,11 +88,13 @@ public class EnvironmentStateManager : MonoBehaviour
 
     int currentEpisode;
     int currentStep;
+    int prevStep = 0;
 
     bool allAgentsInitialized = false;
     bool playingSequence = false;
     public bool buffering;
     bool lerping = false;
+    bool timelapse = true;
     int stepsSkipped = 0;
 
     public float playBackSpeed = 0.25f;
@@ -126,6 +129,7 @@ public class EnvironmentStateManager : MonoBehaviour
         bufferFill = GameObject.FindWithTag("BufferFill").GetComponent<Image>();
         steptext = GameObject.FindWithTag("StepText");
         sliderHandleLabel = GameObject.FindWithTag("SliderHandleLabel");
+        timelapseToggle = GameObject.FindWithTag("TimelapseToggle").GetComponent<Toggle>();
 
         #endregion
 
@@ -170,7 +174,6 @@ public class EnvironmentStateManager : MonoBehaviour
         //********************************** SLIDER SETUP ***************************************************//
 
         InitializeTimelineSlider();
-        InitializeBufferSlider();
         slider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
         bufferSlider.maxValue = environmentConstants.episodes[currentEpisode].steps.Count;
         currentStep = 0;
@@ -265,37 +268,62 @@ public class EnvironmentStateManager : MonoBehaviour
 
                 slider.value = Mathf.Round(slider.value * 10f) / 10f;
                 //Debug.Log("Timestep slider: " + slider.value);
-
-                if (((int)slider.value > currentStep + 2) && !buffering && !playingSequence)
+                if (!timelapseToggle.isOn)
                 {
-                    StartCoroutine(WaitForFinalSliderPositionForward());
+                    Debug.Log("Timelapse turned off...");
+                    timelapse = false;
+                    buffering = false;
+                    prevStep = currentStep;
+                    currentStep = (int)slider.value;
                 }
-                else if (((int)slider.value < currentStep - 2) && !buffering && !playingSequence)
+                else
                 {
-                    StartCoroutine(WaitForFinalSliderPositionBackward());
+                    if (((int)slider.value > currentStep + 2) && !buffering && !playingSequence)
+                    {
+                        StartCoroutine(WaitForFinalSliderPositionForward());
+                    }
+                    else if (((int)slider.value < currentStep - 2) && !buffering && !playingSequence)
+                    {
+                        StartCoroutine(WaitForFinalSliderPositionBackward());
+                    }
                 }
-
             });
     }
 
     IEnumerator WaitForFinalSliderPositionForward()
     {
-        yield return new WaitForSeconds(1);
-        Debug.Log("Buffering forward");
-        StartBuffering();
-        sliderFill.color = new Color32(0, 125, 255, 255);
-        sliderFill.transform.SetSiblingIndex(0);
-        bufferFill.color = Color.white;
+        if (timelapse)
+        {
+            yield return new WaitForSeconds(1);
+            Debug.Log("Buffering forward");
+            StartBuffering();
+            sliderFill.color = new Color32(0, 125, 255, 255);
+            sliderFill.transform.SetSiblingIndex(0);
+            bufferFill.color = Color.white;
+        }
+        else
+        {
+            yield return null;
+            StartBuffering();
+        }
     }
 
     IEnumerator WaitForFinalSliderPositionBackward()
     {
-        yield return new WaitForSeconds(1);
-        Debug.Log("Buffering backward");
-        StartBuffering();
-        sliderFill.color = Color.white;
-        sliderFill.transform.SetSiblingIndex(1);
-        bufferFill.color = new Color32(0, 125, 255, 255);
+        if (timelapse)
+        {
+            yield return new WaitForSeconds(1);
+            Debug.Log("Buffering backward");
+            StartBuffering();
+            sliderFill.color = Color.white;
+            sliderFill.transform.SetSiblingIndex(1);
+            bufferFill.color = new Color32(0, 125, 255, 255);
+        }
+        else
+        {
+            yield return null;
+            StartBuffering();
+        }
     }
 
     void StartBuffering()
@@ -309,25 +337,6 @@ public class EnvironmentStateManager : MonoBehaviour
     void StopBuffering()
     {
         buffering = false;
-    }
-
-    void InitializeBufferSlider()
-    {
-        bufferSlider.onValueChanged.AddListener(delegate
-        {
-            //Debug.Log("Bufferslider changed...");
-            //var bufferCheckValue = Mathf.Round(bufferSlider.value * 100f) / 100f;
-            /*bufferSlider.value = Mathf.Round(bufferSlider.value * 10f) / 10f;
-            //Debug.Log("Timestep buffer: " + bufferSlider.value + " slider: " + slider.value + " currentstep: " + currentStep);
-            if (bufferSlider.value % 1f == 0)
-            {
-                if (bufferSlider.value == currentStep + 1f)
-                {
-                    Debug.Log("_____Load new timestep bufferslider");
-                    LoadNewTimeStep(currentEpisode, currentStep);
-                }
-            }*/
-        });
     }
 
     bool AllAgentObjectsInitialized(int episode)
@@ -356,13 +365,6 @@ public class EnvironmentStateManager : MonoBehaviour
         }
         else
         {
-            //Debug.Log("Update: slider: " + slider.value + " buffer: " + bufferSlider.value);
-
-            /*if (bufferSlider.value != slider.value)
-            {
-                StartBuffering();
-            }*/
-
             if (playingSequence)
             {
                 HandleSequenceUpdate();
@@ -377,6 +379,13 @@ public class EnvironmentStateManager : MonoBehaviour
                 {
                     HandleBufferUpdateBackward();
                 }
+            }
+            Debug.Log("CurrentStep: " + currentStep + " PrevStep: " + prevStep);
+            //if (!timelapse && (currentStep != prevStep) && !playingSequence)
+            if (!timelapse && !playingSequence)
+
+            {
+                LoadNewTimeStepNoTimelapse(currentEpisode, currentStep);
             }
         }
     }
@@ -393,41 +402,67 @@ public class EnvironmentStateManager : MonoBehaviour
 
     void HandleBufferUpdateForward()
     {
-        if (bufferSlider.value < slider.value)
+        if (!timelapse)
         {
-            EnablePlayerInteraction(false);
-            if (checkIfAllAgentsFinished())
-            {
-                currentStep += 1;
-                LoadNewTimeStepBufferForward(currentEpisode, currentStep);
-            }
-        }
-        if (bufferSlider.value >= slider.value - 1)
-        {
+            Debug.Log("Buffer forward");
+            currentStep = (int)slider.value;
+            LoadNewTimeStepNoTimelapse(currentEpisode, currentStep);
             EnablePlayerInteraction(true);
             UpdateSliderLabel();
             StopBuffering();
             resetBufferAccelleration();
+        }
+        else
+        {
+            if (bufferSlider.value < slider.value)
+            {
+                EnablePlayerInteraction(false);
+                if (checkIfAllAgentsFinished())
+                {
+                    currentStep += 1;
+                    LoadNewTimeStepBufferForward(currentEpisode, currentStep);
+                }
+            }
+            if (bufferSlider.value >= slider.value - 1)
+            {
+                EnablePlayerInteraction(true);
+                UpdateSliderLabel();
+                StopBuffering();
+                resetBufferAccelleration();
+            }
         }
     }
 
     void HandleBufferUpdateBackward()
     {
-        if (bufferSlider.value > slider.value)
+        if (!timelapse)
         {
-            EnablePlayerInteraction(false);
-            if (checkIfAllAgentsFinished())
-            {
-                currentStep -= 1;
-                LoadNewTimeStepBufferBackward(currentEpisode, currentStep);
-            }
-        }
-        if (bufferSlider.value <= slider.value + 1)
-        {
+            Debug.Log("Buffer backward");
+            currentStep = (int)slider.value;
+            LoadNewTimeStepNoTimelapse(currentEpisode, currentStep);
             EnablePlayerInteraction(true);
             UpdateSliderLabel();
             StopBuffering();
             resetBufferAccelleration();
+        }
+        else
+        {
+            if (bufferSlider.value > slider.value)
+            {
+                EnablePlayerInteraction(false);
+                if (checkIfAllAgentsFinished())
+                {
+                    currentStep -= 1;
+                    LoadNewTimeStepBufferBackward(currentEpisode, currentStep);
+                }
+            }
+            if (bufferSlider.value <= slider.value + 1)
+            {
+                EnablePlayerInteraction(true);
+                UpdateSliderLabel();
+                StopBuffering();
+                resetBufferAccelleration();
+            }
         }
     }
 
@@ -561,6 +596,25 @@ public class EnvironmentStateManager : MonoBehaviour
         var longestAgentAction = GetLongestAgentAction();
         Debug.Log("____ Longest action: " + longestAgentAction);
         StartCoroutine(AnimateBothSlidersOverTime(from, to, longestAgentAction));
+    }
+
+    public void LoadNewTimeStepNoTimelapse(int episode, int step)
+    {
+        Debug.Log("Loading new timestep no timelapse...step: " + currentStep);
+        //currentStep = step;
+        agents = environmentConstants.episodes[currentEpisode].steps[currentStep].Agents;
+        UpdateAgentsNoTimelapse(episode, step);
+        UpdateDirtPiles(episode, step);
+        UpdateDoors(episode, step);
+        UpdateItemObjects(episode, step);
+        UpdateSliderLabel();
+        UpdateStepOverview();
+        for (int i = 0; i < agentObjects.Count; i++)
+        {
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
+            //agentObjController.finished = true;
+            agentObjController.bufferAcceleration = 1;
+        }
     }
 
     public void resetBufferAccelleration()
@@ -720,6 +774,18 @@ public class EnvironmentStateManager : MonoBehaviour
         previousButton.interactable = active;
         previousPreviousButton.interactable = active;
     }
+
+    public void ToggleSliderTimelapse()
+    {
+        if (timelapseToggle.isOn)
+        {
+            timelapse = true;
+        }
+        else
+        {
+            timelapse = false;
+        }
+    }
     #endregion
 
     #region Update Objects - Functions
@@ -776,6 +842,27 @@ public class EnvironmentStateManager : MonoBehaviour
 
             //********************************** UPDATE AGENT POSITIONS ************************************//
             UpdateAgentPositions(agents[i], agentObjController);
+
+            //********************************** UPDATE AGENT UI *******************************************//
+            agentObjController.UpdateAgentListItems(agentObjects[i], agentListObjects[i],
+            agents[i].x, agents[i].y, agents[i].name, agents[i].action, agents[i].valid);
+
+            //********************************** UPDATE AGENT ACTION ***************************************//
+            agentObjController.UpdateAgentAction();
+        }
+    }
+
+    public void UpdateAgentsNoTimelapse(int episode, int step)
+    {
+        for (int i = 0; i < agents.Count; i++)
+        {
+            //********************************** FIND AGENT CONTROLLERS ************************************//
+            var agentObjController = agentObjects[i].transform.GetChild(0).GetComponent<AgentController>();
+            agentObjController.SetAgentModel(agents[i]);
+
+            //********************************** UPDATE AGENT POSITIONS ************************************//
+            var pos = GetRecalculatedPosition(agents[i].x, 0, agents[i].y);
+            agentObjController.SetRobotPosition(pos);
 
             //********************************** UPDATE AGENT UI *******************************************//
             agentObjController.UpdateAgentListItems(agentObjects[i], agentListObjects[i],

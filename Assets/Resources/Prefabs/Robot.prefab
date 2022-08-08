@@ -876,6 +876,8 @@ GameObject:
   - component: {fileID: 4406488891832653679}
   - component: {fileID: 5905215709132941141}
   - component: {fileID: 7197545585419527893}
+  - component: {fileID: 2290622856225793659}
+  - component: {fileID: 6955950708558154892}
   m_Layer: 8
   m_Name: Robo3
   m_TagString: AgentBody
@@ -1038,6 +1040,7 @@ MonoBehaviour:
   valid: 0
   backwardBuffer: 0
   finished: 0
+  batteryBlink: 0
   action: 
 --- !u!114 &7197545585419527893
 MonoBehaviour:
@@ -1053,6 +1056,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WallMaterial: {fileID: 2100000, guid: d733bfeaebaf34566b186699d794ee4f, type: 2}
   DoorMaterial: {fileID: 2100000, guid: b4b23edac8ee44f2ead0aa3ae0dd1c2a, type: 2}
+--- !u!114 &2290622856225793659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5905215707851643584}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0.7924528, g: 0.0037379938, b: 0.0037379938, a: 1}
+  outlineWidth: 5
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!114 &6955950708558154892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5905215707851643584}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e82af60c1b25d48deab71ac7485f3df9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minimum: 0
+  maximum: 1
+  cyclesPerSecond: 1
 --- !u!1 &5905215707851643588
 GameObject:
   m_ObjectHideFlags: 0
@@ -1937,8 +1973,9 @@ GameObject:
   - component: {fileID: 2971482019427171356}
   - component: {fileID: 9163306163790697159}
   - component: {fileID: 6020784488301319078}
+  - component: {fileID: 4912694982660104969}
   m_Layer: 8
-  m_Name: Image
+  m_Name: BatteryFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1991,16 +2028,29 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 9a60b05b2ca4c4437acb3440282a86a3, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 1
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4912694982660104969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7202838372929006112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc9bd6c68096b4b3e80fed9de03e2599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fill_amount: 1
 --- !u!1 &7404172433970492083
 GameObject:
   m_ObjectHideFlags: 0

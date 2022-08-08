@@ -30,15 +30,15 @@ public class Battery : MonoBehaviour
             agent_battery_fill.fillAmount = fill_amount;
             if (fill_amount > 0.6f)
             {
-                agent_battery_fill.color = new Color32(0, 255, 55, 100);
+                agent_battery_fill.color = new Color32(0, 255, 55, 255);
             }
             if (fill_amount < 0.6f)
             {
-                agent_battery_fill.color = new Color32(255, 225, 55, 100);
+                agent_battery_fill.color = new Color32(255, 225, 55, 255);
             }
             if (fill_amount < 0.3f)
             {
-                agent_battery_fill.color = new Color32(255, 0, 55, 100);
+                agent_battery_fill.color = new Color32(255, 0, 55, 255);
             }
         }
     }
