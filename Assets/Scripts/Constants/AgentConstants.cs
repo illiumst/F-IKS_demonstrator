@@ -10,16 +10,18 @@ public static class AgentConstants
 
     //********************************** AGENT ACTION NAMES ***************************************************//
 
-    public const string ACTION_CLEAN_UP = "Action[CLEAN_UP]";
-    public const string ACTION_ITEM = "Action[ITEM_ACTION]";
-    public const string ACTION_NORTH = "Action[NORTH]";
-    public const string ACTION_NORTHEAST = "Action[NORTHEAST]";
-    public const string ACTION_EAST = "Action[EAST]";
-    public const string ACTION_SOUTHEAST = "Action[SOUTHEAST]";
-    public const string ACTION_SOUTH = "Action[SOUTH]";
-    public const string ACTION_SOUTHWEST = "Action[SOUTHWEST]";
-    public const string ACTION_WEST = "Action[WEST]";
-    public const string ACTION_NORTHWEST = "Action[NORTHWEST]";
+    public const string ACTION_CLEAN_UP = "do_cleanup_action";
+    public const string ACTION_ITEM = "ITEMACTION";
+    public const string ACTION_NORTH = "north";
+    public const string ACTION_NORTHEAST = "north_east";
+    public const string ACTION_EAST = "east";
+    public const string ACTION_SOUTHEAST = "south_east";
+    public const string ACTION_SOUTH = "south";
+    public const string ACTION_SOUTHWEST = "south_west";
+    public const string ACTION_WEST = "west";
+    public const string ACTION_NORTHWEST = "north_west";
+    public const string ACTION_DOOR = "use_door";
+
 
     //********************************** SPEECHBUBBLE TEXTS ***************************************************//
 

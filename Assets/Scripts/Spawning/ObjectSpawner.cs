@@ -76,14 +76,14 @@ public class ObjectSpawner : MonoBehaviour
     public void SpawnNewEpisode(EnvironmentConstants constantsInput, int episode)
     {
         constants = constantsInput;
-        Debug.Log("#Walls Spawner Input: " + constantsInput.episodes[0].steps[0].WallTiles.Count);
-        Debug.Log("#Walls Spawner: " + constants.episodes[0].steps[0].WallTiles.Count);
+        Debug.Log("#Walls Spawner Input: " + constantsInput.episodes[0].steps[0].Walls.Count);
+        Debug.Log("#Walls Spawner: " + constants.episodes[0].steps[0].Walls.Count);
         spawnWalls(episode);
         spawnDoors(episode);
         spawnAgents(episode, 0);
-        spawnPickUpItems(episode, 0);
-        spawnDropOffZones(episode, 0);
-        spawnDirtRegister(episode, 0);
+        if (constants.episodes[episode].steps[0].ItemRegister != null) { spawnPickUpItems(episode, 0); }
+        if (constants.episodes[episode].steps[0].DropOffLocations != null) { spawnDropOffZones(episode, 0); }
+        if (constants.episodes[episode].steps[0].DirtRegister != null) { spawnDirtRegister(episode, 0); }
         spawnFloorPositionMarkers(episode);
     }
 
@@ -115,7 +115,7 @@ public class ObjectSpawner : MonoBehaviour
             var nrAgents = FindGameObjectInChildWithTag(newEpisodeItem, "EpisodeNrAgents");
             nrAgents.transform.GetComponent<Text>().text = "" + ep.steps[0].Agents.Count;
             var environmentSize = FindGameObjectInChildWithTag(newEpisodeItem, "EpisodeEnvironmentSize");
-            environmentSize.transform.GetComponent<Text>().text = GetMaxWallX(ep.episode) + " x " + GetMaxWallY(ep.episode);
+            //environmentSize.transform.GetComponent<Text>().text = GetMaxWallX(ep.episode) + " x " + GetMaxWallY(ep.episode);
             system.GetComponent<EnvironmentStateManager>().episodeItems.Add(newEpisodeItem);
         }
     }
@@ -158,7 +158,7 @@ public class ObjectSpawner : MonoBehaviour
         var tmpMinWallX = 0;
         var tmpMinWallY = 0;
 
-        List<Wall> walls = constants.episodes[episode].steps[0].WallTiles;
+        List<Wall> walls = constants.episodes[episode].steps[0].Walls;
 
         foreach (Wall wall in walls)
         {
@@ -315,7 +315,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnWalls(int episode)
     {
-        List<Wall> walls = constants.episodes[episode].steps[0].WallTiles;
+        List<Wall> walls = constants.episodes[episode].steps[0].Walls;
         wallCenter = GetWallCenter(walls, episode);
 
         foreach (Wall wall in walls)
@@ -448,7 +448,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnDoors(int episode)
     {
-        List<Wall> walls = constants.episodes[episode].steps[0].WallTiles;
+        List<Wall> walls = constants.episodes[episode].steps[0].Walls;
         List<Door> doors = constants.episodes[episode].steps[0].Doors;
         wallCenter = GetWallCenter(walls, episode);
 
@@ -508,7 +508,7 @@ public class ObjectSpawner : MonoBehaviour
     }
     public bool CheckIfWallExistsAtPosition(int x, int y)
     {
-        List<Wall> walls = constants.episodes[0].steps[0].WallTiles;
+        List<Wall> walls = constants.episodes[0].steps[0].Walls;
         foreach (Wall wall in walls)
         {
             if (wall.x == x && wall.y == y)
@@ -542,7 +542,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public int GetMaxWallX(int episode)
     {
-        var walls = constants.episodes[episode].steps[0].WallTiles;
+        var walls = constants.episodes[episode].steps[0].Walls;
         tempMaxWallX = 0;
         tempMaxWallY = 0;
 
@@ -562,7 +562,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public int GetMaxWallY(int episode)
     {
-        var walls = constants.episodes[episode].steps[0].WallTiles;
+        var walls = constants.episodes[episode].steps[0].Walls;
         tempMaxWallX = 0;
         tempMaxWallY = 0;
 

@@ -67,6 +67,11 @@ public class OnMouseOverClass : MonoBehaviour
         {
             Debug.Log("Hovering over handle...");
         }
+        else
+        {
+            toolTipCanvas.GetComponent<Canvas>().enabled = false;
+            Cursor.visible = true;
+        }
     }
 
 }

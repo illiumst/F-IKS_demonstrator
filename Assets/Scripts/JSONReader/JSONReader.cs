@@ -67,12 +67,18 @@ public class JSONReader : MonoBehaviour
     }
     private void ReadEnvironmentConstants()
     {
-        constants = JsonConvert.DeserializeObject<EnvironmentConstants>(episodeDataString);
+        constants = JsonConvert.DeserializeObject<EnvironmentConstants>(episodeDataString, new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        });
     }
 
     public void ReadEnvironmentData()
     {
-        environmentTimeSteps = JsonConvert.DeserializeObject<List<List<EnvironmentTimeStep>>>(environmentData.text);
+        environmentTimeSteps = JsonConvert.DeserializeObject<List<List<EnvironmentTimeStep>>>(environmentData.text, new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        });
     }
 
     public void CleanBackSlashes(TextAsset textAsset)

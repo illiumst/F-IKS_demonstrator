@@ -235,7 +235,7 @@ public class EnvironmentStateManager : MonoBehaviour
         environmentConstants = JSONReader.constants;
         currentEpisode = 0;
         objectSpawner.SpawnNewEpisode(environmentConstants, currentEpisode);
-        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.episodes[0].steps[0].WallTiles, 0);
+        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.episodes[0].steps[0].Walls, 0);
         InitializeEnvironmentStateMachine();
     }
 
@@ -546,7 +546,7 @@ public class EnvironmentStateManager : MonoBehaviour
         agents.Clear();
         agents = environmentConstants.episodes[currentEpisode].steps[0].Agents;
         objectSpawner.SpawnNewEpisode(environmentConstants, currentEpisode);
-        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.episodes[0].steps[0].WallTiles, 0);
+        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.episodes[0].steps[0].Walls, 0);
         UpdateSliderLabel();
         validCounter = 0;
         invalidCounter = 0;
@@ -733,13 +733,17 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         var step = environmentConstants.episodes[currentEpisode].steps[currentStep];
         var nrAgents = step.Agents.Count;
-        var nrDirt = step.DirtRegister.Count;
+        var nrDirt = 0;
+        if (step.DirtRegister != null) { nrDirt = step.DirtRegister.Count; }
         var nrItems = 0;
-        foreach (Item item in environmentConstants.episodes[currentEpisode].steps[currentStep].ItemRegister)
+        if (environmentConstants.episodes[currentEpisode].steps[currentStep].ItemRegister != null)
         {
-            if (item.x != -9999 && item.y != -9999)
+            foreach (Item item in environmentConstants.episodes[currentEpisode].steps[currentStep].ItemRegister)
             {
-                nrItems += 1;
+                if (item.x != -9999 && item.y != -9999)
+                {
+                    nrItems += 1;
+                }
             }
         }
         agentNrText.gameObject.GetComponent<Text>().text = "" + nrAgents;
@@ -819,17 +823,21 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         var items = environmentConstants.episodes[episode].steps[step].ItemRegister;
 
-        for (int i = 0; i < items.Count; i++)
+        if (items != null)
         {
-            if (items[i].x == -9999 && items[i].y == -9999)
+            for (int i = 0; i < items.Count; i++)
             {
-                itemObjects[i].SetActive(false);
-            }
-            else
-            {
-                itemObjects[i].SetActive(true);
+                if (items[i].x == -9999 && items[i].y == -9999)
+                {
+                    itemObjects[i].SetActive(false);
+                }
+                else
+                {
+                    itemObjects[i].SetActive(true);
+                }
             }
         }
+
     }
 
     public void UpdateAgents(int episode, int step)
@@ -884,29 +892,32 @@ public class EnvironmentStateManager : MonoBehaviour
     {
         List<Dirt> dirtPiles = environmentConstants.episodes[episode].steps[step].DirtRegister;
 
-        foreach (Dirt dirt in dirtPiles)
+        if (dirtPiles != null)
         {
-            if (GetDirtObjectByName(dirt.name) != null)
+            foreach (Dirt dirt in dirtPiles)
             {
-                var dirtInPrevStep = GetDirtByNamePrevStep(dirt.name);
-                if (dirtInPrevStep != null && dirtInPrevStep.amount != dirt.amount)
+                if (GetDirtObjectByName(dirt.name) != null)
                 {
-                    var dirtObj = GetDirtObjectByName(dirt.name);
-                    var scaleFactor = Mathf.Sqrt((float)dirt.amount);
-                    dirtObj.transform.localScale = new Vector3(scaleFactor, 0.001f, scaleFactor);
+                    var dirtInPrevStep = GetDirtByNamePrevStep(dirt.name);
+                    if (dirtInPrevStep != null && dirtInPrevStep.amount != dirt.amount)
+                    {
+                        var dirtObj = GetDirtObjectByName(dirt.name);
+                        var scaleFactor = Mathf.Sqrt((float)dirt.amount);
+                        dirtObj.transform.localScale = new Vector3(scaleFactor, 0.001f, scaleFactor);
+                    }
+                }
+                else
+                {
+                    var pos = GetRecalculatedPosition(dirt.x, 0, dirt.y);
+                    objectSpawner.spawnDirt(pos, dirt.amount, dirt.name);
                 }
             }
-            else
+            foreach (GameObject dirtObj in dirtObjects)
             {
-                var pos = GetRecalculatedPosition(dirt.x, 0, dirt.y);
-                objectSpawner.spawnDirt(pos, dirt.amount, dirt.name);
-            }
-        }
-        foreach (GameObject dirtObj in dirtObjects)
-        {
-            if (GetDirtByName(dirtObj.name) == null)
-            {
-                StartCoroutine(DeleteDirtObject(dirtObj));
+                if (GetDirtByName(dirtObj.name) == null)
+                {
+                    StartCoroutine(DeleteDirtObject(dirtObj));
+                }
             }
         }
     }
@@ -1014,7 +1025,7 @@ public class EnvironmentStateManager : MonoBehaviour
     bool CheckForWall(int x, int y, int episode, AgentController ctr)
     {
         bool wallExists = false;
-        List<Wall> walls = environmentConstants.episodes[episode].steps[0].WallTiles;
+        List<Wall> walls = environmentConstants.episodes[episode].steps[0].Walls;
         foreach (Wall wall in walls)
         {
             if (wall.x == x && wall.y == y)
