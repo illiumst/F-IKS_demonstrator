@@ -1297,6 +1297,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wall4 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7212546119041284868, guid: 5f0b07b3a4f514e82b25691d874215da, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f0b07b3a4f514e82b25691d874215da, type: 3}
 --- !u!1 &73159950
@@ -2587,6 +2591,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wall4 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7212546119041284868, guid: 5f0b07b3a4f514e82b25691d874215da, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f0b07b3a4f514e82b25691d874215da, type: 3}
 --- !u!1001 &207274917
@@ -2886,6 +2894,10 @@ PrefabInstance:
     - target: {fileID: 6243528653663769609, guid: 966496a36a954418daed3e920c72498f, type: 3}
       propertyPath: m_Name
       value: PillarTop
+      objectReference: {fileID: 0}
+    - target: {fileID: 6243528653663769609, guid: 966496a36a954418daed3e920c72498f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 966496a36a954418daed3e920c72498f, type: 3}
@@ -5958,6 +5970,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a10fb9fedbcf4464aa4bab2123e43998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &515824301 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3120603987908422036, guid: b8714dfa9d45040f8ae7e5a12a3181be, type: 3}
+  m_PrefabInstance: {fileID: 7063400024265322137}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &515824302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515824301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63b8282be23dc47d9886fdfe9fdce0b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fill_amount: 1
 --- !u!1 &529892093
 GameObject:
   m_ObjectHideFlags: 0
@@ -11344,9 +11374,9 @@ MonoBehaviour:
   WallObjects: {fileID: 1054808325}
   DoorObjects: {fileID: 2103608161}
   AgentObjects: {fileID: 1611058005}
-  ItemRegister: {fileID: 872071673}
+  Items: {fileID: 872071673}
   ZoneObjects: {fileID: 499477751}
-  DirtRegister: {fileID: 1453658599}
+  DirtPiles: {fileID: 1453658599}
   FloorMarkerRegister: {fileID: 381064360}
   floorMarkerToggle: {fileID: 0}
 --- !u!114 &906522902
@@ -18076,6 +18106,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wall4 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7212546119041284868, guid: 5f0b07b3a4f514e82b25691d874215da, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f0b07b3a4f514e82b25691d874215da, type: 3}
 --- !u!1 &1430611974
@@ -19882,6 +19916,10 @@ PrefabInstance:
     - target: {fileID: 5905215709132941142, guid: 0b293610312e943b399731c83a48de2e, type: 3}
       propertyPath: m_IsKinematic
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197545585419527893, guid: 0b293610312e943b399731c83a48de2e, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b293610312e943b399731c83a48de2e, type: 3}
@@ -23921,6 +23959,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wall4
       objectReference: {fileID: 0}
+    - target: {fileID: 7212546119041284868, guid: 5f0b07b3a4f514e82b25691d874215da, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f0b07b3a4f514e82b25691d874215da, type: 3}
 --- !u!1 &1948087923
@@ -26287,5 +26329,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1241943424191272568, guid: b8714dfa9d45040f8ae7e5a12a3181be, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: b8714dfa9d45040f8ae7e5a12a3181be, type: 3}

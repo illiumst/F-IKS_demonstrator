@@ -5,11 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
+/// <summary>Class <c>ObjectSpawner</c> is responsible for instantiating all 
+/// GameObjects from predefined prefabs in the scene according to the JSON file. 
+/// Objects of the same type (walls, agents, items etc.) are all stored in lists of GameObjects.</summary>
+///
 public class ObjectSpawner : MonoBehaviour
 {
     GameObject RobotSpawnObject;
     GameObject WallSpawnObject;
+    GameObject PillarTopSpawnObject;
     GameObject PickupItemSpawnObject;
     GameObject DropOffZoneSpawnObject;
     GameObject DoorObject;
@@ -20,20 +24,16 @@ public class ObjectSpawner : MonoBehaviour
     [SerializeField] GameObject WallObjects;
     [SerializeField] GameObject DoorObjects;
     [SerializeField] GameObject AgentObjects;
-    [SerializeField] GameObject ItemRegister;
+    [SerializeField] GameObject Items;
     [SerializeField] GameObject ZoneObjects;
-    [SerializeField] GameObject DirtRegister;
+    [SerializeField] GameObject DirtPiles;
     [SerializeField] GameObject FloorMarkerRegister;
     [SerializeField] Toggle floorMarkerToggle;
-
 
     Quaternion wallRotation;
     Quaternion doorRotation;
 
-
     GameObject system;
-
-
     List<GameObject> trashList = new List<GameObject>();
     List<GameObject> wallList = new List<GameObject>();
     List<GameObject> doorList = new List<GameObject>();
@@ -58,6 +58,7 @@ public class ObjectSpawner : MonoBehaviour
         AgentListItem = Resources.Load("Prefabs/AgentListItem") as GameObject;
         DoorObject = Resources.Load("Prefabs/SlideDoor") as GameObject;
         WallSpawnObject = Resources.Load("Prefabs/Walls/Wall3") as GameObject;
+        PillarTopSpawnObject = Resources.Load("Prefabs/Walls/PillarTop") as GameObject;
         PickupItemSpawnObject = Resources.Load("Prefabs/PickupItem") as GameObject;
         DropOffZoneSpawnObject = Resources.Load("Prefabs/DropOffZone") as GameObject;
         positionMarkerObject = Resources.Load("Prefabs/PositionMarker") as GameObject;
@@ -73,20 +74,31 @@ public class ObjectSpawner : MonoBehaviour
         FloorMarkerRegister.SetActive(false);
     }
 
+    /// <summary>This method is called to spawn a specific episode from the JSON file. 
+    /// In particular the methods <c>spawnWalls(episode)</c>, <c>spawnDoors(episode)</c>
+    /// and <c>spawnAgents(episode, step)</c> are being called. Objects that are optional and
+    /// don't necessarily appear in an episode are null-checked. These are <c>spawnPickUpItems(episode, step)</c>,
+    /// <c>spawnDropOffZones(episode, step)</c> and <c>spawnDirtRegister(episode, step)</c>.
+    /// The JSON input is stored in and extracted from an object of the type <c>EnvironmentConstants</c>. </summary>
+    /// <param name="constantsInput">the <c>EnvironmentConstants</c> object that stores the JSON data.</param>
+    /// <param name="episode">the episode number to be spawned</param>
+    /// 
     public void SpawnNewEpisode(EnvironmentConstants constantsInput, int episode)
     {
         constants = constantsInput;
-        Debug.Log("#Walls Spawner Input: " + constantsInput.episodes[0].steps[0].Walls.Count);
-        Debug.Log("#Walls Spawner: " + constants.episodes[0].steps[0].Walls.Count);
+        Debug.Log("#Walls Spawner Input: " + constantsInput.header.rec_Walls.Count);
+        Debug.Log("#Walls Spawner: " + constants.header.rec_Walls.Count);
         spawnWalls(episode);
         spawnDoors(episode);
         spawnAgents(episode, 0);
-        if (constants.episodes[episode].steps[0].ItemRegister != null) { spawnPickUpItems(episode, 0); }
-        if (constants.episodes[episode].steps[0].DropOffLocations != null) { spawnDropOffZones(episode, 0); }
-        if (constants.episodes[episode].steps[0].DirtRegister != null) { spawnDirtRegister(episode, 0); }
+        if (constants.episodes[episode].steps[0].Items != null) { spawnPickUpItems(episode, 0); }
+        if (constants.header.rec_DropOffLocations != null) { spawnDropOffZones(episode, 0); }
+        if (constants.episodes[episode].steps[0].DirtPiles != null) { spawnDirtRegister(episode, 0); }
         spawnFloorPositionMarkers(episode);
     }
-
+    /// <summary>This method is called to destroy all GameObjects in the scene of the previous episode and clear the
+    /// wall- dirt- and dool-list. </summary>
+    /// 
     public void RemoveLastEpisode()
     {
         DestroyObjectsWithTag("Agent");
@@ -101,6 +113,9 @@ public class ObjectSpawner : MonoBehaviour
         doorList.Clear();
     }
 
+    /// <summary>This method is called to spawn the different items in the top foldout scrollview for the episode selection. 
+    /// It sets the episode's name, number of steps, number of agents and environment dimensions. </summary>
+    /// 
     public void SpawnEpisodeSelection()
     {
         foreach (EnvironmentEpisode ep in constants.episodes)
@@ -137,7 +152,7 @@ public class ObjectSpawner : MonoBehaviour
         {
             var newPickupItem = Instantiate(objectToSpawn, SpawnPosition, transform.rotation) as GameObject;
             newPickupItem.name = name;
-            newPickupItem.transform.parent = ItemRegister.transform;
+            newPickupItem.transform.parent = Items.transform;
             system.GetComponent<EnvironmentStateManager>().itemObjects.Add(newPickupItem);
 
         }
@@ -158,7 +173,7 @@ public class ObjectSpawner : MonoBehaviour
         var tmpMinWallX = 0;
         var tmpMinWallY = 0;
 
-        List<Wall> walls = constants.episodes[episode].steps[0].Walls;
+        List<Wall> walls = constants.header.rec_Walls;
 
         foreach (Wall wall in walls)
         {
@@ -259,7 +274,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnPickUpItems(int episode, int step)
     {
-        List<Item> items = constants.episodes[episode].steps[step].ItemRegister;
+        List<Item> items = constants.episodes[episode].steps[step].Items;
         foreach (Item item in items)
         {
             spawnObject(PickupItemSpawnObject, GetRecalculatedPosition(item.x, 0.3f, item.y), item.name);
@@ -267,7 +282,7 @@ public class ObjectSpawner : MonoBehaviour
     }
     public void spawnDropOffZones(int episode, int step)
     {
-        List<DropOffLocation> zones = constants.episodes[episode].steps[step].DropOffLocations;
+        List<DropOffLocation> zones = constants.header.rec_DropOffLocations;
         foreach (DropOffLocation zone in zones)
         {
             if (zone != null)
@@ -291,7 +306,7 @@ public class ObjectSpawner : MonoBehaviour
         }
         var dirtSpawn = Instantiate(dirtObj, trashPosition, transform.rotation) as GameObject;
         dirtSpawn.name = name;
-        dirtSpawn.transform.parent = DirtRegister.transform;
+        dirtSpawn.transform.parent = DirtPiles.transform;
         var scaleFactor = Mathf.Sqrt((float)amount);
         dirtSpawn.transform.localScale = new Vector3(scaleFactor, 0.001f, scaleFactor);
         dirtSpawn.transform.eulerAngles = new Vector3(0, randRot, 0);
@@ -301,7 +316,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnDirtRegister(int episode, int step)
     {
-        List<Dirt> dirtPiles = constants.episodes[episode].steps[step].DirtRegister;
+        List<Dirt> dirtPiles = constants.episodes[episode].steps[step].DirtPiles;
         foreach (Dirt dirt in dirtPiles)
         {
             if (dirt != null)
@@ -315,13 +330,23 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnWalls(int episode)
     {
-        List<Wall> walls = constants.episodes[episode].steps[0].Walls;
+        List<Wall> walls = constants.header.rec_Walls;
         wallCenter = GetWallCenter(walls, episode);
 
         foreach (Wall wall in walls)
         {
             wallRotation = Quaternion.Euler(0, 0, 0);
-
+            //PillarTop
+            if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
+             && CheckIfWallExistsAtPosition(wall.x + 1, wall.y + 1))
+            {
+                var pillarRotation = Quaternion.Euler(90, 0, 0);
+                var newPillarTop = Instantiate(PillarTopSpawnObject, new Vector3(wall.x, 1.9f, wall.y), pillarRotation) as GameObject;
+                newPillarTop.transform.parent = WallObjects.transform;
+                newPillarTop.transform.position = GetRecalculatedPosition(newPillarTop.transform.position.x + 0.5f, newPillarTop.transform.position.y, newPillarTop.transform.position.z + 0.5f);
+                //x+0.34 z+0.6
+            }
+            //Walls
             if (!CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && !CheckIfWallExistsAtPosition(wall.x, wall.y - 1)
              && !CheckIfWallExistsAtPosition(wall.x + 1, wall.y) && !CheckIfWallExistsAtPosition(wall.x - 1, wall.y))
             {
@@ -448,7 +473,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void spawnDoors(int episode)
     {
-        List<Wall> walls = constants.episodes[episode].steps[0].Walls;
+        List<Wall> walls = constants.header.rec_Walls;
         List<Door> doors = constants.episodes[episode].steps[0].Doors;
         wallCenter = GetWallCenter(walls, episode);
 
@@ -508,7 +533,7 @@ public class ObjectSpawner : MonoBehaviour
     }
     public bool CheckIfWallExistsAtPosition(int x, int y)
     {
-        List<Wall> walls = constants.episodes[0].steps[0].Walls;
+        List<Wall> walls = constants.header.rec_Walls;
         foreach (Wall wall in walls)
         {
             if (wall.x == x && wall.y == y)
@@ -542,7 +567,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public int GetMaxWallX(int episode)
     {
-        var walls = constants.episodes[episode].steps[0].Walls;
+        var walls = constants.header.rec_Walls;
         tempMaxWallX = 0;
         tempMaxWallY = 0;
 
@@ -562,7 +587,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public int GetMaxWallY(int episode)
     {
-        var walls = constants.episodes[episode].steps[0].Walls;
+        var walls = constants.header.rec_Walls;
         tempMaxWallX = 0;
         tempMaxWallY = 0;
 

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary> MODEL Class <c>Pod</c> used in JSON deserialization. </summary>
+
 [System.Serializable]
 public class Pod
 {

@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>Class <c>BatteryBlinkPulse</c> created an outline around the agent that can blink. 
+/// In the future it is intended to be used to indicate and draw attention to a low battery status. 
+/// This script is assigned to the Robo3 of the Agent prefab.</summary>
 public class BatteryBlinkPulse : MonoBehaviour
 {
-
     private Outline outline;
 
     public float minimum = 0.0f;

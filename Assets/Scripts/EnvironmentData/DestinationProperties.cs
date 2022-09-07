@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary> MODEL Class <c>DestinationProperties</c> used in JSON deserialization. </summary>
 [SerializeField]
 public class DestinationProperties
 {

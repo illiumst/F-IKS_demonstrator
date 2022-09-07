@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary> MODEL Class <c>Wall</c> used in JSON deserialization. </summary>
+
 [System.Serializable]
 public class Wall
 {

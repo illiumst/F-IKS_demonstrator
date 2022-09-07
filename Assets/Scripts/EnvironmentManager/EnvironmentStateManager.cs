@@ -7,7 +7,9 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System;
-
+/// <summary>Class <c>EnvironmentStateManager</c> models a point in a two-dimensional
+/// plane.</summary>
+///
 public class EnvironmentStateManager : MonoBehaviour
 {
     #region Object and Variable Declarations
@@ -235,7 +237,7 @@ public class EnvironmentStateManager : MonoBehaviour
         environmentConstants = JSONReader.constants;
         currentEpisode = 0;
         objectSpawner.SpawnNewEpisode(environmentConstants, currentEpisode);
-        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.episodes[0].steps[0].Walls, 0);
+        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.header.rec_Walls, 0);
         InitializeEnvironmentStateMachine();
     }
 
@@ -471,30 +473,7 @@ public class EnvironmentStateManager : MonoBehaviour
     void SkipSteps(int i)
     {
         Debug.Log("Skipping steps...");
-        /* PauseSequence();
-         if (i > 0)
-         {
-             if (slider.value + i > slider.maxValue)
-             {
-                 slider.value = (slider.value + i) - slider.maxValue;
-             }
-             else
-             {
-                 slider.value = slider.value + i;
-             }
-         }
-         else
-         {
-             if (slider.value + i < 0)
-             {
-                 slider.value = (slider.value + i) + slider.maxValue;
-             }
-             else
-             {
-                 slider.value = slider.value + i;
-             }
-         }
-         LoadNewTimeStep(currentEpisode, currentStep);*/
+
     }
 
     IEnumerator AnimateBufferSliderOverTime(float start, float finish, float seconds)
@@ -546,7 +525,7 @@ public class EnvironmentStateManager : MonoBehaviour
         agents.Clear();
         agents = environmentConstants.episodes[currentEpisode].steps[0].Agents;
         objectSpawner.SpawnNewEpisode(environmentConstants, currentEpisode);
-        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.episodes[0].steps[0].Walls, 0);
+        environmentCenter = objectSpawner.GetWallCenter(environmentConstants.header.rec_Walls, 0);
         UpdateSliderLabel();
         validCounter = 0;
         invalidCounter = 0;
@@ -734,11 +713,11 @@ public class EnvironmentStateManager : MonoBehaviour
         var step = environmentConstants.episodes[currentEpisode].steps[currentStep];
         var nrAgents = step.Agents.Count;
         var nrDirt = 0;
-        if (step.DirtRegister != null) { nrDirt = step.DirtRegister.Count; }
+        if (step.DirtPiles != null) { nrDirt = step.DirtPiles.Count; }
         var nrItems = 0;
-        if (environmentConstants.episodes[currentEpisode].steps[currentStep].ItemRegister != null)
+        if (environmentConstants.episodes[currentEpisode].steps[currentStep].Items != null)
         {
-            foreach (Item item in environmentConstants.episodes[currentEpisode].steps[currentStep].ItemRegister)
+            foreach (Item item in environmentConstants.episodes[currentEpisode].steps[currentStep].Items)
             {
                 if (item.x != -9999 && item.y != -9999)
                 {
@@ -821,7 +800,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
     private void UpdateItemObjects(int episode, int step)
     {
-        var items = environmentConstants.episodes[episode].steps[step].ItemRegister;
+        var items = environmentConstants.episodes[episode].steps[step].Items;
 
         if (items != null)
         {
@@ -890,7 +869,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
     public void UpdateDirtPiles(int episode, int step)
     {
-        List<Dirt> dirtPiles = environmentConstants.episodes[episode].steps[step].DirtRegister;
+        List<Dirt> dirtPiles = environmentConstants.episodes[episode].steps[step].DirtPiles;
 
         if (dirtPiles != null)
         {
@@ -1025,7 +1004,7 @@ public class EnvironmentStateManager : MonoBehaviour
     bool CheckForWall(int x, int y, int episode, AgentController ctr)
     {
         bool wallExists = false;
-        List<Wall> walls = environmentConstants.episodes[episode].steps[0].Walls;
+        List<Wall> walls = environmentConstants.header.rec_Walls;
         foreach (Wall wall in walls)
         {
             if (wall.x == x && wall.y == y)
@@ -1059,7 +1038,7 @@ public class EnvironmentStateManager : MonoBehaviour
     }
     public Dirt GetDirtByName(string name)
     {
-        foreach (Dirt dirt in environmentConstants.episodes[currentEpisode].steps[currentStep].DirtRegister)
+        foreach (Dirt dirt in environmentConstants.episodes[currentEpisode].steps[currentStep].DirtPiles)
         {
             if (dirt.name.Equals(name))
             {
@@ -1074,7 +1053,7 @@ public class EnvironmentStateManager : MonoBehaviour
         var temp = currentStep;
         if (currentStep > 0)
         {
-            foreach (Dirt dirt in environmentConstants.episodes[currentEpisode].steps[temp - 1].DirtRegister)
+            foreach (Dirt dirt in environmentConstants.episodes[currentEpisode].steps[temp - 1].DirtPiles)
             {
                 if (dirt.name.Equals(name))
                 {
@@ -1099,7 +1078,7 @@ public class EnvironmentStateManager : MonoBehaviour
 
     public Item GetItemByName(string name)
     {
-        foreach (Item item in environmentConstants.episodes[currentEpisode].steps[currentStep].ItemRegister)
+        foreach (Item item in environmentConstants.episodes[currentEpisode].steps[currentStep].Items)
         {
             if (item.name.Equals(name))
             {

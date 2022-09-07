@@ -1,3 +1,5 @@
+/// <summary>Class <c>AgentConstants</c> contains all constant strings like agent animation and action names
+/// and speechbubble texts.</summary>
 public static class AgentConstants
 {
     //********************************** AGENT ANIMATION NAMES ************************************************//

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary> MODEL Class <c>Door</c> used in JSON deserialization. </summary>
+
 [System.Serializable]
 public class Door
 {
@@ -18,5 +20,5 @@ public class Door
     public string state { get; set; }
 
     public int time_to_close { get; set; }
-   
+
 }

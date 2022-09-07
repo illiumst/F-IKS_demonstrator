@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary> MODEL Class <c>BatteryProperties</c> used in JSON deserialization. </summary>
+
 [SerializeField]
 public class BatteryProperties
 {

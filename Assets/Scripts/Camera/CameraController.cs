@@ -2,16 +2,23 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
+/// <summary>Class <c>CameraController</c> is responsible for manual camera control.
+/// This script is assigned to the Main Camera.</summary>
 public class CameraController : MonoBehaviour
 {
+    #region Initializations
+    //========================================================================================================//
+    //================================= TWEAKABLE VALUES =====================================================//
+    //========================================================================================================//
     public float panSpeed = 20f;
 
     public float turnSpeed = 5f;
 
     public float zoomAmount = 10f;
 
-    public bool zoomActive;
-
+    //========================================================================================================//
+    //========================================== BUTTONS =====================================================//
+    //========================================================================================================//
     public Button ZoomInButton;
     public Button ZoomOutButton;
     public Button PanUpButton;
@@ -21,21 +28,25 @@ public class CameraController : MonoBehaviour
     public Button TurnLeftButton;
     public Button TurnRightButton;
 
+
+    //========================================================================================================//
+    //==================================== HELPER VALUES =====================================================//
+    //========================================================================================================//
+    public bool zoomActive;
     Vector3 cameraPos;
     Vector3 cameraTurn;
-
     public GameObject target;
     private Vector3 targetPoint;
-
     float zoom;
-
     float tempMouseX;
     float tempMouseY;
-
     bool rotating;
     bool panning;
     UIShowAndHide UIScript;
 
+    #endregion
+
+    #region Start
     void Start()
     {
         targetPoint = target.transform.position;
@@ -44,10 +55,13 @@ public class CameraController : MonoBehaviour
         zoomActive = true;
 
         UIScript = GameObject.FindWithTag("System").GetComponent<UIShowAndHide>();
-
-
     }
-    // Update is called once per frame
+    #endregion
+
+    #region Update: Handling Input
+
+    //set up different key options --> could be optimized
+    //TODO some controls missing like panning
     void Update()
     {
         if (Input.GetKey("w"))
@@ -82,6 +96,10 @@ public class CameraController : MonoBehaviour
         {
             TaskOnClickTurnRight();
         }
+
+        /*******************************************************************************************************/
+        /*************************************** ZOOMING *******************************************************/
+        /*******************************************************************************************************/
         if (!Input.GetMouseButtonDown(1) && zoomActive)
         {
             var zoomValue = Camera.main.orthographicSize;
@@ -177,8 +195,14 @@ public class CameraController : MonoBehaviour
                 rotating = true;
             }
         }
-
     }
+    #endregion
+
+    #region Single Navigation Functions
+
+    //========================================================================================================//
+    //=========================== SINGLE NAVIGATION FUNCTIONS ================================================//
+    //========================================================================================================//
 
     void TaskOnClickZoomIn()
     {
@@ -249,4 +273,6 @@ public class CameraController : MonoBehaviour
         UIScript.OnCameraInteractionStart("rotate");
 
     }
+
+    #endregion
 }

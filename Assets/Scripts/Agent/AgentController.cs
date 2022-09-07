@@ -6,7 +6,9 @@ using TMPro;
 using System.Text.RegularExpressions;
 
 
-
+/// <summary>Class <c>AgentController</c> is responsible for handling the behavior of Agent objects in the scene 
+/// like movement, action animations and displaying the little displays over each agent. 
+/// This script is assigned to the Robo3 of the Agent prefab.</summary>
 public class AgentController : MonoBehaviour
 {
 
@@ -59,23 +61,25 @@ public class AgentController : MonoBehaviour
 
     #endregion
 
-    // Start is called before the first frame update
     void Start()
     {
         #region Initilizations
 
+        // initializing system object
+        system = GameObject.FindWithTag("System");
+
+        // initializing animator object
+        animator = GetComponent<Animator>();
+
+        // initializing helping fields
         currentpos = this.transform.position;
         goalPosition = currentpos;
         sliderValue = 0;
         valid = true;
         backwardBuffer = false;
-
-        system = GameObject.FindWithTag("System");
-
         playingSequence = false;
 
-        animator = GetComponent<Animator>();
-
+        // initializing objects from scene
         agentCanvas = FindGameObjectInChildWithTag(gameObject, "AgentCanvas");
         speechBubble = FindGameObjectInChildWithTag(agentCanvas, "SpeechBubble");
         speechBubbleContent = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleContent");
@@ -86,21 +90,26 @@ public class AgentController : MonoBehaviour
         speechBubbleAgentName = FindGameObjectInChildWithTag(speechBubble, "SpeechBubbleAgentNumber");
         SetAgentNameInSpeechBubble(this.transform.parent.gameObject.name);
 
+        // loading sprite resources as textures (speech bubble images)
         cleaningTex = Resources.Load<Texture2D>("Sprites/cleaningNew");
         itemPickTex = Resources.Load<Texture2D>("Sprites/boxUp");
         directionTex = Resources.Load<Texture2D>("Sprites/direction");
 
-
+        // creating sprites from textures
         cleaningSprite = Sprite.Create(cleaningTex, new Rect(0.0f, 0.0f, cleaningTex.width, cleaningTex.height), new Vector2(0.5f, 0.5f), 100.0f);
         itemPickSprite = Sprite.Create(itemPickTex, new Rect(0.0f, 0.0f, itemPickTex.width, itemPickTex.height), new Vector2(0.5f, 0.5f), 100.0f);
         directionSprite = Sprite.Create(directionTex, new Rect(0.0f, 0.0f, directionTex.width, directionTex.height), new Vector2(0.5f, 0.5f), 100.0f);
 
+        // initially deactivating speech bubble
         speechBubble.SetActive(false);
 
         #endregion
     }
 
     #region Update
+
+    /// <summary> Central Update method. Update position, playback speed. Setting the animator's "animSpeed" valuable to playback speed. 
+    /// Setting buffering bool according buffering value of the stateMAnager. Calling movement method <c> MoveRobotTo(position)</c>.  </summary>
 
     void Update()
     {
@@ -136,6 +145,10 @@ public class AgentController : MonoBehaviour
     #endregion
 
     #region ActionUpdate
+
+    /// <summary>This method is called to update the agent's action. This encompasses updating the display and its content 
+    /// and in a switch statement calling the function <c>ChangeAnimationState(state)</c>. </summary>
+    /// 
     public void UpdateAgentAction()
     {
         var stateManager = system.GetComponent<EnvironmentStateManager>();
@@ -179,9 +192,12 @@ public class AgentController : MonoBehaviour
         }
     }
 
+    /// <summary>This method returns the length of an action. It is later used to wait for this amount of time 
+    /// before proceeding to the next step to let an animation finish. </summary>
+    /// <param name="action">string value of the action name (in form of an <c>AgentConstants</c> value. </param>
+
     float GetActionLength(string action)
     {
-        //Debug.Log("__Getting Action length: playbackSpeed " + playBackSpeed);
         switch (action)
         {
             case AgentConstants.ANIMATION_CLEANING:
@@ -198,6 +214,8 @@ public class AgentController : MonoBehaviour
     #endregion
 
     #region Bubbles
+
+    /// <summary>This iEnumerator is used to spawnCleaning bubbles ofter wating for a couple of frames. </summary>
     IEnumerator BubblesAction()
     {
         var stateManager = system.GetComponent<EnvironmentStateManager>();
@@ -207,10 +225,18 @@ public class AgentController : MonoBehaviour
     #endregion
 
     #region Position and Moving
+
+    /// <summary>This method is called every frame in update after verifying if the agent is moving.  
+    /// It transforms the agents position by calling the Vector3.MoveTowards() function towards the 
+    /// global variable goalPosition over time multiplied by speed. Speed is a multiple of 3 of playBackSpeed.
+    /// The agent is rotated to face its goalPosition.
+    /// If the buffer is buffering backwards, the agent is rotated by 180 degrees. </summary>
+    /// <param name="position">the goalPosition </param>
+
     public void MoveRobotTo(Vector3 position)
     {
         var speed = 3f * playBackSpeed;
-        this.transform.position = Vector3.MoveTowards(transform.position, goalPosition, Time.deltaTime * speed);
+        this.transform.position = Vector3.MoveTowards(transform.position, position, Time.deltaTime * speed);
 
         if (backwardBuffer)
         {
@@ -224,13 +250,17 @@ public class AgentController : MonoBehaviour
             name.transform.eulerAngles = Vector3.zero;
         }
     }
-
+    /// <summary>This method resets the transform's position. It also starts a coroutine to wait for the current animation
+    /// to finish. </summary>
+    /// <param name="pos"> the new position. </param>
     public void SetRobotPosition(Vector3 pos)
     {
         this.transform.position = pos;
         StartCoroutine(WaitToFinishAnimation(currentAnimationState));
     }
-
+    /// <summary>This method changes the animation state. If the desired state matches the current state 
+    /// a coroutine is started to wait for the animation to finish. </summary>
+    /// <param name="state"> the string state name (in form of AgentConstant) </param>
     void ChangeAnimationState(string state)
     {
         finished = false;
@@ -243,6 +273,8 @@ public class AgentController : MonoBehaviour
         StartCoroutine(WaitToFinishAnimation(state));
     }
 
+    /// <summary>This IEnumerator waits for the length of an action before setting the global finished state to true. </summary>
+    /// <param name="action"> the string action name (in form of AgentConstant) </param>
     IEnumerator WaitToFinishAnimation(string action)
     {
         currentActionLength = GetActionLength(action);
@@ -253,6 +285,15 @@ public class AgentController : MonoBehaviour
     #endregion
 
     #region List
+
+    /// <summary>This method updates the content in the agent info scrollview. </summary>
+    /// <param name="agentObject"> the corresponding GameObject to the ist item. </param>
+    /// <param name="listItem"> the corresponding listItem GameObject. </param>
+    /// <param name="x"> agent's x coordinate </param>
+    /// <param name="y"> agent's y coordinate </param>  
+    /// <param name="name"> agent's name </param>
+    /// <param name="action"> agent's name </param>
+    /// <param name="valid"> boolean indicating action's validity </param>
     public void UpdateAgentListItems(GameObject agentObject, GameObject listItem, int x, int y, string name, string action, bool valid)
     {
         var agentBody = agentObject.transform.GetChild(0).gameObject;
@@ -285,6 +326,11 @@ public class AgentController : MonoBehaviour
     #endregion
 
     #region SpeechBubble
+
+    /// <summary>This method updates the content in the agent over head display/speech-bubble.
+    /// Depending on the agent action it calls the method <c>SetSpeechBubbleContent(...)</c></summary>
+    /// <param name="action"> the string action name (in form of AgentConstant) </param>
+    /// <param name="valid"> boolean indicating action's validity </param>
     public void UpdateSpeechBubble(string action, bool valid)
     {
         var rectTrans = speechBubble.GetComponent<RectTransform>();
@@ -342,6 +388,13 @@ public class AgentController : MonoBehaviour
 
     }
 
+    /// <summary>This method sets the content in the agent over head display/speech-bubble. 
+    /// Parameters are the sprite, contentRotation, text, rotation and the directionText. </summary>
+    /// <param name="sprite"> the sprite to set the image to. </param>
+    /// <param name="contentRotation"> rotation of the sprite. </param>
+    /// <param name="text"> string text to display. </param>
+    /// <param name="rotation"> rotation of the speech-bubble. </param>
+    /// <param name="directionText"> boolean wheather to show the direction text or not. </param>
     void SetSpeechBubbleContent(Sprite sprite, Vector3 contentRotation, string text, float rotation, bool directionText)
     {
         speechBubbleContent.transform.GetComponent<Image>().sprite = sprite;
@@ -350,6 +403,8 @@ public class AgentController : MonoBehaviour
         speechBubbleDirectionText.SetActive(directionTex);
         speechBubble.SetActive(true);
     }
+    /// <summary>This method sets name in the speech-bubble. </summary>
+    /// <param name="name"> string name to set to. </param>
     public void SetAgentNameInSpeechBubble(string name)
     {
         speechBubbleAgentName.transform.GetComponent<Text>().text = GetAgentNumberFromNameAsString(name);
@@ -358,12 +413,18 @@ public class AgentController : MonoBehaviour
     #endregion
 
     #region helper methods
+
+    /// <summary>This method returns the agent number as a strring based on its name string. </summary>
+    /// <param name="name"> string name to set to. </param>
     string GetAgentNumberFromNameAsString(string name)
     {
         string nameNew = Regex.Replace(name, "[^0-9]", "");
         return nameNew;
     }
 
+    /// <summary>This method returns a certain child gameobject from a parent based on its tag. </summary>
+    /// <param name="parent"> parent gameobject. </param>
+    /// <param name="tag"> string tag of object. </param>
     public static GameObject FindGameObjectInChildWithTag(GameObject parent, string tag)
     {
         Transform t = parent.transform;
@@ -379,31 +440,25 @@ public class AgentController : MonoBehaviour
 
         return null;
     }
-    IEnumerator LerpPosition(Vector3 targetPosition, float duration)
-    {
-        float time = 0;
-        Vector3 startPosition = transform.position;
 
-        while (time < duration)
-        {
-            transform.position = Vector3.Lerp(startPosition, targetPosition, time / duration);
-            time += Time.deltaTime;
-            yield return null;
-        }
-        transform.position = targetPosition;
-    }
-
+    /// <summary>This method returns the recalculated position according to the unity coordinate system as a Vector3.
+    /// This is used to transform the position values taken from the JSON. </summary>
+    /// <param name="x"> original x value. </param>
+    /// <param name="y"> original y value. </param>
+    /// <param name="z"> original z value. </param>
     public Vector3 GetRecalculatedPosition(float x, float y, float z)
     {
         Vector3 center = system.GetComponent<EnvironmentStateManager>().environmentCenter;
         return new Vector3(x - center.x, y, z - center.z);
     }
-
+    /// <summary>This method sets the global variable agentModel to the indicated agent. </summary>
+    /// <param name="agent"> agent to set the model to. </param>
     public void SetAgentModel(Agent agent)
     {
         this.agentModel = agent;
     }
 
+    /// <summary>This method returns the length of the current action. </summary>
     public float GetCurrentActionLength()
     {
         return this.currentActionLength;
