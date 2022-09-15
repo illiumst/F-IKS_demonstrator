@@ -102,15 +102,6 @@ public class JSONReader : MonoBehaviour
         });
     }
 
-    public EnvironmentConstantsHeaderOnly ReadEnvironmentConstantsHeaderOnly(string episodeDataString)
-    {
-        return JsonConvert.DeserializeObject<EnvironmentConstantsHeaderOnly>(episodeDataString, new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore
-        });
-        
-    }
-
     public void ReadEnvironmentData()
     {
         environmentTimeSteps = JsonConvert.DeserializeObject<List<List<EnvironmentTimeStep>>>(environmentData.text, new JsonSerializerSettings
