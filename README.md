@@ -17,6 +17,8 @@ The style guide shows details about colors, fonts, button design (in their diffe
 - **Design guide:** https://www.figma.com/file/0DSr13TIOoEcvmphThmgkA/F-IKS_Demonstrator?node-id=0%3A1
 - **Prototype:** https://www.figma.com/proto/0DSr13TIOoEcvmphThmgkA/F-IKS_Demonstrator?node-id=79%3A117&starting-point-node-id=79%3A117
 
+<img src="./Screenshots/Demonstrator_Design_Guide.png" width="70%"/>
+
 # Getting Started
 
 ## Opening the project
@@ -27,11 +29,47 @@ The style guide shows details about colors, fonts, button design (in their diffe
 
 - check which scene opens upon start: if the **StartScene** (with the familiar agent environment) is already open, you are good to go. Just press the play button. If an unnamed new scene opened, navigate to the StartScene and open it.
 
-<img src="./Screenshots/UnityScene.png" width="80%"/>
+<img src="./Screenshots/UnityScene.png" width="60%"/>
 
 - if you want to test with a bigger view: check **"Maximize on Play"** in the game view window
 
-<img src="./Screenshots/MaximizeGameView.png" width="50%"/>
+<img src="./Screenshots/MaximizeGameView.png" width="40%"/>
+
+## Scene Overview 
+
+The two scenes contained in the project are the
+
+- **StartScreen:** used for sequence selection and upload
+- **MainScene:** containing the interactive player
+
+<img src="./Screenshots/StartScene.png" width="45%"/>
+<img src="./Screenshots/MainScene.png" width="45%"/>
+
+## Script Overview
+
+All scripts are held in different thematically organized folders. 
+<img src="./Screenshots/ScriptFolders.png" width="20%"/>
+
+- **Agent:** contains Monobehavior scripts that are attached to the Agent prefab (GameObject) and descripe behavior of that object in the scene
+- **Camera:** contains the CameraController script
+- **Constants:** contains the AgentConstants script that holds fixed string variables
+- **EnvironmentData:** contains all model classes used to deserialize the JSON file and hold that information
+- **EnvironmentManager:** contains the EnvironmentStateMAnager script, which is the programs central control instance and is attached to an empty "System" object in the scene
+- **EventSystem:** contains the InputManager
+- **JSONReader:** contains the JSONReader class to deserailze the JSON file and load a file from the computer
+- **Spawning:** contains the ObjectSpawner class to spawn (generate and place) new objects into the scene, and a SpawnerHelperClass
+- **UI:** contains UI relevant scripts like e.g. a tooltip script attached to gameobjects for which a tooltip is supposed to be shown when hovering over, it also contains the CustomFileBrowser
+
+
+# Scene Structures
+
+## Start Scene 
+## Main Scene
+
+
+
+
+
 
 
 
