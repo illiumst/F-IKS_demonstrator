@@ -80,9 +80,12 @@ The sequences that are clickable are Button [Prefabs](#Prefabs) called **FileIte
 <img src="./Screenshots/start_selection.png" width="60%"/>
 
 
-
-
 ## Main Scene
+
+The Main Scene is the where the actual demonstrator takes place. Its UI is set up like a video player player. 
+<img src="./Screenshots/main_scene_structure.png" width="30%"/>
+
+- **Main Camera**: In comparison to the Start Scene, the Main Scene's Main Camera has a Child Object called **Camera Target**. It is placed in the center of the environment but is not visible in the scene. It is simply used as an anchor for camera rotation. In the main scene, the camera also hasd the Camera Controller` script attached.
 
 # Prefabs 
 
@@ -93,7 +96,7 @@ A prefab is a component of (potentially nested) gameObjects that can be reused.
 You can create one by dragging an object into the Prefabs folder in the unity editor under **Assets/Resources/Prefabs**. If you want changes to affect all prefab instances, they need to be made on the prefab directly (you can click "Open Prefab" in the inspector on the left). In your scene structure you can recognizing a prefab by its blue color. 
 Some of the prefabs used in the demonstrator are the wall pieces, agents, dirt puddles, charging stations etc. 
 
-<img src="./Screenshots/prefabs.png" width="60%"/>
+<img src="./Screenshots/prefabs.png" width="80%"/>
 
 ## Intantiating a Prefab
 
