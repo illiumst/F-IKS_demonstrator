@@ -74,17 +74,43 @@ The first few GameObjects of the scene like the **Main Camera**, lights inside t
 The following two GameObjects **ScreenFades** and **UICanvas** make the user interface. The screen fades are simple image overlays on the top and bottom of the screen to enhance a vignette like visual effect. The UICanvas object contains the remaining UI elements. 
 
 The component worth further explaination is the scrollview containing the different sequences that can be clicked on to open.
+The sequences that are clickable are Button [Prefabs](#Prefabs) called **FileItemButton** that are created dynamically (indicated blue in the left image below), reading out the folder where all JSON files are stored. See [File Upload](#File Upload).
+
 <img src="./Screenshots/start_UICanvas.png" width="30%"/>
-<img src="./Screenshots/start_selection.png" width="50%"/>
-The sequences that are clickable are Button [Prefabs](#Prefabs) that are created dynamically, reading out the folder where all JSON files are stored. See [File Upload](#File Upload).
+<img src="./Screenshots/start_selection.png" width="60%"/>
+
 
 
 
 ## Main Scene
 
-#Prefabs 
+# Prefabs 
 
-#File Upload
+A prefab is a component of (potentially nested) gameObjects that can be reused. 
+
+## Creating a Prefab
+
+You can create one by dragging an object into the Prefabs folder in the unity editor under **Assets/Resources/Prefabs**. If you want changes to affect all prefab instances, they need to be made on the prefab directly (you can click "Open Prefab" in the inspector on the left). In your scene structure you can recognizing a prefab by its blue color. 
+Some of the prefabs used in the demonstrator are the wall pieces, agents, dirt puddles, charging stations etc. 
+
+<img src="./Screenshots/prefabs.png" width="60%"/>
+
+## Intantiating a Prefab
+
+In the demonstrator, prefabs are instantiated in the ObjectSpawner class. It goes as followed:
+```csharp
+//Declare the object
+GameObject RobotSpawnObject;
+
+//Load resource
+RobotSpawnObject = Resources.Load("Prefabs/Robot") as GameObject;
+
+//Instatiate 
+var newRobot = Instantiate(RobotSpawnObject, SpawnPosition, transform.rotation) as GameObject;
+
+```
+
+# File Upload
 
 
 
