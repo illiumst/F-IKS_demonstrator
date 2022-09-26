@@ -64,7 +64,28 @@ All scripts are held in different thematically organized folders.
 # Scene Structures
 
 ## Start Scene 
+
+The Start Scene is the first scene that opens up after the splash screen (TODO). It is used to select a sequence or upload a new sequence via a JSON file from your computer. It also contains a help button in the right hand top corner to show a prompt explaining how the demonstrator works. In the bottom of the screen the logos of all participating parties of the demonstrator are displayed.
+
+The following paragraph explains the unity scene components of the scene. 
+<img src="./Screenshots/start_scene_structure.png" width="30%"/>
+
+The first few GameObjects of the scene like the **Main Camera**, lights inside the **Lights** object, background cubes inside the **Cube Background** object as well as the **Floor** object are straight forward and static. They do not habe any interaction functionalities or scripts attached, they simply create the background environment.
+The following two GameObjects **ScreenFades** and **UICanvas** make the user interface. The screen fades are simple image overlays on the top and bottom of the screen to enhance a vignette like visual effect. The UICanvas object contains the remaining UI elements. 
+
+The component worth further explaination is the scrollview containing the different sequences that can be clicked on to open.
+<img src="./Screenshots/start_UICanvas.png" width="30%"/>
+<img src="./Screenshots/start_selection.png" width="50%"/>
+The sequences that are clickable are Button [Prefabs](#Prefabs) that are created dynamically, reading out the folder where all JSON files are stored. See [File Upload](#File Upload).
+
+
+
 ## Main Scene
+
+#Prefabs 
+
+#File Upload
+
 
 
 
