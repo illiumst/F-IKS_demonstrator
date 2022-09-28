@@ -130,7 +130,7 @@ var newRobot = Instantiate(RobotSpawnObject, SpawnPosition, transform.rotation) 
 The script responsible for file upload is the `FileBrowserCustom` under `Scripts/UI/FileBrowserCustom`. It is using the AssetStore plugin ([SimpleFileBrowser)](https://assetstore.unity.com/packages/2d/gui/icons/animated-loading-icons-47844). 
 The file browser allows only JSON files to be loaded by setting a `.json` or `.JSON` filter. 
 
-## Uploafding a file
+## Uploading a file
 
 <img src="./Screenshots/import_episode_button.png" width="30%"/>
 <img src="./Screenshots/import_episode_button_inspector.png" width="30%"/>
@@ -142,6 +142,53 @@ By clicking the `ÌmportEpisodeButton` in the `StartScene` the `OnClick()` metho
 episodeDataString = FileBrowserHelpers.ReadTextFromFile(FileBrowser.Result[0]);
 _filename = Path.GetFileName(FileBrowser.Result[0]);
 SaveAsJSONToResources(_filename, episodeDataString);
+```
+## File Location
+
+Once a file is selected, it is saved to a folder called `FIKS_Demonstrator_Data/JSON_Sequences`. If it does not exist yet, it is created as follows:
+
+```csharp
+if(!Directory.Exists("FIKS_Demonstrator_Data/JSON_Sequences")){
+    Directory.CreateDirectory("FIKS_Demonstrator_Data/JSON_Sequences");
+}
+```
+
+All files from that folder are displayed in the ScrollView via the method `FillScrollView()` by instantiating a `ListItemObject`.
+Each ScrollView item is a Button with the following `OnClick(` method to start the Demonstrator (opening the main scene) passing the selected `filenam` through to the next scene.
+
+```csharp
+newItem.GetComponent<Button>().onClick.AddListener(()
+    => StartDemonstrator(file.Name));
+}
+```
+
+# JSON Deserialization
+
+The JSON Deserialization is handled through the `JSONReader` script attached to the `System` object in the `MainScene`. 
+
+## JSON Format
+
+All relevant data is stored within a nested JSON file. All nested JSON objects have a corresponding model `C# class` that is not a MonoBehavior but `[System.Serializable]` to store the data in a format to work with as objects. 
+The top level object is `EnvironmentConstants`, containing the number of episodes `n_episodes`, environment paramneters with e.g. reward specifities `env_params` (not relevant in Unity yet), constant environment parameters that remain the same in each episode and step in a `header` and finally the episode Data in a list of `episodes`. 
+
+Episodes can contain different types of objects, some, like e.g. `Items`,`Destinations`or `DirtPiles` are optional and are not necessarily included, that is why they are marked as optional with a `?`.
+
+```csharp
+[System.Serializable]
+public class EnvironmentTimeStep
+{
+    public int step { get; set; }
+    public List<Door>? Doors { get; set; }
+    public List<Agent> Agents { get; set; }
+    public List<Item>? Items { get; set; }
+    public List<Inventory>? Inventories { get; set; }
+    public List<Dirt>? DirtPiles { get; set; }
+    public List<Destination>? Destinations { get; set; }
+    public List<Destination>? ReachedDestinations { get; set; }
+    public List<Battery>? Batteries { get; set; }
+
+}
+}
 ```
 
 
