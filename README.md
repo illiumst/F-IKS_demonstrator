@@ -98,6 +98,8 @@ The `UI` components consist of different canvases.
 - `FullScreenUI`: deactivred by default, can be activted via `FullscreenButton`. Distracting elements like the timeslider etc. disappear.
 - `LoadingCanvas`: contains a roting loading circle ([Asset: Animated Loading Icons)](https://assetstore.unity.com/packages/2d/gui/icons/animated-loading-icons-47844) and text display and is shown when the scene is started while the JSON data is processing.
 
+The `System` empty GameObject contains all the major scripts that are handling the program flow. It has the scripts `JSONReader`, `EnvironmentStateManager`, `ObjectSpawner`, `InputManager` and `UIShowAndHide` attached to it.
+
 # Prefabs 
 
 A prefab is a component of (potentially nested) gameObjects that can be reused multiple times and spawned as an object. 
@@ -162,7 +164,7 @@ newItem.GetComponent<Button>().onClick.AddListener(()
 }
 ```
 
-# JSON Deserialization
+# JSON
 
 The JSON Deserialization is handled through the `JSONReader` script attached to the `System` object in the `MainScene`. 
 
@@ -190,6 +192,38 @@ public class EnvironmentTimeStep
 }
 }
 ```
+## JSON Deserialization
+
+The actual deserialization takes place in the `JSONReader.ReadEnvironmentConstants()` method:
+
+```csharp
+private void ReadEnvironmentConstants()
+    {
+        constants = JsonConvert.DeserializeObject<EnvironmentConstants>(episodeDataString, new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        });
+    }
+```
+The `environmentDataString` parameter used is the string JSON data taken by using the previously passed through (from the SatrtScene scrollview) selected `filename` and selecting the correct JSON file from the `FIKS_Demonstrator_Data/JSON_Sequences` folder via `ReadSelectedJSONFile(string _filename)`:
+
+```csharp
+var info = new DirectoryInfo("FIKS_Demonstrator_Data/JSON_Sequences");
+    var fileInfo = info.GetFiles();
+    foreach (FileInfo file in fileInfo)
+    {
+        if (file.Name.Contains(_filename))
+        {
+            var source = new StreamReader(file.FullName);
+            episodeDataString = source.ReadToEnd();
+            source.Close();
+        }
+    }
+```
+
+# Object Spawning
+
+
 
 
 
