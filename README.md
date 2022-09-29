@@ -66,7 +66,7 @@ All scripts are held in different thematically organized folders.
 
 <img src="./Screenshots/start_scene_structure.png" width="30%"/>
 
-The `Start Scen` is the first scene that opens up after the splash screen (TODO). It is used to select a sequence or upload a new sequence via a JSON file from your computer. It also contains a help button in the right hand top corner to show a prompt explaining how the demonstrator works. In the bottom of the screen the logos of all participating parties of the demonstrator are displayed.
+The `Start Scene` is the first scene that opens up after the splash screen (TODO). It is used to select a sequence or upload a new sequence via a JSON file from your computer. It also contains a help button in the right hand top corner to show a prompt explaining how the demonstrator works. In the bottom of the screen the logos of all participating parties of the demonstrator are displayed.
 
 The following paragraph explains the unity scene components of the scene. 
 
@@ -223,8 +223,40 @@ var info = new DirectoryInfo("FIKS_Demonstrator_Data/JSON_Sequences");
 
 # Object Spawning
 
+The `ObjectSpawner` script is also attached to the `System` GameObject. The `EnvironmentStateManager` that is responsible for the program flow calls the ObjectSpawner method `SpawnNewEpisode()`, taking the `EnvironmentConstants` (=deserialized JSON data) and episode number as a input, upon start. It isd a wrapper function to call all other spawning functions for walls, doors, agents etc. :
 
+```csharp
+public void SpawnNewEpisode(EnvironmentConstants constantsInput, int episode)
+    {
+        constants = constantsInput;
+        Debug.Log("#Walls Spawner Input: " + constantsInput.header.rec_Walls.Count);
+        Debug.Log("#Walls Spawner: " + constants.header.rec_Walls.Count);
+        spawnWalls(episode);
+        spawnDoors(episode);
+        spawnAgents(episode, 0);
+        if (constants.episodes[episode].steps[0].Items != null) { spawnPickUpItems(episode, 0); }
+        if (constants.header.rec_DropOffLocations != null) { spawnDropOffZones(episode, 0); }
+        if (constants.episodes[episode].steps[0].DirtPiles != null) { spawnDirtRegister(episode, 0); }
+        spawnFloorPositionMarkers(episode);
+    }
+```
 
+## General Spawning
+
+In general, to spawn an object, the corresponding prefab has to be instantiated in the scene as a GameObject using a given position and rotation, name and parent transform have to be set and it has to be added to the corresponding GameObject list in the `EnvironmentSateManager`. 
+
+```csharp
+var newPickupItem = Instantiate(objectToSpawn, SpawnPosition, transform.rotation) as GameObject;
+            newPickupItem.name = name;
+            newPickupItem.transform.parent = Items.transform;
+            system.GetComponent<EnvironmentStateManager>().itemObjects.Add(newPickupItem);
+```
+
+## Object model vs. GameObject in scene
+
+An important thing to mention is the distinction between the model class of an object that is deserialized from the JSON like e.g. `Agent` holding information from the rcorded sequence and the physical `GameObject` in the scene. The corresponding `GameObject` to an Agent is an instance of the `Robot` prefab. The scripts regarding the agent control are attached to the first child object `Robo3`.
+
+<img src="./Screenshots/gameObject.png" width="30%"/>
 
 
 
