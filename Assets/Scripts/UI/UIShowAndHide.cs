@@ -13,6 +13,8 @@ public class UIShowAndHide : MonoBehaviour
     GameObject ToggleMenuCanvas;
     Image CameraCursorImage;
 
+    GameObject QuickOverview;
+
 
     Texture2D CameraCursorTextureZoomIn;
     Texture2D CameraCursorTextureZoomOut;
@@ -41,36 +43,14 @@ public class UIShowAndHide : MonoBehaviour
     float cameraRotationY;
     public float cameraRotationYNew;
 
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void InitializeUIShowAndHide()
     {
-        CameraControlsCanvas = GameObject.FindWithTag("CameraControlsPanel");
-        CameraControlsCanvas.GetComponent<Canvas>().enabled = false;
-
-        RobotScrollView = GameObject.FindWithTag("RobotScrollview");
-        RobotScrollView.GetComponent<Canvas>().enabled = false;
 
         CompassCanvas = GameObject.FindWithTag("CompassCanvas");
-
+        QuickOverview = GameObject.FindWithTag("QuickFactsOverview");
         CameraCursorCanvas = GameObject.FindWithTag("CameraCursor");
         CameraCursorCanvas.GetComponent<Canvas>().enabled = false;
         CameraCursorImage = GameObject.FindWithTag("CameraCursorImage").transform.GetComponent<Image>();
-
-        ToggleMenuCanvas = GameObject.FindWithTag("ToggleMenu");
-        ToggleMenuCanvas.GetComponent<Canvas>().enabled = false;
 
         CameraCursorTextureZoomIn = Resources.Load<Texture2D>("Sprites/zoom-in");
         CameraCursorTextureZoomOut = Resources.Load<Texture2D>("Sprites/zoom-out");
@@ -81,10 +61,6 @@ public class UIShowAndHide : MonoBehaviour
         CameraCursorSpriteZoomOut = Sprite.Create(CameraCursorTextureZoomOut, new Rect(0.0f, 0.0f, CameraCursorTextureZoomOut.width, CameraCursorTextureZoomOut.height), new Vector2(0.5f, 0.5f), 100.0f);
         CameraCursorSpriteRotate = Sprite.Create(CameraCursorTextureRotate, new Rect(0.0f, 0.0f, CameraCursorTextureRotate.width, CameraCursorTextureRotate.height), new Vector2(0.5f, 0.5f), 100.0f);
         CameraCursorSpritePan = Sprite.Create(CameraCursorTexturePan, new Rect(0.0f, 0.0f, CameraCursorTexturePan.width, CameraCursorTexturePan.height), new Vector2(0.5f, 0.5f), 100.0f);
-
-        SettingsButton = GameObject.FindWithTag("SettingsButton").GetComponent<Button>();
-        CameraControlsButton = GameObject.FindWithTag("CameraControlsButton").GetComponent<Button>();
-        CameraCalibrationButton = GameObject.FindWithTag("CameraCalibrationButton").GetComponent<Button>();
 
         camControlsCounter = 0;
         settingsCounter = 0;
@@ -143,6 +119,39 @@ public class UIShowAndHide : MonoBehaviour
         camControlsCounter += 1;
     }
 
+    public void MoveOverviewCanvasDown()
+    {
+        var canvas = QuickOverview;
+        var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y - 0.17f * Screen.height, canvas.transform.position.z);
+        canvas.transform.position = newPos;
+    }
+    public void MoveOverviewCanvasUp()
+    {
+        var canvas = QuickOverview;
+        var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y + 0.17f * Screen.height, canvas.transform.position.z);
+        canvas.transform.position = newPos;
+    }
+
+    public void MoveAgentCanvasDown()
+    {
+        var canvas = GameObject.FindWithTag("DetailsDisplay");
+        if (canvas != null)
+        {
+            var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y - 0.17f * Screen.height, canvas.transform.position.z);
+            canvas.transform.position = newPos;
+        }
+
+    }
+    public void MoveAgentCanvasUp()
+    {
+        var canvas = GameObject.FindWithTag("DetailsDisplay");
+        if (canvas != null)
+        {
+            var newPos = new Vector3(canvas.transform.position.x, canvas.transform.position.y + 0.17f * Screen.height, canvas.transform.position.z);
+            canvas.transform.position = newPos;
+        }
+    }
+
 
     public void HideCameraControls()
     {
@@ -157,7 +166,7 @@ public class UIShowAndHide : MonoBehaviour
         MoveCompassLeft(Screen.width / 8);
     }
 
-    public void ShowHideSettigs()
+    public void ShowHideSettings()
     {
         if (settingsCounter % 2 == 0)
         {
@@ -191,7 +200,6 @@ public class UIShowAndHide : MonoBehaviour
 
     public void RotateCompass()
     {
-        //var currentCamRotation = Camera.main.transform.localEulerAngles.y;
         var diff = cameraRotationYNew - cameraRotationY;
         Debug.Log("Initial Camera rotation: " + cameraRotationY);
         Debug.Log("Current Camera rotation: " + cameraRotationYNew);

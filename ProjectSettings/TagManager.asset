@@ -57,6 +57,55 @@ TagManager:
   - ImportEpisodeButton
   - LoadingCanvas
   - SequenceSelectionWarning
+  - PopUpDialog
+  - HomeButton
+  - SequenceName
+  - CloseTabButton
+  - AddTabButton
+  - CursorButton
+  - MoveButton
+  - TurnButton
+  - ZoomInButton
+  - ZoomOutButton
+  - FileItemButton
+  - FileNameLabel
+  - PathNameLabel
+  - LastOpenendLabel
+  - FileScrollViewContent
+  - QuickFactsOverview
+  - NrAgentsText
+  - NrItemsText
+  - NrDirtText
+  - NrValidText
+  - NrInvalidText
+  - DetailsDisplay
+  - SpeechBubblePositiontext
+  - Tooltip
+  - TooltipText
+  - SpeechBubbleAgentNumber
+  - EpisodeScrollViewContent
+  - EpisodeItemName
+  - EpisodeNrSteps
+  - EpisodeNrAgents
+  - EpisodeEnvironmentSize
+  - SelectedEpisodeName
+  - EpisodeSelectionButtonArrow
+  - EpisodeSelectionScrollviewCanvas
+  - EpisodeSelectionButtonClosed
+  - EpisodeSelectionButtonOpen
+  - EpisodeItemOutline
+  - SliderFill
+  - BufferFill
+  - StepText
+  - PlayButton
+  - PauseButton
+  - NextButton
+  - NextNextButton
+  - PreviousButton
+  - PreviousPreviousButton
+  - SliderHandleLabel
+  - BatteryFillStation
+  - TimelapseToggle
   layers:
   - Default
   - TransparentFX

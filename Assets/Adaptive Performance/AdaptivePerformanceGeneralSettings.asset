@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Keys: 01000000
   Values:
-  - {fileID: 8585198431485696149}
---- !u!114 &7499811118017735487
+  - {fileID: 9039956426765819767}
+--- !u!114 &2444625604951476278
 MonoBehaviour:
   m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
@@ -30,7 +30,7 @@ MonoBehaviour:
   m_AutomaticLoading: 0
   m_AutomaticRunning: 0
   m_Loaders: []
---- !u!114 &8585198431485696149
+--- !u!114 &9039956426765819767
 MonoBehaviour:
   m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,5 +42,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179fc3111e144bc4688dca4038b3265d, type: 3}
   m_Name: Standalone Settings
   m_EditorClassIdentifier: 
-  m_LoaderManagerInstance: {fileID: 7499811118017735487}
-  m_InitManagerOnStart: 1
+  m_LoaderManagerInstance: {fileID: 2444625604951476278}
+  m_InitManagerOnStart: 0

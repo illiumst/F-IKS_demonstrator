@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<extradoc>
+    <class name="EnvironmentStateManager">
+        <summary>
+        Contains a list of integers.
+        </summary>
+    </class>
+    <class name="ObjectSpawner">
+        <summary>
+        Contains a list of integers.
+        </summary>
+    </class>
+</extradoc>

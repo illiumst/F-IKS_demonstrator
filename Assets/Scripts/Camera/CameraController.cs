@@ -2,16 +2,23 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
+/// <summary>Class <c>CameraController</c> is responsible for manual camera control.
+/// This script is assigned to the Main Camera.</summary>
 public class CameraController : MonoBehaviour
 {
+    #region Initializations
+    //========================================================================================================//
+    //================================= TWEAKABLE VALUES =====================================================//
+    //========================================================================================================//
     public float panSpeed = 20f;
 
     public float turnSpeed = 5f;
 
     public float zoomAmount = 10f;
 
-    public bool zoomActive;
-
+    //========================================================================================================//
+    //========================================== BUTTONS =====================================================//
+    //========================================================================================================//
     public Button ZoomInButton;
     public Button ZoomOutButton;
     public Button PanUpButton;
@@ -21,48 +28,42 @@ public class CameraController : MonoBehaviour
     public Button TurnLeftButton;
     public Button TurnRightButton;
 
+
+    //========================================================================================================//
+    //==================================== HELPER VALUES =====================================================//
+    //========================================================================================================//
+    public bool zoomActive;
     Vector3 cameraPos;
     Vector3 cameraTurn;
-
     public GameObject target;
     private Vector3 targetPoint;
-
     float zoom;
-
     float tempMouseX;
     float tempMouseY;
-
     bool rotating;
     bool panning;
     UIShowAndHide UIScript;
 
+    #endregion
+
+    #region Start
     void Start()
     {
         targetPoint = target.transform.position;
-        //transform.LookAt(targetPoint);
-        ZoomInButton.onClick.AddListener(TaskOnClickZoomIn);
-        ZoomOutButton.onClick.AddListener(TaskOnClickZoomOut);
-        PanUpButton.onClick.AddListener(TaskOnClickPanUp);
-        PanLeftButton.onClick.AddListener(TaskOnClickPanLeft);
-        PanRightButton.onClick.AddListener(TaskOnClickPanRight);
-        PanDownButton.onClick.AddListener(TaskOnClickPanDown);
-        TurnLeftButton.onClick.AddListener(TaskOnClickTurnLeft);
-        TurnRightButton.onClick.AddListener(TaskOnClickTurnRight);
-
         cameraPos = transform.position;
         cameraTurn = transform.eulerAngles;
         zoomActive = true;
 
         UIScript = GameObject.FindWithTag("System").GetComponent<UIShowAndHide>();
-
-
     }
-    // Update is called once per frame
+    #endregion
+
+    #region Update: Handling Input
+
+    //set up different key options --> could be optimized
+    //TODO some controls missing like panning
     void Update()
     {
-        //targetPoint = target.transform.position;
-        //transform.LookAt(targetPoint);
-
         if (Input.GetKey("w"))
         {
             TaskOnClickPanUp();
@@ -95,6 +96,10 @@ public class CameraController : MonoBehaviour
         {
             TaskOnClickTurnRight();
         }
+
+        /*******************************************************************************************************/
+        /*************************************** ZOOMING *******************************************************/
+        /*******************************************************************************************************/
         if (!Input.GetMouseButtonDown(1) && zoomActive)
         {
             var zoomValue = Camera.main.orthographicSize;
@@ -126,7 +131,6 @@ public class CameraController : MonoBehaviour
             }
             else
             {
-                //panning = true;
                 rotating = true;
             }
         }
@@ -155,17 +159,6 @@ public class CameraController : MonoBehaviour
                 TaskOnClickTurnLeft();
                 tempMouseX += diffX;
             }
-            //TODO still buggy
-            /*if (diffY > 40)
-            {
-                TaskOnClickTurnUp();
-                tempMouseY += diffY;
-            }
-            if (diffY < 40)
-            {
-                TaskOnClickTurnDown();
-                tempMouseY += diffY;
-            }*/
         }
         if (panning && zoomActive)
         {
@@ -197,14 +190,19 @@ public class CameraController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftCommand))
         {
-            Debug.Log("...........Left command pressed....");
             if (Input.GetMouseButtonDown(1))
             {
                 rotating = true;
             }
         }
-
     }
+    #endregion
+
+    #region Single Navigation Functions
+
+    //========================================================================================================//
+    //=========================== SINGLE NAVIGATION FUNCTIONS ================================================//
+    //========================================================================================================//
 
     void TaskOnClickZoomIn()
     {
@@ -252,9 +250,6 @@ public class CameraController : MonoBehaviour
 
     void TaskOnClickTurnLeft()
     {
-        //TODO 360 degrees abfragen
-        //cameraTurn.y += turnSpeed * Time.deltaTime;
-        //transform.eulerAngles = cameraTurn;
         transform.RotateAround(targetPoint, new Vector3(0.0f, 1.0f, 0.0f), 5 * Time.deltaTime * turnSpeed);
         UIScript.OnCameraInteractionStart("rotate");
 
@@ -262,9 +257,6 @@ public class CameraController : MonoBehaviour
 
     void TaskOnClickTurnRight()
     {
-        //TODO 360 degrees abfragen
-        //cameraTurn.y -= turnSpeed * Time.deltaTime;
-        //transform.eulerAngles = cameraTurn;
         transform.RotateAround(targetPoint, new Vector3(0.0f, 1.0f, 0.0f), -5 * Time.deltaTime * turnSpeed);
         UIScript.OnCameraInteractionStart("rotate");
 
@@ -281,4 +273,6 @@ public class CameraController : MonoBehaviour
         UIScript.OnCameraInteractionStart("rotate");
 
     }
+
+    #endregion
 }

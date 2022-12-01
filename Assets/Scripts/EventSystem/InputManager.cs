@@ -32,7 +32,7 @@ public class InputManager : MonoBehaviour
     //Returns 'true' if we touched or hovering on Unity UI element.
     private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
     {
-        var stateMachine = GameObject.FindWithTag("System").GetComponent<EnvironmentStateMachine>();
+        var stateMachine = GameObject.FindWithTag("System").GetComponent<EnvironmentStateManager>();
         for (int index = 0; index < eventSystemRaysastResults.Count; index++)
         {
             RaycastResult curRaysastResult = eventSystemRaysastResults[index];
@@ -41,7 +41,7 @@ public class InputManager : MonoBehaviour
                 if (curRaysastResult.gameObject.name.Equals("Handle"))
                 {
                     Debug.Log("Hovering over handle");
-                    stateMachine.steptext.SetActive(true);
+                    stateMachine.SetStepTextActive(true);
                 }
                 else
                 {
@@ -50,7 +50,7 @@ public class InputManager : MonoBehaviour
                 return true;
             }
         }
-        stateMachine.steptext.SetActive(false);
+        stateMachine.SetStepTextActive(false);
         Camera.main.GetComponent<CameraController>().zoomActive = true;
         return false;
     }

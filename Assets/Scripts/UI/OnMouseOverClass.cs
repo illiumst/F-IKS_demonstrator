@@ -39,8 +39,7 @@ public class OnMouseOverClass : MonoBehaviour
 
     void FillTooltip()
     {
-        Debug.Log("________Trying to fill tooltip: " + this.gameObject.name);
-        var statemachine = GameObject.FindWithTag("System").GetComponent<EnvironmentStateMachine>();
+        var statemachine = GameObject.FindWithTag("System").GetComponent<EnvironmentStateManager>();
 
         if (this.gameObject.name.Contains("Dirt"))
         {
@@ -67,6 +66,11 @@ public class OnMouseOverClass : MonoBehaviour
         else if (this.gameObject.name.Contains("Slider"))
         {
             Debug.Log("Hovering over handle...");
+        }
+        else
+        {
+            toolTipCanvas.GetComponent<Canvas>().enabled = false;
+            Cursor.visible = true;
         }
     }
 

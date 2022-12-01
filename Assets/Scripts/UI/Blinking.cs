@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Blinking : MonoBehaviour
 {
     public float spriteBlinkingTimer = 0.0f;
-    public float spriteBlinkingMiniDuration = 0.3f;
+    public float spriteBlinkingMiniDuration = 2f;
     public float spriteBlinkingTotalTimer = 0.0f;
     public float spriteBlinkingTotalDuration = 3.0f;
     public bool startBlinking = false;
@@ -24,8 +24,7 @@ public class Blinking : MonoBehaviour
         {
             startBlinking = false;
             spriteBlinkingTotalTimer = 0.0f;
-            this.gameObject.GetComponent<Image>().enabled = true;   // according to 
-                                                                    //your sprite
+            this.gameObject.GetComponent<Image>().enabled = true;   // according to your sprite
             return;
         }
 
