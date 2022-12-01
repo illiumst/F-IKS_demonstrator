@@ -340,7 +340,7 @@ public class ObjectSpawner : MonoBehaviour
             if (CheckIfWallExistsAtPosition(wall.x, wall.y + 1) && CheckIfWallExistsAtPosition(wall.x + 1, wall.y)
              && CheckIfWallExistsAtPosition(wall.x + 1, wall.y + 1))
             {
-                var pillarRotation = Quaternion.Euler(90, 0, 0);
+                var pillarRotation = Quaternion.Euler(0, 0, 0);
                 var newPillarTop = Instantiate(PillarTopSpawnObject, new Vector3(wall.x, 1.9f, wall.y), pillarRotation) as GameObject;
                 newPillarTop.transform.parent = WallObjects.transform;
                 newPillarTop.transform.position = GetRecalculatedPosition(newPillarTop.transform.position.x + 0.5f, newPillarTop.transform.position.y, newPillarTop.transform.position.z + 0.5f);
