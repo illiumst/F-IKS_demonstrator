@@ -204,13 +204,13 @@ public class CameraController : MonoBehaviour
     //=========================== SINGLE NAVIGATION FUNCTIONS ================================================//
     //========================================================================================================//
 
-    void TaskOnClickZoomIn()
+    public void TaskOnClickZoomIn()
     {
         Camera.main.orthographicSize -= zoomAmount * Time.deltaTime;
         UIScript.OnCameraInteractionStart("zoomIn");
     }
 
-    void TaskOnClickZoomOut()
+    public void TaskOnClickZoomOut()
     {
         Camera.main.orthographicSize += zoomAmount * Time.deltaTime;
         UIScript.OnCameraInteractionStart("zoomOut");

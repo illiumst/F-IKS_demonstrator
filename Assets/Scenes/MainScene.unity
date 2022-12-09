@@ -2049,7 +2049,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 169029494}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1052446084}
+        m_TargetAssemblyTypeName: CameraController, Assembly-CSharp
+        m_MethodName: TaskOnClickZoomOut
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &169029494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6590,7 +6602,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 600433662}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1052446084}
+        m_TargetAssemblyTypeName: CameraController, Assembly-CSharp
+        m_MethodName: TaskOnClickZoomIn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &600433662
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8839,8 +8863,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 965286633}
   m_HandleRect: {fileID: 965286632}
   m_Direction: 1
-  m_Value: 1
-  m_Size: 0.9999999
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 11
   m_OnValueChanged:
     m_PersistentCalls:
