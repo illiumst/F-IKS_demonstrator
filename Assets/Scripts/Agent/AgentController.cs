@@ -27,7 +27,7 @@ public class AgentController : MonoBehaviour
     //========================================================================================================//
 
     GameObject agentCanvas;
-    GameObject speechBubble;
+    public GameObject speechBubble;
     GameObject speechBubbleContent;
     GameObject speechBubbleInvalidityImage;
     GameObject speechBubbleDirectionText;

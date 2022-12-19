@@ -62,7 +62,7 @@ public class CameraController : MonoBehaviour
 
     //set up different key options --> could be optimized
     //TODO some controls missing like panning
-    void Update()
+    public void Update()
     {
         if (Input.GetKey("w"))
         {

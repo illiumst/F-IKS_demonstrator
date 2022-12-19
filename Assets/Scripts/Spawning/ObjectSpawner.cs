@@ -135,7 +135,7 @@ public class ObjectSpawner : MonoBehaviour
         }
     }
 
-    void DestroyObjectsWithTag(string tag)
+    public void DestroyObjectsWithTag(string tag)
     {
 
         GameObject[] objs = GameObject.FindGameObjectsWithTag(tag) as GameObject[];

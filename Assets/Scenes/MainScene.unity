@@ -9320,7 +9320,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 752927747}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11500000, guid: 98aab2ce56fa14d06a01cea89f51a77c, type: 3}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &752927747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11149,6 +11161,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98aab2ce56fa14d06a01cea89f51a77c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  system: {fileID: 0}
+  JSONReader: {fileID: 0}
+  objectSpawner: {fileID: 0}
+  nextButton: {fileID: 0}
+  nextNextButton: {fileID: 0}
+  previousButton: {fileID: 0}
+  previousPreviousButton: {fileID: 0}
   agentObjects: []
   agentListObjects: []
   dirtObjects: []
@@ -15652,7 +15671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -15682,7 +15701,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1276317930}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1052446087}
+        m_TargetAssemblyTypeName: UnityEngine.Camera, UnityEngine
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1276317930
 MonoBehaviour:
   m_ObjectHideFlags: 0

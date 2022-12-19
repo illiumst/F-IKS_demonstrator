@@ -17,9 +17,9 @@ public class EnvironmentStateManager : MonoBehaviour
     //========================================================================================================//
     //================================= GLOBAL OBJECTS =======================================================//
     //========================================================================================================//
-    GameObject system;
-    JSONReader JSONReader;
-    ObjectSpawner objectSpawner;
+    public GameObject system;
+    public JSONReader JSONReader;
+    public ObjectSpawner objectSpawner;
     public EnvironmentConstants environmentConstants;
 
     //========================================================================================================//
@@ -49,10 +49,10 @@ public class EnvironmentStateManager : MonoBehaviour
     GameObject sliderHandleLabel;
     Button playButton;
     Button pauseButton;
-    Button nextButton;
-    Button nextNextButton;
-    Button previousButton;
-    Button previousPreviousButton;
+    public Button nextButton;
+    public Button nextNextButton;
+    public Button previousButton;
+    public Button previousPreviousButton;
     GameObject playBackSpeedDropdown;
     Toggle timelapseToggle;
 
@@ -470,9 +470,31 @@ public class EnvironmentStateManager : MonoBehaviour
 
     #region Major Control Functions
     //TODO check if matches concept of buffering
-    void SkipSteps(int i)
+    public void SkipSteps(int i)
+
     {
-        Debug.Log("Skipping steps...");
+        bool playing = playingSequence;
+       
+        system.GetComponent<ObjectSpawner>().DestroyObjectsWithTag("Agent");
+        agentObjects.Clear();
+        currentStep = currentStep+i;
+        slider.value=currentStep;
+        system.GetComponent<ObjectSpawner>().spawnAgents(currentEpisode, currentStep);
+       
+       //TODO fix speechbubble - coroutine?
+        foreach (GameObject agentObj in agentObjects)
+            {
+                var controller = agentObj.transform.GetChild(0).GetComponent<AgentController>();
+                controller.speechBubble.SetActive(true);
+            }
+
+      
+        LoadNewTimeStepNoTimelapse(currentEpisode, currentStep);
+        
+        
+
+    
+        Debug.Log("Current Step:" + currentStep);
 
     }
 
